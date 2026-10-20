@@ -8,7 +8,7 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{8181D560-7071-4F20-AF3C-54878F7BD376}</ProjectGuid>
+    <ProjectGuid>{9F2B26C9-4C1F-453E-FB43-9C8457B51CC5}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -107,6 +107,10 @@
     <Content Include="Admin\ManageCommunity.aspx" />
     <Content Include="Admin\ManageRecipes.aspx" />
     <Content Include="Admin\ManageUsers.aspx" />
+    <Content Include="App_Data\MasakingDB.mdf" />
+    <Content Include="App_Data\MasakingDB_log.ldf">
+      <DependentUpon>MasakingDB.mdf</DependentUpon>
+    </Content>
     <Content Include="Community\Community.aspx" />
     <Content Include="Community\Reviews.aspx" />
     <Content Include="Contact.aspx" />
@@ -359,7 +363,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Content\css\" />
     <Folder Include="Content\images\" />
   </ItemGroup>
