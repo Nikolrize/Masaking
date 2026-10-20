@@ -23,7 +23,7 @@
             <br />
             <asp:Label ID="lblSimulationRecord" runat="server" Text="Fried Rice — Completed"></asp:Label>
             <br />
-            <asp:HyperLink ID="lnkSimulation" runat="server" NavigateUrl="~/Learning/CookingSimulation.aspx">Practise Cooking</asp:HyperLink>
+            <asp:HyperLink ID="lnkSimulation" runat="server" NavigateUrl="~/Learning/CookingSimulation.aspx">Practice Cooking</asp:HyperLink>
             <br />
             <br />
             <asp:Label ID="lblChallengeHeading" runat="server" Font-Bold="True" Text="Quiz Challenges"></asp:Label>
