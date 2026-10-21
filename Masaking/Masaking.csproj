@@ -130,6 +130,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\css\home.css" />
+    <Content Include="Content\images\home\nasi lemak.png" />
+    <Content Include="Content\images\home\roti canai.png" />
     <Content Include="Content\images\Masaking Logo.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
@@ -365,9 +368,7 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\css\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
