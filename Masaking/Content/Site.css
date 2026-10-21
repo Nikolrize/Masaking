@@ -2,7 +2,6 @@
     --color-primary: #28583d; /* Deep leafy green */
     --color-primary-dark: #1d432e;
     --color-accent: #e58a45; /* Terracotta orange */
-    --color-accent-red: #c85d46;
     --color-cream: #f7f2e6; /* Warm page background */
     --color-surface: #fffdf7; /* Cards and header */
     --color-text: #26352c;
@@ -14,227 +13,9 @@
     --bs-secondary-rgb: 255, 253, 247;
 }
 
-.masaking-page {
-    min-height: 100vh;
-    background-color: var(--color-cream);
-}
-
-.masaking-nav {
-    background: rgba(255,253,247,.96);
-    border-bottom: 1px solid var(--color-border);
-}
-
-    .masaking-nav .navbar-brand {
-        color: var(--color-primary);
-        font-weight: 700;
-    }
-
-    .masaking-nav .nav-link {
-        color: var(--color-text);
-    }
-
-        .masaking-nav .nav-link:hover {
-            color: var(--color-accent);
-        }
-
-.brand-mark {
-    width: 116px;
-    height: auto;
-    object-fit: contain;
-}
-
-.page-heading {
-    color: var(--color-primary-dark);
-    font-family: "Segoe UI", Arial, sans-serif;
-    font-weight: 700;
-    letter-spacing: -.025em;
-}
-
-.masaking-card {
-    background: rgba(255,253,248,.96);
-    border: 1px solid var(--color-border);
-    border-radius: 1rem;
-    box-shadow: 0 10px 28px rgba(40,88,61,.07);
-}
-
-.form-control, .form-select {
-    max-width: none;
-    border-color: var(--color-border);
-}
-
-.btn {
-    max-width: none;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 .2rem rgba(40,88,61,.15);
-}
-
-.text-brand {
-    color: var(--color-primary);
-}
-
-.badge-pending {
-    color: #765100;
-    background: #fff0c8;
-}
-
-.recipe-image {
-    width: 100%;
-    max-height: 340px;
-    object-fit: cover;
-    border-radius: .8rem;
-    background: #eee7d9;
-}
-
-.star-rating {
-    color: #e6a500;
-    letter-spacing: .08em;
-}
-
-.field-validation-error {
-    color: #b42318;
-    font-size: .875rem;
-}
-
-.validation-summary-errors {
-    color: #b42318;
-}
-
-.auth-wrap {
-    max-width: 470px;
-    margin: 3rem auto;
-}
-
-.auth-background {
-    background-image: url("images/auth-kitchen.svg"), linear-gradient(135deg, #f7f2e6, #eef3e9 55%, #faf4e8);
-    background-position: center top;
-    background-size: cover;
-    background-attachment: fixed;
-}
-
-    .auth-background .masaking-card {
-        background: rgba(255,253,247,.94);
-        backdrop-filter: blur(4px);
-    }
-
-.register-terms {
-    display: flex;
-    align-items: flex-start;
-    gap: .65rem;
-    padding-left: 0;
-}
-
-    .register-terms .form-check-input {
-        float: none;
-        flex: 0 0 1rem;
-        width: 1rem;
-        height: 1rem;
-        max-width: none;
-        margin: .28rem 0 0;
-    }
-
-    .register-terms .form-check-label {
-        flex: 1;
-        margin: 0;
-        line-height: 1.5;
-        cursor: pointer;
-    }
-
-.auth-ornament {
-    color: var(--color-accent);
-}
-
-@media (max-width: 767.98px) {
-    .auth-background {
-        background-attachment: scroll;
-        background-size: auto 900px, cover;
-        background-position: center top;
-    }
-}
-
-.avatar-small {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--color-border);
-}
-
-.avatar-profile {
-    width: 84px;
-    height: 84px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--color-border);
-    background: var(--color-cream);
-}
-
-.image-preview {
-    display: none;
-    max-width: 100%;
-    max-height: 280px;
-    object-fit: cover;
-    border: 1px solid var(--color-border);
-    border-radius: .8rem;
-}
-
-    .image-preview.is-visible {
-        display: block;
-    }
-
-.avatar-preview {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-}
-
-.community-photo {
-    display: block;
-    width: 100%;
-    max-height: 360px;
-    object-fit: cover;
-    border-radius: .8rem;
-    background: var(--color-cream);
-}
-
-.step-image-editors {
-    display: grid;
-    gap: 1rem;
-}
-
-.step-image-editor {
-    padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: .8rem;
-    background: rgba(255,253,248,.8);
-}
-
-.step-image-heading {
-    display: block;
-    color: var(--color-primary-dark);
-    overflow-wrap: anywhere;
-}
-
-.step-image-preview {
-    max-height: 180px;
-}
-
-.recipe-step-image {
-    display: block;
-    width: 100%;
-    max-width: 280px;
-    max-height: 180px;
-    object-fit: cover;
-    border-radius: .75rem;
-    border: 1px solid var(--color-border);
-}
-
 body {
     background-color: var(--color-cream);
     color: var(--color-text);
-    font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
 }
 
 .site-header {
@@ -242,26 +23,26 @@ body {
     border-bottom: 1px solid var(--color-border);
 }
 
-    .site-header .navbar-brand,
-    .site-header .navbar-nav .nav-link {
-        color: var(--color-primary);
-    }
+.site-header .navbar-brand,
+.site-header .navbar-nav .nav-link {
+    color: var(--color-primary);
+}
 
-        .site-header .navbar-nav .nav-link:hover,
-        .site-header .navbar-nav .nav-link:focus {
-            color: var(--color-accent);
-        }
+.site-header .navbar-nav .nav-link:hover,
+.site-header .navbar-nav .nav-link:focus {
+    color: var(--color-accent);
+}
 
 .btn-primary {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
 }
 
-    .btn-primary:hover,
-    .btn-primary:focus {
-        background-color: var(--color-primary-dark);
-        border-color: var(--color-primary-dark);
-    }
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
 
 .btn-accent {
     background-color: var(--color-accent);
@@ -272,19 +53,6 @@ body {
 .card {
     background-color: var(--color-surface);
     border-color: var(--color-border);
-}
-
-h1, h2, h3, h4 {
-    color: var(--color-primary);
-}
-
-.hover-lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 /* Wrapping element */
