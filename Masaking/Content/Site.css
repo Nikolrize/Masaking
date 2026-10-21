@@ -1,4 +1,57 @@
-﻿/* Wrapping element */
+﻿:root {
+    --color-primary: #28583d; /* Deep leafy green */
+    --color-primary-dark: #1d432e;
+    --color-accent: #e58a45; /* Terracotta orange */
+    --color-cream: #f7f2e6; /* Warm page background */
+    --color-surface: #fffdf7; /* Cards and header */
+    --color-text: #26352c;
+    --color-muted: #73776d;
+    --color-border: #e8e1d3;
+}
+
+body {
+    background-color: var(--color-cream);
+    color: var(--color-text);
+}
+
+.site-header {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.site-header .navbar-brand,
+.site-header .navbar-nav .nav-link {
+    color: var(--color-primary);
+}
+
+.site-header .navbar-nav .nav-link:hover,
+.site-header .navbar-nav .nav-link:focus {
+    color: var(--color-accent);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+.btn-accent {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+}
+
+.card {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+}
+
+/* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
     margin-top: 15px;
