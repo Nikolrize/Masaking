@@ -52,6 +52,10 @@
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Learning/CookingSimulation">Learn</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Community/Community">Community</a></li>
                     </ul>
+                    <ul class="navbar-nav flex-grow-1 justify-content-end gap-2">
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Account/Login">Login</a></li>
+                        <li class="nav-item"><a class="btn btn-primary" runat="server" href="~/Account/Register">Sign Up</a></li>
+                    </ul>
                 </div>
             </div>
         </nav>
