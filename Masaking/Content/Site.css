@@ -7,7 +7,11 @@
     --color-surface: #fffdf7; /* Cards and header */
     --color-text: #26352c;
     --color-muted: #73776d;
-    --color-border: #e8e1d3;
+    --color-border: #e8e1d3 --bs-primary: #28583d;
+    --bs-primary: #f7f2e6; /* Cream */
+    --bs-primary-rgb: 247, 242, 230;
+    --bs-secondary: #fffdf7; /* Surface */
+    --bs-secondary-rgb: 255, 253, 247;
 }
 
 .masaking-page {
@@ -270,205 +274,17 @@ body {
     border-color: var(--color-border);
 }
 
-.profile-intro {
-    background: linear-gradient(120deg, #edf3e9, #fff9eb);
-    border: 1px solid var(--color-border);
-    border-radius: 1.25rem;
-}
-
-.profile-editor-card {
-    background: linear-gradient(135deg, #fffdf7 0%, #f1f5ec 100%);
-    border: 1px solid var(--color-border);
-    border-radius: 1.25rem;
-    box-shadow: 0 12px 30px rgba(40,88,61,.08);
-}
-
-.profile-photo-panel {
-    background: rgba(255,255,255,.72);
-    border: 1px solid var(--color-border);
-    border-radius: 1rem;
-}
-
-.profile-editor-avatar {
-    width: 128px;
-    height: 128px;
-}
-
-.profile-username-chip {
-    display: flex;
-    flex-direction: column;
-    gap: .2rem;
-    padding: .7rem 1rem;
-    background: #fff;
-    border: 1px solid var(--color-border);
-    border-radius: .8rem;
-}
-
-.profile-banner-avatar {
-    width: 132px;
-    height: 132px;
-    flex: 0 0 132px;
-}
-
-.profile-summary-grid > div {
-    display: flex;
-    flex-direction: column;
-    gap: .1rem;
-}
-
-.profile-summary-grid strong {
-    color: var(--color-text);
-    font-size: .98rem;
-    font-weight: 600;
-}
-
-.profile-summary-label {
-    color: var(--color-muted);
-    font-size: .76rem;
-    text-transform: uppercase;
-    letter-spacing: .045em;
-}
-
-.profile-panel-title {
-    display: flex;
-    align-items: center;
-    gap: .65rem;
-}
-
-    .profile-panel-title .title-mark {
-        display: grid;
-        place-items: center;
-        width: 2.25rem;
-        height: 2.25rem;
-        border-radius: .75rem;
-        background: #eaf2e9;
-        color: var(--color-primary);
-    }
-
-.profile-picture-wrap {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 1rem;
-    background: #f8f7ef;
-    border: 1px solid var(--color-border);
-}
-
-.avatar-profile {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #fff;
-    box-shadow: 0 3px 14px rgba(38,53,44,.15);
-    background: var(--color-cream);
-}
-
-.profile-stat {
-    padding: .9rem;
-    border-radius: .9rem;
-    background: #f6f8f1;
-    border: 1px solid var(--color-border);
-}
-
-    .profile-stat strong {
-        display: block;
-        color: var(--color-primary-dark);
-        font-size: 1.5rem;
-    }
-
-.admin-stat-recipes {
-    background: #edf4e9;
-}
-
-.admin-stat-pending {
-    background: #fff2e5;
-}
-
-.admin-stat-users {
-    background: #edf3f8;
-}
-
-.password-toggle {
-    display: inline-grid;
-    place-items: center;
-    min-width: 2.75rem;
-}
-
-    .password-toggle svg, .form-icon svg {
-        width: 1.15rem;
-        height: 1.15rem;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 1.8;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-.recipe-owned-image {
-    display: block;
-    width: 100%;
-    height: 100%;
-    min-height: 230px;
-    max-height: 300px;
-    object-fit: cover;
-    background: #eee9dc;
-}
-
-.form-icon {
-    display: inline-flex;
-    align-items: center;
-    gap: .55rem;
+h1, h2, h3, h4 {
     color: var(--color-primary);
 }
 
-.icon-spatula {
-    font-size: 1.15em;
-    display: inline-block;
-    transform: rotate(-35deg);
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.cost-icon {
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    vertical-align: -.15em;
-    fill: none;
-    stroke: var(--color-accent);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.recipe-detail-icon {
-    display: inline-block;
-    font-weight: 700;
-    margin-right: .12rem;
-}
-
-    .recipe-detail-icon.icon-time {
-        color: #4383a2;
-    }
-
-    .recipe-detail-icon.icon-difficulty {
-        color: #d86f45;
-    }
-
-    .recipe-detail-icon.icon-servings {
-        color: #708b43;
-    }
-
-    .recipe-detail-icon.icon-ingredients {
-        color: #b88924;
-    }
-
-    .recipe-detail-icon.icon-steps {
-        color: #8b69a6;
-    }
-
-.recipe-detail-cost {
-    stroke: #b88924;
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 /* Wrapping element */
