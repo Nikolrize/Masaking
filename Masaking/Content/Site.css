@@ -6,7 +6,11 @@
     --color-surface: #fffdf7; /* Cards and header */
     --color-text: #26352c;
     --color-muted: #73776d;
-    --color-border: #e8e1d3;
+    --color-border: #e8e1d3 --bs-primary: #28583d;
+    --bs-primary: #f7f2e6; /* Cream */
+    --bs-primary-rgb: 247, 242, 230;
+    --bs-secondary: #fffdf7; /* Surface */
+    --bs-secondary-rgb: 255, 253, 247;
 }
 
 body {
@@ -49,6 +53,19 @@ body {
 .card {
     background-color: var(--color-surface);
     border-color: var(--color-border);
+}
+
+h1, h2, h3, h4 {
+    color: var(--color-primary);
+}
+
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 /* Wrapping element */
