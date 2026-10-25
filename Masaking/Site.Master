@@ -21,7 +21,7 @@
 
 </head>
 <body>
-    <form runat="server" class="site-shell">
+    <form runat="server">
         <asp:ScriptManager runat="server">
             <Scripts>
                 <%--To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
@@ -81,10 +81,11 @@
         <div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
+            <hr />
+            <footer>
+                <p>&copy; <%: DateTime.Now.Year %> - Masaking</p>
+            </footer>
         </div>
-        <footer class="site-footer">
-            <div class="site-footer-inner"><p>&copy; <%: DateTime.Now.Year %> - My ASP.NET Application</p></div>
-        </footer>
     </form>
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/Scripts/bootstrap.js") %>

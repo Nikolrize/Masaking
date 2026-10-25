@@ -187,6 +187,9 @@
     <Content Include="Scripts\bootstrap.esm.js.map" />
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.bundle.js.map" />
+	<Content Include="Content\css\home.css" />
+	<Content Include="Content\images\home\nasi lemak.png" />
+	<Content Include="Content\images\home\roti canai.png" />
     <Content Include="Content\bootstrap.rtl.min.css.map" />
     <Content Include="Content\bootstrap.rtl.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
@@ -237,6 +240,7 @@
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
     <Content Include="Site.Mobile.Master" />
+	  
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\Login.aspx.cs">

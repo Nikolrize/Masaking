@@ -84,9 +84,9 @@
     border-radius: .8rem;
 }
 
-.image-preview.is-visible {
-    display: block;
-}
+    .image-preview.is-visible {
+        display: block;
+    }
 
 .avatar-preview {
     width: 120px;
@@ -106,26 +106,26 @@ body {
     border-bottom: 1px solid var(--color-border);
 }
 
-.site-header .navbar-brand,
-.site-header .navbar-nav .nav-link {
-    color: var(--color-primary);
-}
+    .site-header .navbar-brand,
+    .site-header .navbar-nav .nav-link {
+        color: var(--color-primary);
+    }
 
-.site-header .navbar-nav .nav-link:hover,
-.site-header .navbar-nav .nav-link:focus {
-    color: var(--color-accent);
-}
+        .site-header .navbar-nav .nav-link:hover,
+        .site-header .navbar-nav .nav-link:focus {
+            color: var(--color-accent);
+        }
 
 .btn-primary {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
-    background-color: var(--color-primary-dark);
-    border-color: var(--color-primary-dark);
-}
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: var(--color-primary-dark);
+        border-color: var(--color-primary-dark);
+    }
 
 .btn-accent {
     background-color: var(--color-accent);
@@ -144,15 +144,15 @@ body {
     min-width: 2.75rem;
 }
 
-.password-toggle svg, .form-icon svg {
-    width: 1.15rem;
-    height: 1.15rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
+    .password-toggle svg, .form-icon svg {
+        width: 1.15rem;
+        height: 1.15rem;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
 
 .form-icon {
     display: inline-flex;
@@ -180,22 +180,66 @@ textarea {
 }
 
 /* Official Bootstrap Icons, loaded locally by the shared bundle or page head. */
-.password-toggle .bi, .form-icon .bi { font-size: 1.15rem; line-height: 1; }
-i.cost-icon { color: var(--color-accent); }
+.password-toggle .bi, .form-icon .bi {
+    font-size: 1.15rem;
+    line-height: 1;
+}
 
-.site-search-page { max-width: 1000px; padding-block: 2.5rem; }
-.site-search-page h1 { font-size: 2rem; font-weight: 700; color: var(--color-primary-dark); }
-.site-search-heading { color: var(--color-muted); margin-bottom: 2rem; overflow-wrap: anywhere; }
-.site-search-group { margin-bottom: 2rem; }
-.site-search-group h2 { font-size: 1.2rem; color: var(--color-primary); }
-.site-search-result { display: block; margin-bottom: .75rem; padding: 1rem 1.25rem; border: 1px solid var(--color-border); border-radius: .75rem; background: var(--color-surface); text-decoration: none; color: var(--color-text); }
-.site-search-result:hover { background: #edf2e7; color: var(--color-primary-dark); }
-.site-search-result strong { display: block; margin-bottom: .35rem; }
-.site-search-result p { margin: 0; font-size: .85rem; color: var(--color-muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+i.cost-icon {
+    color: var(--color-accent);
+}
 
-/* Keep the shared footer independent of each page's content width. */
-.site-shell { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
-.site-shell > .body-content { flex: 1 0 auto; }
-.site-footer { flex-shrink: 0; width: 100%; margin-top: auto; border-top: 1px solid var(--color-border); background: var(--color-cream); }
-.site-footer-inner { padding: 1rem 1.5rem; }
-.site-footer p { margin: 0; font-size: .85rem; color: var(--color-muted); }
+.site-search-page {
+    max-width: 1000px;
+    padding-block: 2.5rem;
+}
+
+    .site-search-page h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-primary-dark);
+    }
+
+.site-search-heading {
+    color: var(--color-muted);
+    margin-bottom: 2rem;
+    overflow-wrap: anywhere;
+}
+
+.site-search-group {
+    margin-bottom: 2rem;
+}
+
+    .site-search-group h2 {
+        font-size: 1.2rem;
+        color: var(--color-primary);
+    }
+
+.site-search-result {
+    display: block;
+    margin-bottom: .75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: .75rem;
+    background: var(--color-surface);
+    text-decoration: none;
+    color: var(--color-text);
+}
+
+    .site-search-result:hover {
+        background: #edf2e7;
+        color: var(--color-primary-dark);
+    }
+
+    .site-search-result strong {
+        display: block;
+        margin-bottom: .35rem;
+    }
+
+    .site-search-result p {
+        margin: 0;
+        font-size: .85rem;
+        color: var(--color-muted);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
