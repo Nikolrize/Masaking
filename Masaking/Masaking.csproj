@@ -44,8 +44,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\Database.cs" />
-    <Compile Include="Infrastructure\ImageUpload.cs" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
@@ -103,8 +101,6 @@
   <ItemGroup>
     <Content Include="About.aspx" />
     <Content Include="Account\Login.aspx" />
-    <Content Include="Account\ForgotPassword.aspx" />
-    <Content Include="Account\ResetPassword.aspx" />
     <Content Include="Account\Profile.aspx" />
     <Content Include="Account\EditProfile.aspx" />
     <Content Include="Content\images\profile\nasilemak_satay_roti.png" />
@@ -114,7 +110,6 @@
     <Content Include="Admin\ManageCommunity.aspx" />
     <Content Include="Admin\ManageRecipes.aspx" />
     <Content Include="Admin\ManageUsers.aspx" />
-    <Content Include="Admin\BootstrapAdmin.aspx" />
     <Content Include="App_Data\MasakingDB.mdf" />
     <Content Include="App_Data\MasakingDB_log.ldf">
       <DependentUpon>MasakingDB.mdf</DependentUpon>
@@ -243,20 +238,6 @@
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Account\ForgotPassword.aspx.cs">
-      <DependentUpon>ForgotPassword.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Account\ForgotPassword.aspx.designer.cs">
-      <DependentUpon>ForgotPassword.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Account\ResetPassword.aspx.cs">
-      <DependentUpon>ResetPassword.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Account\ResetPassword.aspx.designer.cs">
-      <DependentUpon>ResetPassword.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Account\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
@@ -312,13 +293,6 @@
     <Compile Include="Admin\ManageUsers.aspx.cs">
       <DependentUpon>ManageUsers.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\BootstrapAdmin.aspx.cs">
-      <DependentUpon>BootstrapAdmin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\BootstrapAdmin.aspx.designer.cs">
-      <DependentUpon>BootstrapAdmin.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\ManageUsers.aspx.designer.cs">
       <DependentUpon>ManageUsers.aspx</DependentUpon>
