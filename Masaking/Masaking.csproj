@@ -106,6 +106,9 @@
     <Content Include="Account\ForgotPassword.aspx" />
     <Content Include="Account\ResetPassword.aspx" />
     <Content Include="Account\Profile.aspx" />
+    <Content Include="Account\EditProfile.aspx" />
+    <Content Include="Content\images\profile\nasilemak_satay_roti.png" />
+    <Content Include="Scripts\profile.js" />
     <Content Include="Account\Register.aspx" />
     <Content Include="Admin\ManageChallenges.aspx" />
     <Content Include="Admin\ManageCommunity.aspx" />
@@ -117,6 +120,8 @@
       <DependentUpon>MasakingDB.mdf</DependentUpon>
     </Content>
     <Content Include="Community\Community.aspx" />
+    <Content Include="Community\EditPost.aspx" />
+    <Content Include="Community\Post.aspx" />
     <Content Include="Community\Reviews.aspx" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
@@ -135,10 +140,27 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\images\community\three_plates_food.png" />
+    <Content Include="Content\images\bootstrap-icons\LICENSE.txt" />
+    <Content Include="Content\images\bootstrap-icons\README.md" />
+    <Content Include="Content\images\community\community-botanical.png" />
     <Content Include="Content\images\Masaking Logo.png" />
-    <Content Include="Content\images\default-avatar.svg" />
-    <Content Include="Content\images\auth-kitchen.svg" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\images\auth-kitchen.svg" />
+    <Content Include="Content\images\community\community-leaves.svg" />
+    <Content Include="Content\bootstrap-icons.min.css" />
+    <Content Include="Content\fonts\bootstrap-icons.woff2" />
+    <Content Include="Content\fonts\bootstrap-icons.woff" />
+    <Content Include="Content\css\auth.css" />
+    <Content Include="Content\css\navbar-controls.css" />
+    <Content Include="Content\css\back-links.css" />
+    <Content Include="Content\css\search.css" />
+    <Content Include="Content\css\mobile-artwork.css" />
+    <Content Include="Content\css\profile.css" />
+    <Content Include="Content\css\recipes.css" />
+    <Content Include="Content\css\admin.css" />
+    <Content Include="Content\css\community.css" />
+    <Content Include="Content\css\community-responsive.css" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -154,7 +176,10 @@
     <Content Include="Scripts\bootstrap.esm.js" />
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\masaking.js" />
+    <Content Include="Scripts\form-helpers.js" />
+    <Content Include="Scripts\recipe-form.js" />
+    <Content Include="Scripts\community.js" />
+    <Content Include="Scripts\community-composer.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
@@ -206,6 +231,8 @@
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="Site.Master" />
+    <Content Include="Search.aspx" />
+    <Content Include="Scripts\site-nav.js" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
@@ -232,6 +259,20 @@
     </Compile>
     <Compile Include="Account\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ProfilePage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\EditProfile.aspx.cs">
+      <DependentUpon>EditProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\EditProfile.aspx.designer.cs">
+      <DependentUpon>EditProfile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Account\Profile.aspx.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
@@ -291,6 +332,23 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Community\Post.aspx.cs">
+      <DependentUpon>Post.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Community\Post.aspx.designer.cs">
+      <DependentUpon>Post.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Community\EditPost.aspx.cs">
+      <DependentUpon>EditPost.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Community\EditPost.aspx.designer.cs">
+      <DependentUpon>EditPost.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Community\CommunityPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Community\Community.aspx.cs">
       <DependentUpon>Community.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -394,9 +452,7 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\css\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />

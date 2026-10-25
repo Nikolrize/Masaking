@@ -1,136 +1,171 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Profile.aspx.cs" Inherits="Masaking.Account.Profile" %>
-<%@ Import Namespace="Masaking.Infrastructure" %>
+<%@ Page Title="My profile | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Profile.aspx.cs" Inherits="Masaking.Account.Profile" %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head runat="server">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>My profile | Masaking</title>
-    <link href="../Content/bootstrap.min.css" rel="stylesheet" />
-    <link href="../Content/Site.css" rel="stylesheet" />
-</head>
-<body class="masaking-page">
-    <form id="form1" runat="server" enctype="multipart/form-data">
+<asp:Content ID="ProfileContent" ContentPlaceHolderID="MainContent" runat="server">
+    <link href="<%= ResolveUrl("~/Content/css/profile.css?v=10") %>" rel="stylesheet" />
 
-        <nav class="navbar navbar-expand-lg masaking-nav">
-            <div class="container">
-                <a class="navbar-brand" href="../Default.aspx">
-                    <img class="brand-mark" src="../Content/images/Masaking%20Logo.png" alt="Masaking" />
-                </a>
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="../Recipes/BrowseRecipes.aspx">Browse recipes</a>
-                    <a class="nav-link" href="../Recipes/MyRecipes.aspx">My recipes</a>
-                    <a class="nav-link" href="../Community/Community.aspx">Community</a>
-                    <a class="nav-link d-flex align-items-center gap-2" href="Profile.aspx">
-                        <img class="avatar-small" src="<%: Database.AvatarUrl(Session["UserImage"]) %>" alt="" /><%: Server.HtmlEncode(Convert.ToString(Session["DisplayName"])) %>
-                    </a>
-                    <asp:LinkButton ID="lnkSignOut" runat="server" CssClass="nav-link" OnClick="lnkSignOut_Click">Sign out</asp:LinkButton>
+    <main class="profile-screen profile-overview" <%= IsAdministrator ? "" : "data-profile-screen" %> data-active-tab="overview">
+        <asp:Label ID="lblMessage" runat="server" EnableViewState="false" role="status" />
+
+        <header class="profile-hero">
+            <div class="profile-person">
+                <div class="profile-avatar profile-avatar-large">
+                    <span><%= H(Initials) %></span>
+                    <img src="<%= H(AvatarDisplayUrl) %>" alt="Your profile photo" data-profile-avatar />
+                </div>
+                <div class="profile-person-copy">
+                    <h1><%= H(ProfileName) %></h1>
+                    <p class="profile-handle">
+                        @<%= H(ProfileUsername) %>
+                        <% if (IsAdministrator) { %> <span class="profile-role">Administrator</span><% } %>
+                    </p>
+                    <div class="profile-contact">
+                        <span><i class="bi bi-geo-alt-fill" aria-hidden="true"></i><%= H(ProfileCountry) %></span>
+                        <span><%= ContactIcon("envelope") %><%= H(ProfileEmail) %></span>
+                    </div>
+                    <div class="profile-hero-actions">
+                        <a href="EditProfile.aspx" class="profile-button profile-button-primary">Edit Profile</a>
+                        <a href="EditProfile.aspx#security" class="profile-button profile-button-outline">Change Password</a>
+                        <asp:LinkButton ID="btnSignOut" runat="server" CssClass="profile-button profile-button-signout" CausesValidation="false" OnClick="btnSignOut_Click">
+                            <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Sign Out
+                        </asp:LinkButton>
+                    </div>
                 </div>
             </div>
-        </nav>
 
-        <main class="container py-5">
+            <% if (IsAdministrator) { %>
+            <div class="profile-statistics">
+                <a href="../Admin/ManageRecipes.aspx" class="profile-stat-card">
+                    <span class="profile-stat-icon profile-stat-orange"><%= Icon("journal-check") %></span>
+                    <span>Recipes to Review</span>
+                    <strong><%= PendingRecipes %></strong>
+                </a>
+                <a href="../Admin/ManageCommunity.aspx" class="profile-stat-card">
+                    <span class="profile-stat-icon"><%= Icon("chat-square-text") %></span>
+                    <span>Community Queue</span>
+                    <strong><%= PendingCommunity %></strong>
+                </a>
+            </div>
+            <% } else { %>
+            <div class="profile-statistics">
+                <a href="../Recipes/MyRecipes.aspx" class="profile-stat-card">
+                    <span class="profile-stat-icon profile-stat-orange"><%= Icon("book") %></span>
+                    <span>Recipes Uploaded</span>
+                    <strong><%= RecipeCount %></strong>
+                </a>
+                <a href="#profileContent" class="profile-stat-card" data-profile-tab="posts">
+                    <span class="profile-stat-icon"><%= Icon("chat") %></span>
+                    <span>Community Posts</span>
+                    <strong><%= PostCount %></strong>
+                </a>
+            </div>
+            <% } %>
+        </header>
 
-            <asp:Label ID="lblMessage" runat="server" EnableViewState="false" />
-
-            <%-- Editable profile banner --%>
-            <section class="profile-editor-card p-4 p-lg-5 mb-4">
-                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
-                    <div><p class="text-brand fw-semibold text-uppercase small mb-2">Your Masaking account</p><h1 class="page-heading mb-1">Profile details</h1><asp:Panel ID="pnlMemberProfileNote" runat="server"><p class="text-secondary mb-0">Update your account information and profile photo.</p></asp:Panel><asp:Panel ID="pnlAdminProfileNote" runat="server" Visible="false" CssClass="mt-2"><span class="badge rounded-pill text-bg-success">Administrator</span><span class="text-secondary ms-2">Manage the Masaking community from your dashboard.</span></asp:Panel></div>
-                    <span class="profile-username-chip"><span class="profile-summary-label">Username</span><strong><asp:Literal ID="litProfileUsername" runat="server" /></strong></span>
+        <% if (IsAdministrator) { %>
+        <section class="profile-panel profile-admin-panel">
+            <div class="profile-section-heading">
+                <div>
+                    <p class="profile-admin-eyebrow">ADMINISTRATOR WORKSPACE</p>
+                    <h2>Keep the kitchen running smoothly</h2>
                 </div>
-                <div class="row g-4 align-items-start">
-                    <div class="col-lg-4">
-                        <div class="profile-photo-panel text-center p-4 h-100">
-                            <asp:Image ID="imgAvatar" runat="server" CssClass="avatar-profile profile-editor-avatar mb-3" AlternateText="Your profile picture" />
-                            <strong class="d-block mb-1">Your profile picture</strong><span class="small text-secondary">JPG, PNG or GIF, up to 5 MB.</span>
-                            <label class="form-label text-start d-block mt-4" for="uploadAvatar">Upload a new picture</label>
-                            <asp:FileUpload ID="uploadAvatar" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/gif" data-image-preview="profileAvatarPreview" />
-                            <div id="profileAvatarError" class="small text-danger mt-1 text-start"></div>
-                            <img id="profileAvatarPreview" class="image-preview avatar-preview mt-3" alt="Preview of your new profile picture" />
-                        </div>
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="mb-3"><label class="form-label" for="txtName">Display name</label><asp:TextBox ID="txtName" runat="server" CssClass="form-control" MaxLength="100" /></div>
-                        <div class="mb-3"><label class="form-label" for="txtEmail">Email address</label><asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" TextMode="Email" MaxLength="255" required="required" /></div>
-                        <div class="mb-4"><label class="form-label" for="txtCountry">Country</label><asp:TextBox ID="txtCountry" runat="server" CssClass="form-control" MaxLength="100" /></div>
-                        <div class="d-flex flex-wrap gap-2"><asp:Button ID="btnSaveProfile" runat="server" Text="Save profile" CssClass="btn btn-primary px-4" OnClick="btnSaveProfile_Click" /><asp:Button ID="btnResetAvatar" runat="server" Text="Use default avatar" CssClass="btn btn-outline-secondary" OnClick="btnResetAvatar_Click" /></div>
-                    </div>
+                <span class="profile-role">Administration</span>
+            </div>
+            <p class="profile-admin-intro">Review submissions, manage community content, and look after your members.</p>
+            <div class="profile-admin-shortcuts">
+                <a href="../Admin/ManageRecipes.aspx" class="profile-admin-shortcut">
+                    <span class="profile-stat-icon profile-stat-orange"><%= Icon("journal-check") %></span>
+                    <span><strong>Manage Recipes</strong><small>Review and organise recipe submissions.</small></span>
+                    <%= Icon("arrow-right") %>
+                </a>
+                <a href="../Admin/ManageCommunity.aspx" class="profile-admin-shortcut">
+                    <span class="profile-stat-icon"><%= Icon("chat-square-text") %></span>
+                    <span><strong>Manage Community</strong><small>Review posts, comments, and recipe reviews.</small></span>
+                    <%= Icon("arrow-right") %>
+                </a>
+                <a href="../Admin/ManageUsers.aspx" class="profile-admin-shortcut">
+                    <span class="profile-stat-icon"><%= Icon("people") %></span>
+                    <span><strong>Manage Users</strong><small>View and manage member accounts.</small></span>
+                    <%= Icon("arrow-right") %>
+                </a>
+                <a href="../Admin/ManageChallenges.aspx" class="profile-admin-shortcut">
+                    <span class="profile-stat-icon profile-stat-orange"><%= Icon("trophy") %></span>
+                    <span><strong>Manage Challenges</strong><small>Manage the community’s cooking challenges.</small></span>
+                    <%= Icon("arrow-right") %>
+                </a>
+            </div>
+        </section>
+        <% } else { %>
+        <section id="profileContent" class="profile-panel profile-content-panel">
+            <nav class="profile-tabs" aria-label="Profile sections">
+                <button type="button" class="is-active" data-profile-tab="overview" aria-pressed="true">Overview</button>
+                <button type="button" data-profile-tab="recipes" aria-pressed="false">My Recipes</button>
+                <button type="button" data-profile-tab="posts" aria-pressed="false">My Posts</button>
+                <button type="button" data-profile-tab="comments" aria-pressed="false">My Comments</button>
+            </nav>
+
+            <section class="profile-section" data-profile-recipes>
+                <div class="profile-section-heading">
+                    <h2>My Recipes</h2>
+                    <a href="../Recipes/MyRecipes.aspx">View all <%= Icon("arrow-left", "profile-arrow-forward") %></a>
                 </div>
+                <div class="profile-recipes">
+                    <asp:Repeater ID="rptRecipes" runat="server">
+                        <ItemTemplate>
+                            <a class="profile-recipe" href='<%# RecipeUrl(Eval("recipeID"), Eval("status")) %>'>
+                                <div class="profile-recipe-picture">
+                                    <span class="profile-picture-fallback"><%# Icon("book") %></span>
+                                    <img src='<%#: Picture(Eval("image")) %>' alt='<%#: Eval("title") %>' loading="lazy" data-profile-photo />
+                                </div>
+                                <div class="profile-recipe-copy">
+                                    <h3><%#: Eval("title") %></h3>
+                                    <p>
+                                        <span><%#: Eval("cuisine") %></span>
+                                        <span>·</span>
+                                        <span><%#: Eval("preparationTime") %> mins</span>
+                                    </p>
+                                    <span class="profile-saves"><%# Icon("heart") %><%#: Eval("saves") %></span>
+                                    <span class="profile-recipe-status"><%#: Convert.ToString(Eval("status")) == "Approved" ? "" : Eval("status") %></span>
+                                </div>
+                            </a>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+                <asp:Panel ID="pnlNoRecipes" runat="server" CssClass="profile-empty">
+                    <%= Icon("book") %>
+                    <p>Your recipe collection starts here.</p>
+                    <a href="../Recipes/SubmitRecipe.aspx" class="profile-button profile-button-outline">Share your first recipe</a>
+                </asp:Panel>
             </section>
 
-            <div class="row g-4">
-
-                <%-- Left column: details and password --%>
-                <div class="col-lg-7">
-
-                    <section class="masaking-card p-4 p-lg-5">
-                        <h2 class="h5 page-heading profile-panel-title mb-4">
-                            <span class="title-mark form-icon">
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <circle cx="8" cy="15" r="4" />
-                                    <path d="m11 12 9-9 2 2-2 2 2 2-3 3-2-2-3 3" />
-                                </svg>
-                            </span>
-                            Change password
-                        </h2>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="txtCurrentPassword">Current password</label>
-                            <div class="input-group">
-                                <asp:TextBox ID="txtCurrentPassword" runat="server" CssClass="form-control" TextMode="Password" />
-                                <button class="btn btn-outline-secondary password-toggle" type="button"
-                                    data-toggle-password="txtCurrentPassword" aria-label="Show current password">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-                                        <circle cx="12" cy="12" r="3" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="txtNewPassword">New password</label>
-                            <div class="input-group">
-                                <asp:TextBox ID="txtNewPassword" runat="server" CssClass="form-control" TextMode="Password" />
-                                <button class="btn btn-outline-secondary password-toggle" type="button"
-                                    data-toggle-password="txtNewPassword" aria-label="Show new password">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-                                        <circle cx="12" cy="12" r="3" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <asp:Button ID="btnChangePassword" runat="server" Text="Update password"
-                            CssClass="btn btn-outline-primary" OnClick="btnChangePassword_Click" />
-                    </section>
+            <section class="profile-section profile-activity-section" data-profile-activity>
+                <div class="profile-section-heading">
+                    <h2 data-activity-heading>Recent Community Activity</h2>
+                    <a href="#profileContent" data-profile-tab="posts">View all <%= Icon("arrow-left", "profile-arrow-forward") %></a>
                 </div>
+                <div class="profile-activity-list">
+                    <asp:Repeater ID="rptActivity" runat="server">
+                        <ItemTemplate>
+                            <a class="profile-activity-row" data-activity-kind='<%#: Eval("kind") %>' href='<%# "../Community/Post.aspx?id=" + Eval("postID") + (Convert.ToString(Eval("kind")) == "comment" ? "#comments" : "") %>'>
+                                <span class="profile-avatar profile-avatar-small">
+                                    <span><%# H(Initials) %></span>
+                                    <img src='<%#: AvatarDisplayUrl %>' alt="" data-profile-avatar loading="lazy" />
+                                </span>
+                                <span class="profile-activity-copy">
+                                    <span><%#: ActivityText(Eval("kind")) %></span>
+                                    <strong><%#: Excerpt(Eval("content")) %></strong>
+                                </span>
+                                <time datetime='<%# Convert.ToDateTime(Eval("createdAt")).ToString("s") + "Z" %>'><%#: Age(Eval("createdAt")) %></time>
+                            </a>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+                <p class="profile-empty" data-activity-empty hidden>
+                    No community activity here yet. <a href="../Community/Community.aspx">Join the conversation</a>.
+                </p>
+            </section>
+        </section>
+        <% } %>
+    </main>
 
-                <%-- Right column: activity and shortcuts --%>
-                <asp:Panel ID="pnlMemberRail" runat="server" CssClass="col-lg-5">
-                    <section class="masaking-card p-4 p-lg-5">
-                        <h2 class="h5 page-heading profile-panel-title mb-4">
-                            <span class="title-mark">✦</span> Your cooking activity
-                        </h2>
-                        <asp:Literal ID="litStats" runat="server" />
-                    </section>
-
-                    <div class="d-grid gap-2 mt-4">
-                        <a class="btn btn-primary" href="../Recipes/SubmitRecipe.aspx">Share a recipe</a>
-                        <a class="btn btn-outline-success" href="../Recipes/MyRecipes.aspx">Manage my recipes</a>
-                        <a class="btn btn-outline-success" href="../Community/Community.aspx">Visit the community</a>
-                    </div>
-                </asp:Panel>
-
-            </div>
-        </main>
-
-    </form>
-
-    <script src="../Scripts/bootstrap.bundle.min.js"></script>
-    <script src="../Scripts/masaking.js"></script>
-</body>
-</html>
+    <script src="<%= ResolveUrl("~/Scripts/profile.js?v=5") %>"></script>
+</asp:Content>

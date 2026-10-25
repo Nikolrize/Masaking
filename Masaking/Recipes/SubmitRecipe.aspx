@@ -1,8 +1,190 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SubmitRecipe.aspx.cs" Inherits="Masaking.Recipes.SubmitRecipe" %>
-<!DOCTYPE html><html lang="en"><head runat="server"><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Share a recipe | Masaking</title><link href="../Content/bootstrap.min.css" rel="stylesheet" /><link href="../Content/Site.css" rel="stylesheet" /></head><body class="masaking-page"><form id="form1" runat="server" enctype="multipart/form-data"><nav class="navbar navbar-expand-lg masaking-nav"><div class="container"><a class="navbar-brand" href="../Default.aspx"><img class="brand-mark" src="../Content/images/Masaking%20Logo.png" alt="Masaking" /></a><div class="navbar-nav ms-auto"><a class="nav-link" href="BrowseRecipes.aspx">Recipes</a><a class="nav-link" href="MyRecipes.aspx">My recipes</a><a class="nav-link" href="../Account/Profile.aspx">Profile</a></div></div></nav>
-<main class="container py-5"><p class="text-brand fw-semibold mb-1">COMMUNITY KITCHEN</p><h1 class="page-heading">Share your recipe</h1><p class="text-secondary mb-4">Add the ingredients and cooking steps so others can follow along. New and edited recipes are reviewed before publishing.</p><asp:Label ID="lblMessage" runat="server" EnableViewState="false" /><div class="masaking-card p-4 p-md-5"><h2 class="h5 page-heading form-icon mb-4"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3c-2 2-2 5 0 7l3 3 5-5-3-3C8 3 7 2 5 3Z"/><path d="m10 10 11 11M14 6l4-4M17 9l4-4"/></svg> Cooking information</h2><div class="row g-3"><div class="col-md-8"><label class="form-label" for="txtTitle">Recipe name</label><asp:TextBox ID="txtTitle" runat="server" CssClass="form-control" MaxLength="150" required="required" /></div><div class="col-md-4"><label class="form-label" for="ddlDifficulty">Difficulty</label><asp:DropDownList ID="ddlDifficulty" runat="server" CssClass="form-select"><asp:ListItem>Easy</asp:ListItem><asp:ListItem>Medium</asp:ListItem><asp:ListItem>Hard</asp:ListItem></asp:DropDownList></div><div class="col-12"><label class="form-label" for="txtDescription">Description</label><asp:TextBox ID="txtDescription" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3" MaxLength="1000" /></div><div class="col-md-4"><label class="form-label" for="txtCuisine">Cuisine</label><asp:TextBox ID="txtCuisine" runat="server" CssClass="form-control" Text="Malaysian" MaxLength="80" required="required" /></div><div class="col-md-4"><label class="form-label" for="txtRegion">Region or state</label><asp:TextBox ID="txtRegion" runat="server" CssClass="form-control" Text="Malaysia" MaxLength="80" required="required" /></div><div class="col-md-4"><label class="form-label" for="txtServings">Servings</label><asp:TextBox ID="txtServings" runat="server" CssClass="form-control" TextMode="Number" Text="4" min="1" max="100" required="required" /></div><div class="col-md-4"><label class="form-label" for="txtPrep">Preparation time (minutes)</label><asp:TextBox ID="txtPrep" runat="server" CssClass="form-control" TextMode="Number" Text="20" min="0" max="1440" required="required" /></div><div class="col-md-4"><label class="form-label" for="txtCost"><span class="cost-label-icon"><svg class="cost-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5c-.6-.7-1.5-1-2.8-1-1.4 0-2.4.7-2.4 1.8 0 3 5.6 1.2 5.6 4.2 0 1.2-1.1 2-2.8 2-1.3 0-2.4-.4-3.1-1.2M12.5 6v12"/></svg></span> Estimated cost (RM)</label><asp:TextBox ID="txtCost" runat="server" CssClass="form-control" TextMode="Number" Text="10.00" min="0" step="0.01" required="required" /></div>
-<div class="col-12"><h2 class="h5 page-heading mb-1">Recipe photo</h2><p class="form-text">Paste an image URL or upload a photo from your device. If you provide both, the uploaded photo is used.</p><div class="row g-3"><div class="col-md-6"><label class="form-label" for="txtImage">Image URL</label><asp:TextBox ID="txtImage" runat="server" CssClass="form-control" MaxLength="255" placeholder="https://example.com/recipe.jpg" /></div><div class="col-md-6"><label class="form-label" for="uploadRecipeImage">Upload from device</label><asp:FileUpload ID="uploadRecipeImage" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/gif" data-image-preview="recipeImagePreview" data-image-error="recipeImageError" /></div></div><div id="recipeImageError" class="small text-danger mt-1"></div><img id="recipeImagePreview" class="image-preview mt-3" alt="Recipe image preview" /></div>
-<div class="col-md-6"><label class="form-label" for="txtIngredients">Ingredients</label><asp:TextBox ID="txtIngredients" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="8" placeholder="One per line: ingredient | quantity | unit&#10;Rice | 300 | g&#10;Coconut milk | 200 | ml" /><div class="form-text">Use one ingredient per line: name | quantity | unit.</div></div><div class="col-md-6"><label class="form-label" for="txtSteps">Cooking steps</label><asp:TextBox ID="txtSteps" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="8" placeholder="Put one cooking instruction on each line." data-step-instructions="true" /><div class="form-text">Keep each step clear and in cooking order. Add one step illustration URL or device upload below each step.</div></div>
-<div class="col-12"><h2 class="h5 page-heading mb-1">Step illustrations</h2><p class="form-text">Use an image URL or upload a photo for any step. If both are provided for a step, its uploaded photo is used.</p><div id="stepImageEditors" class="step-image-editors"></div><div class="d-none"><asp:TextBox ID="txtStepImages" runat="server" TextMode="MultiLine" data-step-image-state="true" /></div></div>
-</div><div class="d-flex gap-2 mt-4"><asp:Button ID="btnSave" runat="server" Text="Submit for review" CssClass="btn btn-primary" OnClick="btnSave_Click" /><a class="btn btn-outline-secondary" href="MyRecipes.aspx">Cancel</a></div></div></main>
-</form><script src="../Scripts/bootstrap.bundle.min.js"></script><script src="../Scripts/masaking.js"></script></body></html>
+<%@ Page Title="Share a recipe | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SubmitRecipe.aspx.cs" Inherits="Masaking.Recipes.SubmitRecipe" %>
+
+<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+    <link href="<%= ResolveUrl("~/Content/css/recipes.css?v=3") %>" rel="stylesheet" />
+
+    <main class="container recipe-submit-page" data-recipe-form>
+        <header class="recipe-form-header">
+            <a class="recipe-form-back" href="MyRecipes.aspx"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span>My recipes</span></a>
+            <p class="recipe-form-eyebrow">FROM YOUR KITCHEN</p>
+            <h1 class="page-heading">Share your recipe</h1>
+            <p>Tell us about your dish, list what goes into it, and walk other cooks through each step.</p>
+            
+            <nav class="recipe-form-sections" aria-label="Recipe form sections">
+                <a href="#recipeBasics"><span>1</span> The basics</a>
+                <a href="#recipePhoto"><span>2</span> Photo</a>
+                <a href="#recipeIngredients"><span>3</span> Ingredients</a>
+                <a href="#recipeSteps"><span>4</span> Method</a>
+            </nav>
+        </header>
+
+        <asp:Label ID="lblMessage" runat="server" EnableViewState="false" role="status" />
+
+        <section id="recipeBasics" class="masaking-card recipe-form-section">
+            <div class="recipe-section-heading">
+                <span class="recipe-section-number">1</span>
+                <div>
+                    <h2>The basics</h2>
+                    <p>A few details to help others decide what to cook.</p>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <asp:Label runat="server" AssociatedControlID="txtTitle" CssClass="form-label">Recipe name <span class="recipe-required">*</span></asp:Label>
+                    <asp:TextBox ID="txtTitle" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="150" placeholder="e.g. Nasi Lemak with homemade sambal" required="required" />
+                </div>
+
+                <div class="col-md-4">
+                    <asp:Label runat="server" AssociatedControlID="ddlDifficulty" CssClass="form-label">Difficulty</asp:Label>
+                    <asp:DropDownList ID="ddlDifficulty" ClientIDMode="Static" runat="server" CssClass="form-select">
+                        <asp:ListItem>Easy</asp:ListItem>
+                        <asp:ListItem>Medium</asp:ListItem>
+                        <asp:ListItem>Hard</asp:ListItem>
+                    </asp:DropDownList>
+                    <p class="form-text">Easy: beginner-friendly · Hard: more practice needed.</p>
+                </div>
+
+                <div class="col-12">
+                    <asp:Label runat="server" AssociatedControlID="txtDescription" CssClass="form-label">About this dish <span class="recipe-optional">(optional)</span></asp:Label>
+                    <asp:TextBox ID="txtDescription" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3" MaxLength="1000" placeholder="What makes your recipe special? Describe its flavour or share a serving suggestion." />
+                </div>
+
+                <div class="col-md-6">
+                    <asp:Label runat="server" AssociatedControlID="txtCuisine" CssClass="form-label">Cuisine <span class="recipe-required">*</span></asp:Label>
+                    <asp:TextBox ID="txtCuisine" ClientIDMode="Static" runat="server" CssClass="form-control" Text="Malaysian" MaxLength="80" placeholder="e.g. Malaysian, Chinese, Indian" required="required" />
+                </div>
+
+                <div class="col-md-6">
+                    <asp:Label runat="server" AssociatedControlID="txtRegion" CssClass="form-label">Region or state <span class="recipe-required">*</span></asp:Label>
+                    <asp:TextBox ID="txtRegion" ClientIDMode="Static" runat="server" CssClass="form-control" Text="Malaysia" MaxLength="80" placeholder="e.g. Penang or Johor" required="required" />
+                </div>
+
+                <div class="col-md-4">
+                    <asp:Label runat="server" AssociatedControlID="txtServings" CssClass="form-label">Servings <span class="recipe-required">*</span></asp:Label>
+                    <div class="input-group">
+                        <asp:TextBox ID="txtServings" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="Number" Text="4" min="1" max="100" required="required" />
+                        <span class="input-group-text">people</span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <asp:Label runat="server" AssociatedControlID="txtPrep" CssClass="form-label">Preparation time <span class="recipe-required">*</span></asp:Label>
+                    <div class="input-group">
+                        <asp:TextBox ID="txtPrep" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="Number" Text="20" min="0" max="1440" required="required" />
+                        <span class="input-group-text">minutes</span>
+                    </div>
+                    <p class="form-text">Time spent preparing ingredients before cooking.</p>
+                </div>
+
+                <div class="col-md-4">
+                    <asp:Label runat="server" AssociatedControlID="txtCost" CssClass="form-label">Estimated ingredient cost <span class="recipe-required">*</span></asp:Label>
+                    <div class="input-group">
+                        <span class="input-group-text">RM</span>
+                        <asp:TextBox ID="txtCost" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="Number" Text="10.00" min="0" max="999999.99" step="0.01" required="required" />
+                    </div>
+                    <p class="form-text">Total cost for all the servings above.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="recipePhoto" class="masaking-card recipe-form-section">
+            <div class="recipe-section-heading">
+                <span class="recipe-section-number">2</span>
+                <div>
+                    <h2>A photo of your dish <span class="recipe-optional">(optional)</span></h2>
+                    <p>A clear photo helps other cooks picture the finished recipe.</p>
+                </div>
+            </div>
+
+            <div class="recipe-photo-layout">
+                <div class="recipe-device-upload">
+                    <i class="bi bi-camera" aria-hidden="true"></i>
+                    <asp:Label runat="server" AssociatedControlID="uploadRecipeImage" CssClass="form-label">Choose a photo from your device</asp:Label>
+                    <asp:FileUpload ID="uploadRecipeImage" ClientIDMode="Static" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/gif" data-image-preview="recipeImagePreview" data-image-error="recipeImageError" />
+                    <p class="form-text">JPG, PNG or GIF · Up to 5 MB.</p>
+                    <div id="recipeImageError" class="small text-danger" role="status"></div>
+                </div>
+                <div class="recipe-photo-preview">
+                    <asp:Image ID="imgExistingRecipe" ClientIDMode="Static" runat="server" Visible="false" CssClass="recipe-cover-preview" AlternateText="Current recipe photo" />
+                    <img id="recipeImagePreview" class="image-preview recipe-cover-preview" alt="Selected recipe photo preview" />
+                    <p class="recipe-photo-empty" data-recipe-photo-empty>Your photo preview will appear here.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="recipeIngredients" class="masaking-card recipe-form-section">
+            <div class="recipe-section-heading">
+                <span class="recipe-section-number">3</span>
+                <div>
+                    <h2>Ingredients</h2>
+                    <p>Add each ingredient separately, including how much to use.</p>
+                </div>
+            </div>
+
+            <p class="recipe-entry-example"><i class="bi bi-info-circle" aria-hidden="true"></i> For example: <strong>Rice</strong> · <strong>300</strong> · <strong>g</strong></p>
+            
+            <div id="recipeIngredientRows" class="recipe-ingredient-rows" hidden></div>
+            
+            <button type="button" class="btn btn-outline-success recipe-add-row" data-add-ingredient hidden>
+                <i class="bi bi-plus-lg" aria-hidden="true"></i> Add ingredient
+            </button>
+
+            <div data-ingredient-fallback>
+                <asp:Label runat="server" AssociatedControlID="txtIngredients" CssClass="form-label">Ingredients</asp:Label>
+                <asp:TextBox ID="txtIngredients" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="6" placeholder="Rice | 300 | g&#10;Coconut milk | 200 | ml" />
+                <p class="form-text">One ingredient per line: name | quantity | unit.</p>
+            </div>
+
+            <datalist id="recipeUnits">
+                <option value="g" />
+                <option value="kg" />
+                <option value="ml" />
+                <option value="l" />
+                <option value="tsp" />
+                <option value="tbsp" />
+                <option value="cup" />
+                <option value="piece" />
+                <option value="clove" />
+                <option value="pinch" />
+            </datalist>
+        </section>
+
+        <section id="recipeSteps" class="masaking-card recipe-form-section">
+            <div class="recipe-section-heading">
+                <span class="recipe-section-number">4</span>
+                <div>
+                    <h2>Cooking method</h2>
+                    <p>Break the method into clear, numbered steps. Add a photo to any step if it helps.</p>
+                </div>
+            </div>
+
+            <div id="recipeStepRows" class="recipe-step-rows" hidden></div>
+
+            <button type="button" class="btn btn-outline-success recipe-add-row" data-add-step hidden>
+                <i class="bi bi-plus-lg" aria-hidden="true"></i> Add step
+            </button>
+
+            <div data-step-fallback>
+                <asp:Label runat="server" AssociatedControlID="txtSteps" CssClass="form-label">Cooking steps</asp:Label>
+                <asp:TextBox ID="txtSteps" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="6" placeholder="Rinse the rice until the water runs clear.&#10;Cook the rice with coconut milk and a pinch of salt." />
+                <p class="form-text">Put one cooking instruction on each line.</p>
+            </div>
+
+            <div hidden>
+                <asp:TextBox ID="txtStepImages" ClientIDMode="Static" runat="server" TextMode="MultiLine" />
+            </div>
+        </section>
+
+        <div class="recipe-submit-actions">
+            <p><i class="bi bi-shield-check" aria-hidden="true"></i> Your recipe will be reviewed before it appears publicly.</p>
+            <div>
+                <a class="btn btn-outline-secondary" href="MyRecipes.aspx">Cancel</a>
+                <asp:Button ID="btnSave" runat="server" Text="Submit for review" CssClass="btn btn-primary" OnClick="btnSave_Click" />
+            </div>
+        </div>
+    </main>
+
+    <script src="../Scripts/form-helpers.js?v=20261025-1"></script>
+    <script src="../Scripts/recipe-form.js?v=1"></script>
+</asp:Content>

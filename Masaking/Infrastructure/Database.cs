@@ -10,7 +10,8 @@ namespace Masaking.Infrastructure
 {
     public static class Database
     {
-        public const string DefaultAvatar = "/Content/images/default-avatar.svg";
+        // Transparent fallback: profile and navbar components display initials, never a user icon.
+        public const string DefaultAvatar = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
         public static string AvatarUrl(object value)
         {

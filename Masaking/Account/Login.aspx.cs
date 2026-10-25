@@ -38,7 +38,7 @@ namespace Masaking.Account
             }
             string next = Request.QueryString["returnUrl"];
             if (!String.IsNullOrEmpty(next) && next.StartsWith("/", StringComparison.Ordinal) && !next.StartsWith("//", StringComparison.Ordinal)) Response.Redirect(next, false);
-            else Response.Redirect(String.Equals(Database.UserRole, "Admin", StringComparison.OrdinalIgnoreCase) ? "../Admin/ManageRecipes.aspx" : "Profile.aspx", false);
+            else Response.Redirect(String.Equals(Database.UserRole, "Admin", StringComparison.OrdinalIgnoreCase) ? "../Admin/ManageRecipes.aspx" : "~/", false);
             Context.ApplicationInstance.CompleteRequest();
         }
 

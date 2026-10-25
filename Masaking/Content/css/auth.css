@@ -1,0 +1,59 @@
+/* Sign-in, registration, password recovery and first-admin setup. */
+.auth-wrap {
+    max-width: 470px;
+    margin: 3rem auto;
+}
+
+.auth-background {
+    background-image: url("../images/auth-kitchen.svg"), linear-gradient(135deg, #f7f2e6, #eef3e9 55%, #faf4e8);
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.auth-brand {
+    display: none;
+    width: fit-content;
+    margin: 0 auto 1.5rem;
+}
+.auth-brand img { display: block; width: 170px; max-width: 100%; height: auto; }
+.auth-brand:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 6px; border-radius: .25rem; }
+
+.auth-background .masaking-card {
+    background: rgba(255,253,247,.94);
+    backdrop-filter: blur(4px);
+}
+
+.register-terms {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    padding-left: 0;
+}
+
+.register-terms .form-check-input {
+    float: none;
+    flex: 0 0 1rem;
+    width: 1rem;
+    height: 1rem;
+    max-width: none;
+    margin: .28rem 0 0;
+}
+
+.register-terms .form-check-label {
+    flex: 1;
+    margin: 0;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+@media (max-width: 767.98px) {
+    .auth-brand { display: block; }
+    .auth-background {
+        background-image: linear-gradient(135deg, #f7f2e6, #eef3e9 55%, #faf4e8);
+        background-attachment: scroll;
+        background-size: cover;
+        background-position: center top;
+    }
+}
+

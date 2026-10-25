@@ -1,0 +1,185 @@
+/* Mobile and tablet layouts; desktop community styling stays in community.css. */
+@media (max-width: 1199.98px) {
+    .community-feed-view {
+        width: calc(100% - 3rem);
+        margin-inline: 1.5rem;
+    }
+
+    .community-view .community-banner-inner,
+    .community-view .community-body { width: 100%; }
+    .community-view .community-hero-copy { max-width: 100%; }
+    .community-view .community-banner::before { display: none; }
+    .community-view .community-page-decor { display: none; }
+
+    .community-view .flex-grow-1,
+    .community-view .community-author,
+    .community-view .community-recipe > span,
+    .community-view .row > * { min-width: 0; }
+
+    .community-view h1,
+    .community-view h2,
+    .community-view p,
+    .community-view .community-author,
+    .community-view .community-recipe { overflow-wrap: anywhere; }
+
+    .community-view .form-control,
+    .community-view .form-select { max-width: 100%; }
+    .community-view .community-post-media { min-width: 0; }
+    .community-view .community-post-photo { max-width: 100%; }
+    .community-view .community-feed-post footer { flex-wrap: wrap; }
+    .community-view .community-menu .dropdown-menu {
+        max-width: min(19rem, calc(100vw - 4rem));
+    }
+    .community-view .community-menu .dropdown-item { white-space: normal; }
+
+    .community-floating-actions {
+        right: max(1.5rem, env(safe-area-inset-right));
+    }
+
+    .masaking-nav:has(~ .community-view) .container { gap: .75rem; }
+    .masaking-nav:has(~ .community-view) .navbar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: .25rem 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .community-feed-view {
+        width: calc(100% - 1.5rem);
+        margin-inline: .75rem;
+    }
+
+    .community-feed-view .community-banner-inner {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 1rem;
+    }
+    .community-feed-view .community-banner-copy { grid-column: 1; }
+    .community-feed-view .community-banner-art { display: none !important; }
+    .community-feed-view .community-banner::before { display: none; }
+    .community-feed-view .community-banner { padding-top: 1.25rem; }
+    .community-feed-view .community-banner h1 { font-size: 1.75rem; }
+    .community-view .community-body { padding-bottom: 6rem; }
+    .community-view .community-back-link {
+        justify-self: start;
+        max-width: 100%;
+        min-height: 36px;
+        padding: .375rem .625rem;
+        gap: .375rem;
+        font-size: .8rem;
+        font-weight: 600;
+        line-height: 1.25;
+        border-radius: .375rem;
+    }
+    .community-view .community-back-link .community-icon { width: 14px; height: 14px; font-size: 14px; }
+    .community-secondary-view .community-banner-copy {
+        grid-template-columns: minmax(0, 1fr);
+        column-gap: 0;
+    }
+
+    .community-view .community-filter-row > .d-flex {
+        align-items: stretch !important;
+    }
+    .community-view .community-filter-row nav { width: 100%; }
+    .community-view .community-filter-row nav .btn {
+        flex: 1 1 auto;
+        min-height: 44px;
+        padding-inline: .75rem !important;
+    }
+    .community-view .community-filter-row > .d-flex > div { margin-left: auto; }
+    .community-view .community-sort-toggle { min-height: 44px; }
+    .community-view .community-sort-option { min-height: 44px; }
+    .community-view .community-search-group { min-height: 44px; }
+    .community-view .form-control,
+    .community-view .form-select { min-height: 44px; font-size: 1rem; }
+
+    .community-view .community-avatar { width: 36px; height: 36px; }
+    .community-view .community-feed-post > .card-body > .d-flex,
+    .community-view .community-comment-row { gap: .625rem !important; }
+    .community-view .community-author { gap: .25rem .5rem !important; }
+    .community-view .community-copy { font-size: 1rem; }
+    .community-view .community-post-photo { width: 100%; max-height: 320px; }
+    .community-detail .community-post-media { display: block; }
+    .community-view .community-recipe { gap: .625rem !important; }
+    .community-view .community-recipe-thumb { width: 56px; height: 56px; }
+    .community-view .community-feed-post footer > .btn {
+        min-height: 44px;
+    }
+    .community-view .community-like,
+    .community-view a[aria-label="Read comments"] { min-width: 44px; min-height: 44px; }
+    .community-view .community-menu > summary { min-width: 44px; min-height: 44px; }
+
+    .community-view .community-comment-form {
+        display: grid !important;
+        grid-template-columns: 36px minmax(0, 1fr);
+        gap: .625rem !important;
+    }
+    .community-view .community-comment-form > .btn {
+        grid-column: 2;
+        justify-self: end;
+        min-height: 44px;
+    }
+    .community-view .community-comment-form .form-control { min-height: 44px; }
+    .community-view #comments > .d-flex { flex-wrap: wrap; gap: .75rem; }
+
+    .community-composer .community-attachment { min-height: 0; }
+    .community-composer .community-upload { padding: 1.25rem .75rem !important; }
+    .community-composer .community-composer-count { flex-wrap: wrap; gap: .25rem .75rem; }
+    .community-composer .community-composer-count > :last-child { margin-left: auto; }
+    .community-composer .community-composer-actions > .d-flex {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        gap: .75rem !important;
+    }
+    .community-composer .community-composer-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        min-height: 44px;
+        margin: 0;
+        padding: .625rem .75rem !important;
+        border-radius: 50rem;
+        font: inherit;
+        font-size: .875rem;
+        font-weight: 600;
+        line-height: 1.25;
+        text-align: center;
+        white-space: normal;
+    }
+    .community-composer .community-composer-actions .btn-outline-secondary {
+        color: #426449;
+        border-color: #a9bca3;
+        background: #fffdf8;
+    }
+
+    .community-reviews .community-card.p-4,
+    .community-reviews .community-card.p-5 { padding: 1rem !important; }
+    .community-reviews .community-card > .d-flex { flex-wrap: wrap; }
+    .community-reviews .community-card .btn { min-height: 44px; }
+
+    .community-floating-actions {
+        right: max(.75rem, env(safe-area-inset-right));
+        bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    .community-floating-actions .community-create-post {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        padding: 0 !important;
+        border: 2px solid var(--color-surface);
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: white;
+        font-size: 1.375rem;
+        line-height: 1;
+        box-shadow: 0 3px 10px #26352c24 !important;
+    }
+    .community-floating-actions .community-create-post .community-icon { width: 1em; height: 1em; font-size: inherit; }
+    .community-floating-actions .community-create-label { display: none; }
+}

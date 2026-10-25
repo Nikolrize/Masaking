@@ -41,12 +41,12 @@ namespace Masaking.Community
                 {
                     using (SqlCommand available = new SqlCommand("SELECT COUNT(*) FROM recipes WHERE recipeID=@recipe AND status='Approved'", cn, tx))
                     { available.Parameters.AddWithValue("@recipe", recipeId); if (Convert.ToInt32(available.ExecuteScalar()) != 1) throw new InvalidOperationException("That recipe is no longer available."); }
-                    using (SqlCommand cmd = new SqlCommand("IF EXISTS(SELECT 1 FROM reviews WITH (UPDLOCK,HOLDLOCK) WHERE userID=@user AND recipeID=@recipe) UPDATE reviews SET rating=@rating,comment=@comment,status='Pending',updatedAt=@now WHERE userID=@user AND recipeID=@recipe ELSE INSERT INTO reviews(rating,comment,status,createdAt,updatedAt,userID,recipeID) VALUES(@rating,@comment,'Pending',@now,NULL,@user,@recipe)", cn, tx))
+                    using (SqlCommand cmd = new SqlCommand("IF EXISTS(SELECT 1 FROM reviews WITH (UPDLOCK,HOLDLOCK) WHERE userID=@user AND recipeID=@recipe) UPDATE reviews SET rating=@rating,comment=@comment,status='Approved',updatedAt=@now WHERE userID=@user AND recipeID=@recipe ELSE INSERT INTO reviews(rating,comment,status,createdAt,updatedAt,userID,recipeID) VALUES(@rating,@comment,'Approved',@now,NULL,@user,@recipe)", cn, tx))
                     {
                         cmd.Parameters.AddWithValue("@user", Database.UserId.Value); cmd.Parameters.AddWithValue("@recipe", recipeId); cmd.Parameters.AddWithValue("@rating", rating);
                         cmd.Parameters.AddWithValue("@comment", String.IsNullOrWhiteSpace(txtComment.Text) ? (object)DBNull.Value : txtComment.Text.Trim()); cmd.Parameters.AddWithValue("@now", DateTime.UtcNow); cmd.ExecuteNonQuery();
                     }
-                    tx.Commit(); Show("Thank you! Your review is waiting for community moderation.", true); txtComment.Text = "";
+                    tx.Commit(); Show("Thank you! Your review has been published.", true); txtComment.Text = "";
                 }
                 catch (InvalidOperationException ex) { tx.Rollback(); Show(ex.Message, false); }
             }

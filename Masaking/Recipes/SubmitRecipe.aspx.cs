@@ -11,8 +11,9 @@ namespace Masaking.Recipes
 {
     public partial class SubmitRecipe : System.Web.UI.Page
     {
-        protected TextBox txtTitle, txtDescription, txtCuisine, txtRegion, txtServings, txtPrep, txtCost, txtImage, txtIngredients, txtSteps, txtStepImages;
+        protected TextBox txtTitle, txtDescription, txtCuisine, txtRegion, txtServings, txtPrep, txtCost, txtIngredients, txtSteps, txtStepImages;
         protected FileUpload uploadRecipeImage;
+        protected Image imgExistingRecipe;
         protected DropDownList ddlDifficulty;
         protected Label lblMessage;
         protected Button btnSave;
@@ -28,6 +29,7 @@ namespace Masaking.Recipes
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Database.RequireUser(Response)) return;
+            Form.Enctype = "multipart/form-data";
             if (!IsPostBack && EditId.HasValue) LoadRecipe();
         }
 
@@ -43,7 +45,9 @@ namespace Masaking.Recipes
                         if (!rd.Read()) { Response.Redirect("MyRecipes.aspx"); return; }
                         txtTitle.Text = rd.GetString(0); txtDescription.Text = rd.IsDBNull(1) ? "" : rd.GetString(1); txtCuisine.Text = rd.GetString(2); txtRegion.Text = rd.GetString(3);
                         ddlDifficulty.SelectedValue = rd.GetString(4); txtPrep.Text = rd.GetInt32(5).ToString(); txtCost.Text = rd.GetDecimal(6).ToString(CultureInfo.InvariantCulture); txtServings.Text = rd.GetInt32(7).ToString();
-                        string image = rd.IsDBNull(8) ? "" : rd.GetString(8); txtImage.Text = IsHttpUrl(image) ? image : "";
+                        string image = rd.IsDBNull(8) ? "" : rd.GetString(8);
+                        imgExistingRecipe.ImageUrl = PhotoPreviewUrl(image);
+                        imgExistingRecipe.Visible = !String.IsNullOrEmpty(imgExistingRecipe.ImageUrl);
                     }
                 }
                 using (SqlCommand cmd = new SqlCommand("SELECT ingredientName,quantity,unit FROM ingredients WHERE recipeID=@id ORDER BY displayOrder", cn))
@@ -55,7 +59,7 @@ namespace Masaking.Recipes
                     using (SqlDataReader rd = cmd.ExecuteReader()) while (rd.Read())
                     {
                         txtSteps.Text += (txtSteps.Text.Length == 0 ? "" : Environment.NewLine) + rd.GetString(0);
-                        stepImageUrls.Add(rd.IsDBNull(1) || !IsHttpUrl(rd.GetString(1)) ? "" : rd.GetString(1));
+                        stepImageUrls.Add(rd.IsDBNull(1) ? "" : rd.GetString(1));
                     }
                 }
                 txtStepImages.Text = String.Join(Environment.NewLine, stepImageUrls.ToArray());
@@ -66,18 +70,17 @@ namespace Masaking.Recipes
         protected void btnSave_Click(object sender, EventArgs e)
         {
             int servings, prep; decimal cost;
-            if (String.IsNullOrWhiteSpace(txtTitle.Text) || txtTitle.Text.Trim().Length > 150 || txtDescription.Text.Length > 1000 || txtCuisine.Text.Trim().Length > 100 || txtRegion.Text.Trim().Length > 100 ||
-                !Int32.TryParse(txtServings.Text, out servings) || servings < 1 || !Int32.TryParse(txtPrep.Text, out prep) || prep < 0 ||
-                !Decimal.TryParse(txtCost.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out cost) || cost < 0 || cost > 999999.99m || txtImage.Text.Trim().Length > 255)
+            if (String.IsNullOrWhiteSpace(txtTitle.Text) || txtTitle.Text.Trim().Length > 150 || txtDescription.Text.Length > 1000 || String.IsNullOrWhiteSpace(txtCuisine.Text) || txtCuisine.Text.Trim().Length > 80 || String.IsNullOrWhiteSpace(txtRegion.Text) || txtRegion.Text.Trim().Length > 80 ||
+                !Int32.TryParse(txtServings.Text, out servings) || servings < 1 || servings > 100 || !Int32.TryParse(txtPrep.Text, out prep) || prep < 0 || prep > 1440 ||
+                !Decimal.TryParse(txtCost.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out cost) || cost < 0 || cost > 999999.99m)
             { Show("Check the recipe name, cuisine, region, serving count, preparation time and cost.", false); return; }
-            if (!uploadRecipeImage.HasFile && !String.IsNullOrWhiteSpace(txtImage.Text) && !IsHttpUrl(txtImage.Text.Trim())) { Show("Use a valid http or https URL for the recipe image.", false); return; }
 
             List<string[]> ingredients = new List<string[]>();
             foreach (string line in txtIngredients.Text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
             {
                 string[] parts = line.Split('|'); decimal qty;
                 if (parts.Length != 3 || String.IsNullOrWhiteSpace(parts[0]) || parts[0].Trim().Length > 50 || !Decimal.TryParse(parts[1].Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out qty) || qty < 0 || qty > 99999999.99m || Decimal.Round(qty, 2) != qty || String.IsNullOrWhiteSpace(parts[2]) || parts[2].Trim().Length > 30)
-                { Show("Each ingredient needs a name, non-negative quantity, and unit separated with | characters.", false); return; }
+                { Show("Check each ingredient row: enter a name, a quantity with up to two decimal places, and a unit.", false); return; }
                 ingredients.Add(new[] { parts[0].Trim(), qty.ToString(CultureInfo.InvariantCulture), parts[2].Trim() });
             }
 
@@ -88,10 +91,8 @@ namespace Masaking.Recipes
             {
                 string instruction = stepLines[i].Trim();
                 if (instruction.Length == 0) continue;
+                if (instruction.Length > 2000) { Show("Keep each cooking step within 2,000 characters.", false); return; }
                 string imageUrl = i < urlLines.Length ? urlLines[i].Trim() : "";
-                HttpPostedFile illustration = Request.Files["stepUpload_" + i];
-                bool hasIllustrationUpload = illustration != null && illustration.ContentLength > 0;
-                if (!hasIllustrationUpload && (imageUrl.Length > 255 || (!String.IsNullOrWhiteSpace(imageUrl) && !IsHttpUrl(imageUrl)))) { Show("Enter a valid http or https URL for each step illustration, or leave it blank to upload a picture.", false); return; }
                 steps.Add(new RecipeStep { LineIndex = i, Instruction = instruction, ImageUrl = imageUrl });
             }
             if (ingredients.Count == 0 || steps.Count == 0) { Show("Add at least one ingredient and one cooking step.", false); return; }
@@ -121,7 +122,7 @@ namespace Masaking.Recipes
                     {
                         savedRecipeImage = ImageUpload.Save(uploadRecipeImage.PostedFile, "Recipes", false); newUploads.Add(savedRecipeImage);
                     }
-                    else savedRecipeImage = !String.IsNullOrWhiteSpace(txtImage.Text) ? txtImage.Text.Trim() : oldRecipeImage;
+                    else savedRecipeImage = oldRecipeImage;
 
                     int recipeId;
                     if (EditId.HasValue)
@@ -146,7 +147,9 @@ namespace Masaking.Recipes
                         RecipeStep step = steps[i]; string stepImage = step.ImageUrl;
                         HttpPostedFile upload = Request.Files["stepUpload_" + step.LineIndex];
                         if (upload != null && upload.ContentLength > 0) { stepImage = ImageUpload.Save(upload, "Steps", false); newUploads.Add(stepImage); }
-                        else if (String.IsNullOrWhiteSpace(stepImage) && i < oldStepImages.Count) stepImage = oldStepImages[i];
+                        else if (!String.IsNullOrWhiteSpace(stepImage) && !oldStepImages.Contains(stepImage))
+                            throw new InvalidDataException("Choose step photos from your device. New image links are not accepted.");
+                        else if (String.IsNullOrWhiteSpace(stepImage)) stepImage = null;
                         if (!String.IsNullOrEmpty(stepImage) && oldStepImages.Contains(stepImage)) keptStepImages.Add(stepImage);
                         using (SqlCommand cmd = new SqlCommand("INSERT INTO steps(stepNumber,instruction,image,estimatedMinutes,recipeID) VALUES(@number,@instruction,@image,0,@recipe)", cn, tx))
                         { cmd.Parameters.AddWithValue("@number", i + 1); cmd.Parameters.AddWithValue("@instruction", step.Instruction); cmd.Parameters.AddWithValue("@image", (object)stepImage ?? DBNull.Value); cmd.Parameters.AddWithValue("@recipe", recipeId); cmd.ExecuteNonQuery(); }
@@ -171,10 +174,17 @@ namespace Masaking.Recipes
             cmd.Parameters.AddWithValue("@prep", prep); cmd.Parameters.AddWithValue("@cost", cost); cmd.Parameters.AddWithValue("@servings", servings); cmd.Parameters.AddWithValue("@image", (object)image ?? DBNull.Value);
         }
 
-        private static bool IsHttpUrl(string value)
+        private string PhotoPreviewUrl(string value)
         {
+            if (String.IsNullOrWhiteSpace(value)) return "";
             Uri uri;
-            return Uri.TryCreate(value, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+            if (Uri.TryCreate(value, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)) return value;
+            string image = value.Replace("/Content/Uploads/Recipes/", "/Content/images/Uploads/Recipes/");
+            const string prefix = "/Content/images/Uploads/Recipes/";
+            Guid id;
+            string name = Path.GetFileName(image);
+            if (!image.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) || image.Substring(prefix.Length) != name || !name.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || !Guid.TryParseExact(Path.GetFileNameWithoutExtension(name), "N", out id)) return "";
+            return ResolveUrl(image);
         }
 
         private void Show(string text, bool success) { lblMessage.CssClass = success ? "alert alert-success d-block" : "alert alert-danger d-block"; lblMessage.Text = Server.HtmlEncode(text); }

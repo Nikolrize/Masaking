@@ -47,7 +47,7 @@ namespace Masaking.Admin
             string name = txtAdminName.Text.Trim(), username = txtAdminUsername.Text.Trim(), email = txtAdminEmail.Text.Trim(), country = txtAdminCountry.Text.Trim();
             if (name.Length == 0 || name.Length > 100 || country.Length == 0 || country.Length > 100 || !Regex.IsMatch(username, "^[A-Za-z0-9_.-]{3,40}$")) { Show("Enter a display name and country, and a username with 3–40 letters, numbers, dots, dashes or underscores.", false); return; }
             try { if (email.Length > 255) throw new FormatException(); new MailAddress(email); } catch { Show("Enter a valid email address.", false); return; }
-            if (txtNewPassword.Text.Length < 8 || txtNewPassword.Text.Length > 256) { Show("Choose a password between 8 and 256 characters.", false); return; }
+            if (txtNewPassword.Text.Length < 8 || txtNewPassword.Text.Length > 64) { Show("Choose a password between 8 and 64 characters.", false); return; }
             if (txtNewPassword.Text != txtConfirm.Text) { Show("The passwords do not match.", false); return; }
 
             using (SqlConnection cn = Database.Open()) using (SqlTransaction tx = cn.BeginTransaction(IsolationLevel.Serializable))

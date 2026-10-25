@@ -1,8 +1,9 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ManageCommunity.aspx.cs" Inherits="Masaking.Admin.ManageCommunity" %>
+<%@ Page Language="C#" AutoEventWireup="true"  CodeBehind="ManageCommunity.aspx.cs" Inherits="Masaking.Admin.ManageCommunity" %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
+    <link href="<%= ResolveUrl("~/Content/bootstrap-icons.min.css?v=1") %>" rel="stylesheet" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Community moderation | Masaking</title>

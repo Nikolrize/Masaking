@@ -1,0 +1,12 @@
+/* Administration dashboard summary tiles. */
+.admin-stat-recipes {
+    background: #edf4e9;
+}
+
+.admin-stat-pending {
+    background: #fff2e5;
+}
+
+.admin-stat-users {
+    background: #edf3f8;
+}

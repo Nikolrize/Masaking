@@ -19,7 +19,7 @@ namespace Masaking.Account
         {
             int userId = GetUserId();
             if (userId == 0) { Show("Enter your registered email on the forgot password page to begin.", false); return; }
-            if (txtPassword.Text.Length < 8 || txtPassword.Text.Length > 256 || txtPassword.Text != txtConfirm.Text) { Show("Enter matching passwords between 8 and 256 characters.", false); return; }
+            if (txtPassword.Text.Length < 8 || txtPassword.Text.Length > 64 || txtPassword.Text != txtConfirm.Text) { Show("Enter matching passwords between 8 and 64 characters.", false); return; }
             using (SqlConnection cn = Database.Open()) using (SqlCommand cmd = new SqlCommand("UPDATE users SET password=@password WHERE userID=@id AND isActive=1", cn))
             { cmd.Parameters.AddWithValue("@password", Database.HashPassword(txtPassword.Text)); cmd.Parameters.AddWithValue("@id", userId); if (cmd.ExecuteNonQuery() != 1) { Show("This account is no longer available.", false); return; } }
             Session.Remove("PasswordResetUserId");

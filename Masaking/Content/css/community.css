@@ -1,0 +1,896 @@
+/* Community posts, media, action buttons and the community feed theme. */
+.community-photo {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: .8rem;
+    background: var(--color-cream);
+}
+
+.community-post {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.community-feed-image {
+    display: block;
+    width: 100%;
+    max-height: 640px;
+    object-fit: cover;
+    background: var(--color-cream);
+}
+
+.community-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    color: #45654b;
+    background: #dfe7d8;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.community-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: var(--color-primary);
+    background: transparent;
+    font-size: 1.35rem;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.community-icon-button:hover,
+.community-icon-button:focus-visible {
+    color: var(--color-primary-dark);
+    background: rgba(40, 88, 61, .1);
+}
+
+.community-icon-button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+@media (max-width: 575.98px) {
+    .community-feed-image {
+        max-height: 480px;
+    }
+}
+
+/* Community feed theme, scoped to this page. */
+.body-content:has(.community-view) {
+    max-width: none;
+    padding-inline: 0;
+}
+
+/* Remove shared layout gaps around the community feed. */
+.body-content:has(.community-feed-view) {
+    margin-top: 0;
+    padding-block: 0;
+    padding-inline: 0;
+}
+
+.community-view {
+    width: 100%;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #263e36;
+    font-size: .9rem;
+    position: relative;
+    isolation: isolate;
+}
+
+.community-view .community-body,
+.community-view .community-banner-inner {
+    max-width: 900px;
+}
+
+.community-feed-view .community-body,
+.community-feed-view .community-banner-inner {
+    max-width: none;
+    padding-inline: 0;
+}
+
+.community-feed-view .community-banner {
+    overflow: visible;
+    background: transparent;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+}
+
+.community-feed-view .community-banner-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    row-gap: 1rem;
+}
+
+.community-feed-view .community-banner-copy {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+}
+
+.community-feed-view .community-filter-row {
+    grid-column: 1 / -1;
+}
+
+.community-feed-view .community-banner-copy .community-search-row {
+    margin-bottom: 0 !important;
+}
+
+@media (max-width: 575.98px) {
+    .community-feed-view .community-banner-inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.community-feed-view .community-banner h1 {
+    font-size: clamp(2rem, 3vw, 3rem);
+    width: fit-content;
+    max-width: 100%;
+}
+
+.community-feed-view .community-search-wrap {
+    /* The copy column occupies half the banner. */
+    width: 100%;
+    max-width: 100%;
+}
+
+.community-feed-view .community-search-group {
+    min-height: 2.1667rem;
+}
+
+.community-feed-view .community-search-group .form-control {
+    padding-block: .3333rem;
+}
+
+.community-feed-view .community-search-row {
+    margin-bottom: 2rem !important;
+}
+
+.community-view::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border: 1px solid #e8ddcf;
+    border-radius: .5rem;
+    background: radial-gradient(ellipse at 100% 100%, #e4e9d3 0, transparent 26%),
+        radial-gradient(ellipse at 0 0, #fae9d6 0, transparent 45%), #fbf5ec;
+    pointer-events: none;
+}
+
+.community-view::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 100px;
+    height: 200px;
+    background: url("../images/community/community-leaves.svg") right bottom / contain no-repeat;
+    opacity: .6;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.community-view h1, .community-view h2, .community-view h3 {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #173f31;
+}
+
+.community-view .community-banner {
+    position: relative;
+    background: linear-gradient(110deg, #fbefdf, #f7eddf 65%, #edf0e1);
+}
+
+.community-view .community-hero-copy {
+    max-width: 72%;
+    position: relative;
+    z-index: 1;
+}
+
+.community-view .community-banner-art {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+    object-position: right center;
+    pointer-events: none;
+}
+
+.community-feed-view .community-banner-art {
+    position: static;
+    transform: none;
+    grid-column: 2;
+    grid-row: 1;
+    width: 88%;
+    justify-self: end;
+    height: auto;
+    object-fit: contain;
+    object-position: right center;
+    padding: 0;
+}
+
+.community-view .community-card {
+    background: #fffcf6;
+    border: 1px solid #e8ddcf;
+    box-shadow: 0 3px 12px #614b2e06;
+}
+
+.community-view .btn-primary {
+    background: #577b5d;
+    border-color: #577b5d;
+}
+
+.community-view .btn-primary:hover, .community-view .btn-primary:focus-visible {
+    background: #426449;
+    border-color: #426449;
+}
+
+.community-view .btn-outline-secondary {
+    color: #405751;
+    border-color: #d7cec0;
+    background: #fffaf2;
+}
+
+.community-view .btn-outline-secondary:hover {
+    background: #eee8dc;
+    border-color: #b7c2ad;
+}
+
+.community-view .community-avatar {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.community-view .community-content {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.community-view .community-copy {
+    font-size: 1.05rem;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.community-view .community-post-photo {
+    max-width: 100%;
+    width: 220px;
+    max-height: 190px;
+    object-fit: cover;
+}
+
+.community-view .community-recipe-thumb {
+    width: 76px;
+    height: 68px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.community-view .form-control, .community-view .form-select {
+    background-color: #fffdf8;
+    border-color: #e4dacd;
+    color: #334b42;
+}
+
+.community-view .community-sort {
+    width: auto;
+}
+
+.community-composer .community-body,
+.community-composer .community-banner-inner {
+    max-width: 800px;
+}
+
+.community-composer {
+    min-height: 680px;
+}
+
+.community-composer-text {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.community-attachment {
+    min-height: 250px;
+    border-color: #e8ddcf !important;
+}
+
+.community-upload {
+    border: 1px dashed #cfc8b9;
+    color: #426449;
+}
+
+.community-upload-active, .community-upload:focus-within {
+    background: #edf2e7;
+    outline: 2px solid #577b5d;
+    outline-offset: 2px;
+}
+
+.community-upload-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.community-composer-preview {
+    display: block;
+    width: 120px;
+    height: 110px;
+    object-fit: cover;
+}
+
+.community-detail .community-post-media {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.community-detail .community-post-photo {
+    width: 52%;
+    max-height: 320px;
+}
+
+.community-detail .community-post-media .community-recipe {
+    flex: 1 1 200px;
+}
+
+.community-comment-row:last-of-type {
+    border-bottom: 0 !important;
+}
+
+.community-view .community-icon {
+    width: 17px;
+    height: 17px;
+    fill: currentColor;
+    stroke: none;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.community-view .community-feed-post > .card-body footer {
+    font-size: 1rem;
+}
+
+.community-view .community-feed-post > .card-body footer .btn,
+.community-view .community-feed-post > .card-body footer .small {
+    font-size: inherit;
+}
+
+.community-view .community-feed-post > .card-body footer .community-icon {
+    width: 1em;
+    height: 1em;
+}
+
+.community-view .community-like-heart {
+    align-items: center;
+}
+
+.community-view .community-banner h1 {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.community-detail .community-banner h1 {
+    font-size: clamp(1.875rem, 2.5vw, 2.5rem);
+}
+
+.community-view .community-menu > summary {
+    list-style: none;
+}
+
+.community-view .community-menu > summary::-webkit-details-marker {
+    display: none;
+}
+
+.community-view .community-menu[open] {
+    z-index: 20;
+}
+
+.community-view .community-menu .dropdown-menu {
+    min-width: 190px;
+    background: #fffcf6;
+    border-color: #e8ddcf;
+}
+
+.community-view .community-recipe {
+    background: #fcf8f0;
+    color: #264c3e;
+    border-color: #e8ddcf !important;
+}
+
+.community-view .community-notice {
+    background: #fcf0df;
+    border: 1px solid #f0e1ca;
+}
+
+.community-view .community-banner .form-control, .community-view .community-banner .form-select {
+    background-color: #fffcf6;
+    border-color: #dfd6c8;
+}
+
+.community-view #communityImagePreview.is-visible {
+    display: block !important;
+}
+
+@media (max-width: 575.98px) {
+    .community-view .community-hero-copy {
+        max-width: 100%;
+    }
+
+    .community-view .community-post-photo {
+        width: 100%;
+        max-height: 260px;
+    }
+}
+
+/* Like feedback stays local to the clicked button. */
+.community-view .community-like-heart {
+    display: inline-flex;
+    color: #6c757d;
+}
+
+.community-view .community-like[aria-pressed="true"] .community-like-heart {
+    color: #dc3545;
+}
+
+.community-view .community-like[aria-pressed="true"] .community-icon {
+    fill: currentColor;
+}
+
+.community-view .community-like[aria-busy="true"] {
+    opacity: .65;
+    cursor: wait;
+}
+
+.community-view .community-like.is-popping .community-icon {
+    transform-origin: center;
+    animation: community-like-pop .36s ease-out;
+}
+
+.community-view .community-like[data-like-animation="unlike"].is-popping .community-icon {
+    animation-name: community-unlike-pop;
+}
+
+@keyframes community-like-pop {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.4) rotate(-8deg); }
+    70% { transform: scale(.9); }
+}
+
+@keyframes community-unlike-pop {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(.75) rotate(8deg); }
+    70% { transform: scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .community-view .community-like.is-popping .community-icon {
+        animation: none;
+    }
+}
+
+/* Keep the community inset independent of the shared footer. */
+.community-feed-view {
+    width: calc(100% - 10rem);
+    margin-inline: 5rem;
+}
+
+/* Use one continuous page colour behind the transparent banner artwork. */
+.community-feed-view::before {
+    background: var(--color-cream);
+    border: 0;
+    border-radius: 0;
+}
+
+.community-feed-view::after {
+    display: none;
+}
+
+.community-feed-view .community-banner,
+.community-feed-view .community-banner-art {
+    background: transparent;
+}
+
+.community-feed-view .community-body {
+    padding-bottom: 7rem;
+}
+
+.community-floating-actions {
+    position: fixed;
+    right: max(5rem, env(safe-area-inset-right));
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    z-index: 1030;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: .75rem;
+}
+
+.community-floating-actions .community-back-to-top {
+    position: fixed;
+    left: 50%;
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 14px #26352c22;
+    font-size: 1.5rem;
+    background: var(--color-surface);
+    color: var(--color-primary);
+}
+
+.community-floating-actions [hidden] {
+    display: none !important;
+}
+
+@media (max-width: 575.98px) {
+    .community-floating-actions .community-create-post {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.5rem;
+        height: 3.5rem;
+        padding: 0 !important;
+        font-size: 1.5rem;
+    }
+
+    .community-floating-actions .community-create-label {
+        display: none;
+    }
+}
+
+.community-feed-view,
+.community-feed-view .community-banner-inner,
+.community-feed-view .community-banner-art {
+    overflow: visible;
+}
+
+@media (max-width: 575.98px) {
+    .community-feed-view .community-search-wrap {
+        width: 100%;
+    }
+}
+
+/* Quiet botanical accents sit behind the feed, away from interactive content. */
+.community-feed-view .community-page-decor {
+    position: absolute;
+    inset: 0 -4.5rem;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+}
+
+.community-feed-view .community-botanical {
+    position: absolute;
+    width: 170px;
+    height: auto;
+    opacity: .28;
+}
+
+.community-feed-view .community-botanical-left {
+    left: 0;
+    top: 21rem;
+    transform: rotate(-12deg);
+}
+
+.community-feed-view .community-botanical-right {
+    right: 0;
+    bottom: 4rem;
+    transform: scaleX(-1) rotate(-10deg);
+}
+
+@media (max-width: 991.98px) {
+    .community-feed-view .community-page-decor {
+        display: none;
+    }
+}
+
+/* A faint botanical flourish frames the banner without covering its controls. */
+.community-feed-view .community-banner::before {
+    content: "";
+    position: absolute;
+    right: -1rem;
+    top: 0;
+    width: 180px;
+    height: 240px;
+    background: url("../images/community/community-botanical.png") center / contain no-repeat;
+    opacity: .14;
+    transform: scaleX(-1) rotate(-25deg);
+    pointer-events: none;
+}
+
+@media (max-width: 575.98px) {
+    .community-feed-view .community-banner::before {
+        display: none;
+    }
+}
+
+/* Secondary community pages share the feed theme and keep their own controls. */
+.community-secondary-view .community-body,
+.community-secondary-view .community-banner-inner {
+    max-width: none;
+}
+
+.community-secondary-view .community-banner h1 {
+    font-size: clamp(2rem, 3vw, 3rem);
+}
+
+.community-secondary-view .community-card {
+    font-size: 1rem;
+}
+
+.community-secondary-view .community-banner-copy {
+    padding-block: 1rem;
+}
+
+.community-reviews .community-card {
+    border: 1px solid #e8ddcf;
+}
+
+/* Compact headers on discussion, editing, and review pages. */
+.community-secondary-view .community-banner {
+    padding-block: 1rem .5rem;
+}
+
+.community-secondary-view .community-banner-inner {
+    display: block;
+}
+
+.community-secondary-view .community-banner-copy {
+    padding-block: 0;
+}
+
+.community-secondary-view .community-banner::before {
+    display: none;
+}
+
+.community-secondary-view .community-banner h1 {
+    font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+}
+
+.community-secondary-view .community-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .625rem;
+    margin-bottom: .75rem;
+    padding: .5rem .875rem;
+    border: 1px solid var(--color-primary);
+    border-radius: .5rem;
+    background: var(--color-surface);
+    color: var(--color-primary);
+    font-size: .95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color .18s ease;
+}
+
+.community-secondary-view .community-back-link:hover {
+    background: #edf2e7;
+}
+
+.community-secondary-view .community-back-link:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+.community-secondary-view .community-back-arrow {
+    display: inline-block;
+    transition: transform .2s ease;
+}
+
+.community-secondary-view .community-back-link:hover .community-back-arrow,
+.community-secondary-view .community-back-link:focus-visible .community-back-arrow {
+    transform: translateX(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .community-secondary-view .community-back-link,
+    .community-secondary-view .community-back-arrow {
+        transition: none;
+    }
+
+    .community-secondary-view .community-back-link:hover .community-back-arrow,
+    .community-secondary-view .community-back-link:focus-visible .community-back-arrow {
+        transform: none;
+    }
+}
+
+/* Keep the return action on the right while headings stay on the left. */
+.community-secondary-view .community-banner-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1.5rem;
+    align-items: start;
+}
+
+.community-secondary-view .community-back-link {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
+    margin-bottom: 0;
+}
+
+.community-secondary-view .community-banner-copy > h1,
+.community-secondary-view .community-banner-copy > p {
+    grid-column: 1;
+}
+
+@media (max-width: 575.98px) {
+    .community-secondary-view .community-back-link {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        margin-bottom: .75rem;
+    }
+}
+
+/* Delete uses a full-width button with its decorative icon layered above it. */
+.community-view .community-delete-action {
+    position: relative;
+}
+
+.community-view .community-delete-action > .community-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.community-view .community-delete-action > .dropdown-item {
+    width: 100%;
+    padding-left: calc(1rem + 17px + .5rem);
+}
+
+/* Sorting uses the same cream, sage, and pill shapes as the filter buttons. */
+.community-sort-dropdown {
+    position: relative;
+    display: inline-block;
+    font-size: .875rem;
+}
+
+.community-sort-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: .375rem 1rem;
+    border: 1px solid #d7cec0;
+    border-radius: 50rem;
+    background: #fffaf2;
+    color: #405751;
+    cursor: pointer;
+    list-style: none;
+}
+
+.community-sort-toggle::-webkit-details-marker {
+    display: none;
+}
+
+.community-sort-arrow {
+    display: inline-flex;
+    align-items: center;
+}
+
+.community-sort-options {
+    position: absolute;
+    right: 0;
+    top: calc(100% + .5rem);
+    z-index: 1040;
+    min-width: 10rem;
+    padding: .375rem;
+    border: 1px solid #d7cec0;
+    border-radius: 1rem;
+    background: #fffaf2;
+    box-shadow: 0 6px 20px #26352c18;
+}
+
+.community-sort-option {
+    display: block;
+    width: 100%;
+    padding: .5rem .875rem;
+    border: 0;
+    border-radius: 50rem;
+    background: transparent;
+    color: #405751;
+    text-align: left;
+}
+
+.community-sort-toggle:hover,
+.community-sort-option:hover {
+    background: #eee8dc;
+}
+
+.community-sort-option[aria-pressed="true"] {
+    background: #577b5d;
+    color: white;
+}
+
+.community-sort-toggle:focus-visible,
+.community-sort-option:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.community-view [data-community-sort][hidden] {
+    display: none !important;
+}
+
+/* The return action occupies its own row above the secondary page heading. */
+.community-secondary-view .community-back-link {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: end;
+    margin-bottom: .75rem;
+}
+
+.community-secondary-view .community-banner-copy > h1,
+.community-secondary-view .community-banner-copy > p {
+    grid-column: 1 / -1;
+}
+
+/* Official Bootstrap Icons use filled paths rather than custom SVG strokes. */
+.community-floating-actions .community-icon,
+.community-sort-arrow .community-icon {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+    stroke: none;
+    vertical-align: -.125em;
+}
+
+.community-like .community-heart-filled,
+.community-like[aria-pressed="true"] .community-heart-outline {
+    display: none;
+}
+
+.community-like[aria-pressed="true"] .community-heart-filled {
+    display: inline-block;
+}
+
+.community-view .community-empty-icon {
+    width: 48px;
+    height: 48px;
+}
+
+/* Icon font sizing retains the previous layout and animations. */
+.community-view i.community-icon { display: inline-flex; align-items: center; justify-content: center; font-size: 17px; line-height: 1; }
+.community-view .community-feed-post > .card-body footer i.community-icon { font-size: 1em; }
+.community-floating-actions i.community-icon, .community-sort-arrow i.community-icon { font-size: 1em; }
+.community-sort-dropdown[open] { z-index: 1050; }
+.community-sort-options { border-radius: 1rem; overflow: hidden; }
+.community-sort-option { border-radius: 50rem; cursor: pointer; }
+
+.community-view .community-like .community-heart-filled,
+.community-view .community-like[aria-pressed="true"] .community-heart-outline { display: none; }
+.community-view .community-like[aria-pressed="true"] .community-heart-filled { display: inline-flex; }
+
+/* Match profile initials for members who have not uploaded a photo. */
+.community-view .community-avatar { position: relative; overflow: hidden; font-size: .9rem; }
+.community-avatar > .community-avatar-initials { display: grid; place-items: center; width: 100%; height: 100%; }
+.community-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.community-avatar[data-avatar-photo="true"] > .community-avatar-initials { visibility: hidden; }
+.community-avatar > img[hidden] { display: none !important; }

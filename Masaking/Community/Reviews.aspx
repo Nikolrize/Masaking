@@ -3,11 +3,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
+    <link href="<%= ResolveUrl("~/Content/bootstrap-icons.min.css?v=1") %>" rel="stylesheet" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Reviews and ratings | Masaking</title>
     <link href="../Content/bootstrap.min.css" rel="stylesheet" />
     <link href="../Content/Site.css" rel="stylesheet" />
+    <link href="../Content/css/recipes.css" rel="stylesheet" />
+    <link href="../Content/css/community.css?v=20261024-39" rel="stylesheet" />
+    <link href="../Content/css/community-responsive.css?v=2" rel="stylesheet" />
+    <link href="../Content/css/mobile-artwork.css?v=2" rel="stylesheet" />
+    <link href="../Content/css/back-links.css?v=2" rel="stylesheet" />
 </head>
 <body class="masaking-page">
     <form id="form1" runat="server">
@@ -25,15 +31,25 @@
             </div>
         </nav>
 
-        <main class="container py-5">
-            <p class="text-brand fw-semibold">COOKED IT? TELL US HOW IT WENT</p>
-            <h1 class="page-heading">Reviews and ratings</h1>
-            <p class="text-secondary mb-4">Your notes help other cooks choose a recipe and make it their own.</p>
-
+        <main class="community-view community-feed-view community-secondary-view community-reviews">
+    <div class="community-page-decor" aria-hidden="true">
+        <img class="community-botanical community-botanical-left" src="<%= ResolveUrl("~/Content/images/community/community-botanical.png") %>" alt="" width="1024" height="1536" decoding="async" />
+        <img class="community-botanical community-botanical-right" src="<%= ResolveUrl("~/Content/images/community/community-botanical.png") %>" alt="" width="1024" height="1536" decoding="async" />
+    </div>
+            <header class="community-banner mb-3">
+                <div class="community-banner-inner container">
+                    <div class="community-banner-copy">
+                        <a href="Community.aspx" class="community-back-link"><i class="bi bi-arrow-left community-icon community-back-arrow" aria-hidden="true"></i><span>Back to Community</span></a>
+                        <h1 class="fw-bold mb-2">Reviews and ratings</h1>
+                        <p class="mb-0">Your notes help other cooks choose a recipe and make it their own.</p>
+                    </div>
+                </div>
+            </header>
+            <div class="community-body container">
             <asp:Label ID="lblMessage" runat="server" EnableViewState="false" />
 
             <%-- Review form --%>
-            <asp:Panel ID="pnlForm" runat="server" CssClass="masaking-card p-4 mb-4">
+            <asp:Panel ID="pnlForm" runat="server" CssClass="community-card rounded-3 p-4 mb-4">
                 <div class="row g-3 align-items-end">
                     <div class="col-lg-5">
                         <label class="form-label" for="ddlRecipe">Recipe</label>
@@ -63,7 +79,7 @@
             </asp:Panel>
 
             <%-- Sign-in prompt --%>
-            <asp:Panel ID="pnlSignIn" runat="server" Visible="false" CssClass="masaking-card p-4 mb-4">
+            <asp:Panel ID="pnlSignIn" runat="server" Visible="false" CssClass="community-card rounded-3 p-4 mb-4">
                 <a class="text-brand" href="../Account/Login.aspx">Sign in</a> to leave a recipe rating.
             </asp:Panel>
 
@@ -72,7 +88,7 @@
                 <asp:Repeater ID="rptReviews" runat="server">
                     <ItemTemplate>
                         <div class="col-lg-6">
-                            <article class="masaking-card p-4 h-100">
+                            <article class="community-card rounded-3 p-4 h-100">
                                 <div class="d-flex justify-content-between gap-2">
                                     <h2 class="h5 page-heading">
                                         <a class="text-reset text-decoration-none"
@@ -88,13 +104,16 @@
                 </asp:Repeater>
             </div>
 
-            <asp:Panel ID="pnlEmpty" runat="server" Visible="false" CssClass="masaking-card p-5 text-center">
+            <asp:Panel ID="pnlEmpty" runat="server" Visible="false" CssClass="community-card rounded-3 p-5 text-center">
                 <p class="text-secondary mb-0">Approved recipe reviews will appear here.</p>
             </asp:Panel>
+        </div>
         </main>
+<div class="community-floating-actions"><button id="communityBackToTop" type="button" class="btn btn-light community-back-to-top" aria-label="Back to top" title="Back to top" hidden><i class="bi bi-arrow-up community-icon" aria-hidden="true"></i></button></div>
 
     </form>
 
     <script src="../Scripts/bootstrap.bundle.min.js"></script>
+    <script src="../Scripts/community.js?v=20261024-39"></script>
 </body>
 </html>
