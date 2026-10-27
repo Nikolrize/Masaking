@@ -107,6 +107,10 @@
     <Content Include="Admin\ManageCommunity.aspx" />
     <Content Include="Admin\ManageRecipes.aspx" />
     <Content Include="Admin\ManageUsers.aspx" />
+    <Content Include="App_Data\MasakingDB.mdf" />
+    <Content Include="App_Data\MasakingDB_log.ldf">
+      <DependentUpon>MasakingDB.mdf</DependentUpon>
+    </Content>
     <Content Include="Community\Community.aspx" />
     <Content Include="Community\Reviews.aspx" />
     <Content Include="Contact.aspx" />
@@ -126,7 +130,10 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
-    <Content Include="Content\images\simulation\oil.png" />
+    <Content Include="Content\css\home.css" />
+    <Content Include="Content\images\home\nasi lemak.png" />
+    <Content Include="Content\images\home\roti canai.png" />
+    <Content Include="Content\images\Masaking Logo.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
@@ -360,10 +367,6 @@
     <Compile Include="ViewSwitcher.ascx.designer.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-    <Folder Include="Content\css\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
