@@ -29,6 +29,45 @@ namespace Masaking.Infrastructure
             return DefaultAvatar;
         }
 
+        public static void EnsureDefaultAdmin()
+        {
+            using (SqlConnection cn = Open())
+            using (SqlTransaction tx = cn.BeginTransaction(IsolationLevel.Serializable))
+            {
+                using (SqlCommand check = new SqlCommand("SELECT username,email,role FROM users WITH (UPDLOCK,HOLDLOCK) WHERE username=@username OR email=@email", cn, tx))
+                {
+                    check.Parameters.AddWithValue("@username", "admin_default");
+                    check.Parameters.AddWithValue("@email", "admin@gmail.com");
+                    using (SqlDataReader reader = check.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            bool matches = String.Equals(Convert.ToString(reader["username"]), "admin_default", StringComparison.OrdinalIgnoreCase)
+                                && String.Equals(Convert.ToString(reader["email"]), "admin@gmail.com", StringComparison.OrdinalIgnoreCase)
+                                && String.Equals(Convert.ToString(reader["role"]), "Admin", StringComparison.OrdinalIgnoreCase);
+                            if (!matches || reader.Read())
+                                throw new InvalidOperationException("The default administrator email or username is already used by another account. Resolve this account conflict before starting the application.");
+                            reader.Close();
+                            tx.Commit();
+                            return;
+                        }
+                    }
+                }
+                using (SqlCommand create = new SqlCommand("INSERT INTO users(username,email,password,displayName,role,country,image,createdAt,isActive) VALUES(@username,@email,@password,@name,'Admin',@country,@image,@createdAt,1)", cn, tx))
+                {
+                    create.Parameters.AddWithValue("@username", "admin_default");
+                    create.Parameters.AddWithValue("@email", "admin@gmail.com");
+                    create.Parameters.AddWithValue("@password", HashPassword("admin@1234"));
+                    create.Parameters.AddWithValue("@name", "Admin");
+                    create.Parameters.AddWithValue("@country", "Malaysia");
+                    create.Parameters.AddWithValue("@image", DefaultAvatar);
+                    create.Parameters.AddWithValue("@createdAt", DateTime.UtcNow);
+                    create.ExecuteNonQuery();
+                }
+                tx.Commit();
+            }
+        }
+
         public static SqlConnection Open()
         {
             var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["MasakingDB"].ConnectionString);

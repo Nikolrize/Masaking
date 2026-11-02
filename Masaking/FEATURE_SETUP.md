@@ -2,14 +2,21 @@
 
 These pages use the existing `MasakingDB.mdf` tables. No table or column changes are required. The application connection string uses `|DataDirectory|` to open `App_Data\MasakingDB.mdf`.
 
-## First administrator
+## Default administrator
 
-1. In `Web.config`, set `AdminBootstrapKey` to a long, random one-time secret.
-2. Open `/Admin/BootstrapAdmin.aspx`. If the `users` table is empty, enter the admin account details, setup key, and a password of at least 8 characters to create the first administrator.
-3. If member accounts already exist, sign in as the member to promote, then open `/Admin/BootstrapAdmin.aspx` and provide the setup key and current password.
-4. Clear `AdminBootstrapKey` in `Web.config` after setup. Once an active administrator exists, first-admin setup is closed. Existing administrators can promote trusted members later at `/Admin/ManageUsers.aspx`.
+Application startup automatically creates the default administrator:
 
-Public registration always assigns the `Member` role.
+- Email: `admin@gmail.com`
+- Password: `admin@1234`
+- Username: `admin_default`
+- Display name: `Admin`
+- Country: `Malaysia`
+
+Sign in through `/Account/Login.aspx`. Admins are directed to Manage Recipes. No setup key or admin registration is required. The password is stored as a salted PBKDF2 hash. Existing matching admin accounts are preserved, including changed passwords and inactive status. An email or username belonging to another account causes a startup error rather than silently promoting or overwriting that account.
+
+These fixed credentials are for the assignment/demo; change the password before public deployment. Each teammate gets the account when starting the app against their own database.
+
+Public registration always assigns the `Member` role. Existing admins can promote members at `/Admin/ManageUsers.aspx`.
 
 ## Password reset
 

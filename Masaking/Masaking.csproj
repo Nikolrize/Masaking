@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -112,9 +112,9 @@
     <Content Include="Account\Register.aspx" />
     <Content Include="Admin\ManageChallenges.aspx" />
     <Content Include="Admin\ManageCommunity.aspx" />
+    <Content Include="Admin\Dashboard.aspx" />
     <Content Include="Admin\ManageRecipes.aspx" />
     <Content Include="Admin\ManageUsers.aspx" />
-    <Content Include="Admin\BootstrapAdmin.aspx" />
     <Content Include="App_Data\MasakingDB.mdf" />
     <Content Include="App_Data\MasakingDB_log.ldf">
       <DependentUpon>MasakingDB.mdf</DependentUpon>
@@ -306,6 +306,13 @@
     <Compile Include="Admin\ManageCommunity.aspx.designer.cs">
       <DependentUpon>ManageCommunity.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Admin\ManageRecipes.aspx.cs">
       <DependentUpon>ManageRecipes.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -319,13 +326,6 @@
     </Compile>
     <Compile Include="Admin\ManageUsers.aspx.designer.cs">
       <DependentUpon>ManageUsers.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\BootstrapAdmin.aspx.cs">
-      <DependentUpon>BootstrapAdmin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\BootstrapAdmin.aspx.designer.cs">
-      <DependentUpon>BootstrapAdmin.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="About.aspx.cs">
