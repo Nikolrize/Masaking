@@ -5,6 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>My Learning Progress - Masaking</title>
+    <link runat="server"
+        href="~/Content/bootstrap-icons.min.css?v=1"
+        rel="stylesheet" />
 </head>
 <body>
     <form id="form1" runat="server">

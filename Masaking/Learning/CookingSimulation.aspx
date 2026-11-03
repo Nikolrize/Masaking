@@ -4,7 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+<head runat="server">
     <title>Fried Rice Simulation - Masaking</title>
+    <link runat="server"
+        href="~/Content/bootstrap-icons.min.css?v=1"
+        rel="stylesheet" />
+</head>
 </head>
 <body>
     <form id="form1" runat="server">

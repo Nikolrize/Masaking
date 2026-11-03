@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Masaking._Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <link href="/Content/css/home.css" rel="stylesheet" />
+    <link href="/Content/css/home.css?v=2" rel="stylesheet" />
 
     <main>
         <section class="row align-items-center g-4" aria-labelledby="introSection">
@@ -15,7 +15,7 @@
             </div>
         </section>
 
-        <div class="container p-4 bg-secondary d-flex flex-column gap-4">
+        <div class="container p-4 d-flex flex-column gap-4" style="background-color: var(--color-surface, #fffdf7);">
             <section aria-labelledby="browseByCategory">
                 <h4 id="browseByCategoryTitle">Browse By Category</h4>
                 <!-- Replace with actual categories -->

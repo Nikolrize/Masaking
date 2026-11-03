@@ -1,0 +1,110 @@
+/* Smaller artwork compositions for phones, using the existing illustrations. */
+@media (max-width: 767.98px) {
+    body .profile-screen.profile-overview .profile-hero::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 1.5rem;
+        left: 0;
+        width: 56px;
+        height: 100px;
+        background: url("../images/community/community-leaves.svg") center / contain no-repeat;
+        opacity: .85;
+        pointer-events: none;
+    }
+    body .profile-screen.profile-overview .profile-hero::after {
+        display: block;
+        top: 1.5rem;
+        right: 0;
+        left: auto;
+        width: 56px;
+        height: 100px;
+        background: url("../images/community/community-leaves.svg") center / contain no-repeat;
+        opacity: .85;
+        transform: scaleX(-1);
+        pointer-events: none;
+    }
+    body .profile-screen.profile-edit-screen::before {
+        display: block;
+        top: .75rem;
+        right: 0;
+        bottom: auto;
+        left: auto;
+        width: 96px;
+        height: 64px;
+        background: url("../images/community/community-leaves.svg") right top / contain no-repeat;
+        opacity: .65;
+        pointer-events: none;
+    }
+    body .profile-edit-screen .profile-edit-topline { min-height: 64px; padding-right: 104px; }
+
+    body .community-view.community-feed-view .community-banner-art {
+        display: block !important;
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: center;
+        width: min(85%, 280px);
+        height: auto;
+        max-height: 140px;
+        object-fit: contain;
+        margin-block: .25rem;
+        margin-inline: auto;
+        object-position: center;
+        opacity: .95;
+    }
+    body .community-feed-view:not(.community-secondary-view) .community-banner-copy { display: contents; }
+    body .community-feed-view:not(.community-secondary-view) .community-banner-copy > .d-flex {
+        grid-column: 1;
+        grid-row: 1;
+        margin-bottom: 0 !important;
+    }
+    body .community-feed-view:not(.community-secondary-view) .community-search-row {
+        grid-column: 1;
+        grid-row: 3;
+        width: 100%;
+        margin-bottom: 0 !important;
+    }
+    body .community-view.community-feed-view .community-filter-row { grid-row: 4; }
+    body .community-view.community-feed-view .community-page-decor {
+        display: block;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    body .community-view.community-feed-view .community-botanical {
+        width: 100px;
+        opacity: .32;
+        transform: none;
+    }
+    body .community-view.community-feed-view .community-botanical-left { top: 24rem; left: 0; }
+    body .community-view.community-feed-view .community-botanical-right { right: 0; bottom: 3rem; transform: scaleX(-1); }
+    body .community-view.community-secondary-view .community-banner::before {
+        display: block;
+        top: .75rem;
+        right: 0;
+        width: 60px;
+        height: 100px;
+        background: url("../images/community/community-leaves.svg") right top / contain no-repeat;
+        opacity: .65;
+        transform: none;
+        pointer-events: none;
+    }
+    body .community-secondary-view .community-back-link { position: relative; z-index: 1; }
+
+    .auth-background .auth-wrap {
+        position: relative;
+        margin-top: 1rem;
+        padding-top: 0;
+    }
+
+    .recipe-submit-page .recipe-form-header::after {
+        content: "";
+        display: block;
+        width: 144px;
+        height: 80px;
+        margin: 1rem auto 0;
+        background: url("../images/profile/nasilemak_satay_roti.png") center / contain no-repeat;
+        opacity: .85;
+        pointer-events: none;
+    }
+}
