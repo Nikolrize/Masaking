@@ -13,6 +13,11 @@ namespace Masaking
 
     public partial class SiteMaster
     {
+        protected global::System.Web.UI.WebControls.PlaceHolder phGuestNav;
+        protected global::System.Web.UI.WebControls.PlaceHolder phAuthenticatedNav;
+        protected global::System.Web.UI.WebControls.HyperLink lnkNavProfile;
+        protected global::System.Web.UI.WebControls.Literal litNavInitials;
+        protected global::System.Web.UI.WebControls.Image imgNavAvatar;
 
         /// <summary>
         /// MainContent control.

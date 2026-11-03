@@ -1,0 +1,64 @@
+/* Decorative accents stay behind the search content and never intercept clicks. */
+.site-search-page { position: relative; isolation: isolate; min-height: 420px; }
+.site-search-page::before,
+.site-search-page::after,
+.site-search-hero::before {
+    content: "";
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+}
+.site-search-page::before {
+    top: 11rem;
+    left: 0;
+    width: 80px;
+    height: 160px;
+    background-image: url("../images/community/community-leaves.svg");
+    opacity: .55;
+    z-index: -1;
+}
+.site-search-page::after {
+    right: 0;
+    bottom: .5rem;
+    width: 140px;
+    height: 210px;
+    background-image: url("../images/community/community-botanical.png");
+    background-position: right bottom;
+    opacity: .3;
+    z-index: -1;
+}
+.site-search-hero {
+    position: relative;
+    min-height: 146px;
+    padding: 1rem 240px 1.5rem 0;
+    margin-bottom: 1.5rem;
+}
+.site-search-hero::before {
+    top: 0;
+    right: 0;
+    width: 220px;
+    height: 146px;
+    background-image: url("../images/profile/nasilemak_satay_roti.png");
+    background-position: center;
+    opacity: .75;
+}
+.site-search-hero .site-search-heading { margin-bottom: 0; }
+.site-search-page .site-search-result strong { overflow-wrap: anywhere; }
+
+@media (max-width: 767.98px) {
+    .site-search-page { padding-block: 1.5rem 2.5rem; }
+    .site-search-hero { min-height: 0; padding: 0 0 108px; margin-bottom: 1rem; }
+    .site-search-hero::before {
+        top: auto;
+        bottom: 0;
+        right: auto;
+        left: 50%;
+        width: 160px;
+        height: 96px;
+        transform: translateX(-50%);
+        opacity: .85;
+    }
+    .site-search-page::before { top: 13rem; width: 56px; height: 110px; }
+    .site-search-page::after { width: 96px; height: 144px; opacity: .3; }
+}

@@ -1,48 +1,131 @@
-﻿:root {
+/* Site-wide design tokens, branding, layout, buttons, forms, validation, shared avatars and previews. */
+:root {
     --color-primary: #28583d; /* Deep leafy green */
     --color-primary-dark: #1d432e;
     --color-accent: #e58a45; /* Terracotta orange */
+    --color-accent-red: #c85d46;
     --color-cream: #f7f2e6; /* Warm page background */
     --color-surface: #fffdf7; /* Cards and header */
     --color-text: #26352c;
     --color-muted: #73776d;
-    --color-border: #e8e1d3 --bs-primary: #28583d;
-    --bs-primary: #f7f2e6; /* Cream */
-    --bs-primary-rgb: 247, 242, 230;
-    --bs-secondary: #fffdf7; /* Surface */
-    --bs-secondary-rgb: 255, 253, 247;
+    --color-border: #e8e1d3;
+}
+
+.brand-mark {
+    width: 116px;
+    height: auto;
+    object-fit: contain;
+}
+
+.page-heading {
+    color: var(--color-primary-dark);
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: -.025em;
+}
+
+.masaking-card {
+    background: rgba(255,253,248,.96);
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    box-shadow: 0 10px 28px rgba(40,88,61,.07);
+}
+
+.form-control, .form-select {
+    max-width: none;
+    border-color: var(--color-border);
+}
+
+.btn {
+    max-width: none;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 .2rem rgba(40,88,61,.15);
+}
+
+.text-brand {
+    color: var(--color-primary);
+}
+
+.badge-pending {
+    color: #765100;
+    background: #fff0c8;
+}
+
+.field-validation-error {
+    color: #b42318;
+    font-size: .875rem;
+}
+
+.validation-summary-errors {
+    color: #b42318;
+}
+
+.auth-ornament {
+    color: var(--color-accent);
+}
+
+.avatar-small {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-border);
+}
+
+.image-preview {
+    display: none;
+    max-width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    border: 1px solid var(--color-border);
+    border-radius: .8rem;
+}
+
+    .image-preview.is-visible {
+        display: block;
+    }
+
+.avatar-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
 }
 
 body {
     background-color: var(--color-cream);
     color: var(--color-text);
+    font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
 }
 
 .site-header {
+    font-family: var(--bs-body-font-family);
     background-color: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
 }
 
-.site-header .navbar-brand,
-.site-header .navbar-nav .nav-link {
-    color: var(--color-primary);
-}
+    .site-header .navbar-brand,
+    .site-header .navbar-nav .nav-link {
+        color: var(--color-primary);
+    }
 
-.site-header .navbar-nav .nav-link:hover,
-.site-header .navbar-nav .nav-link:focus {
-    color: var(--color-accent);
-}
+        .site-header .navbar-nav .nav-link:hover,
+        .site-header .navbar-nav .nav-link:focus {
+            color: var(--color-accent);
+        }
 
 .btn-primary {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
-    background-color: var(--color-primary-dark);
-    border-color: var(--color-primary-dark);
-}
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: var(--color-primary-dark);
+        border-color: var(--color-primary-dark);
+    }
 
 .btn-accent {
     background-color: var(--color-accent);
@@ -55,24 +138,108 @@ body {
     border-color: var(--color-border);
 }
 
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
+.password-toggle {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.75rem;
+}
+
+    .password-toggle svg, .form-icon svg {
+        width: 1.15rem;
+        height: 1.15rem;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.form-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    color: var(--color-primary);
+}
+
 .body-content {
     margin-top: 15px;
     padding-left: 15px;
     padding-right: 15px;
 }
 
-/* Set widths on the form inputs since otherwise they're 100% wide */
 input,
 select,
 textarea {
     max-width: 280px;
 }
 
-/* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
     .body-content {
         padding: 0;
     }
 }
+
+/* Official Bootstrap Icons, loaded locally by the shared bundle or page head. */
+.password-toggle .bi, .form-icon .bi {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+i.cost-icon {
+    color: var(--color-accent);
+}
+
+.site-search-page {
+    max-width: 1000px;
+    padding-block: 2.5rem;
+}
+
+    .site-search-page h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-primary-dark);
+    }
+
+.site-search-heading {
+    color: var(--color-muted);
+    margin-bottom: 2rem;
+    overflow-wrap: anywhere;
+}
+
+.site-search-group {
+    margin-bottom: 2rem;
+}
+
+    .site-search-group h2 {
+        font-size: 1.2rem;
+        color: var(--color-primary);
+    }
+
+.site-search-result {
+    display: block;
+    margin-bottom: .75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: .75rem;
+    background: var(--color-surface);
+    text-decoration: none;
+    color: var(--color-text);
+}
+
+    .site-search-result:hover {
+        background: #edf2e7;
+        color: var(--color-primary-dark);
+    }
+
+    .site-search-result strong {
+        display: block;
+        margin-bottom: .35rem;
+    }
+
+    .site-search-result p {
+        margin: 0;
+        font-size: .85rem;
+        color: var(--color-muted);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }

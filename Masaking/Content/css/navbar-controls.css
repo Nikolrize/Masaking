@@ -1,0 +1,91 @@
+/* Add member controls while keeping the original Bootstrap navbar typography. */
+.site-header .navbar-collapse { min-width: 0; }
+.site-header .site-nav-member-actions {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-width: 0;
+    margin-left: auto;
+}
+
+.site-header .site-nav-search {
+    display: flex;
+    align-items: center;
+    width: clamp(180px, 24vw, 340px);
+    min-width: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 50rem;
+    background: var(--color-surface);
+}
+.site-header .site-nav-search:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 .15rem rgba(40, 88, 61, .12);
+}
+.site-header .site-nav-search-submit {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-primary);
+}
+.site-header .site-nav-search input {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    padding: .375rem .875rem .375rem 0;
+    border: 0;
+    border-radius: 0 50rem 50rem 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}
+.site-header .site-nav-search input::placeholder { color: var(--color-muted); }
+
+.site-header .site-nav-profile {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: #e7eedf;
+    color: var(--color-primary);
+    text-decoration: none;
+}
+.site-header .site-nav-initials { line-height: 1; }
+.site-header .site-nav-avatar {
+    position: absolute;
+    inset: 2px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.site-header .site-nav-avatar[hidden] { display: none; }
+.site-header .site-nav-profile:focus-visible,
+.site-header .site-nav-search-submit:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .site-header .navbar-collapse:has(.site-nav-member-actions) {
+        flex-wrap: wrap;
+        gap: .5rem 1rem;
+    }
+    .site-header .site-nav-member-actions { padding-block: .25rem; }
+}
+
+@media (max-width: 575.98px) {
+    .site-header .site-nav-member-actions { width: 100%; padding-block: .75rem; }
+    .site-header .site-nav-search { flex: 1; width: auto; }
+}
