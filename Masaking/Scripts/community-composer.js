@@ -51,7 +51,10 @@
 
     upload.addEventListener('change', previewPhoto);
     remove.addEventListener('change', function () {
-        if (remove.checked) { upload.value = ''; clearPreview(); }
+        if (remove.checked) {
+            upload.value = '';
+            clearPreview();
+        }
         if (existing) existing.classList.toggle('d-none', remove.checked);
     });
     ['dragenter', 'dragover'].forEach(function (name) {
@@ -60,7 +63,9 @@
             drop.classList.add('community-upload-active');
         });
     });
-    drop.addEventListener('dragleave', function () { drop.classList.remove('community-upload-active'); });
+    drop.addEventListener('dragleave', function () {
+        drop.classList.remove('community-upload-active');
+    });
     drop.addEventListener('drop', function (event) {
         event.preventDefault();
         drop.classList.remove('community-upload-active');
@@ -82,7 +87,9 @@
     var image = document.getElementById('composerRecipeImage');
     var hint = document.getElementById('composerRecipeHint');
     // Clone the server-rendered options so searches preserve values and metadata.
-    var allOptions = Array.from(recipes.options).map(function (option) { return option.cloneNode(true); });
+    var allOptions = Array.from(recipes.options).map(function (option) {
+        return option.cloneNode(true);
+    });
 
     function showRecipe() {
         var option = recipes.options[recipes.selectedIndex];

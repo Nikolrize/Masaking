@@ -1,6 +1,6 @@
 (function () {
     // Filter only the posts already rendered on this page; no database requests.
-    var page = document.querySelector('.community-view');
+    var page = document.querySelector('[data-community-page]');
     var search = document.getElementById('communitySearch');
     if (!page) return;
     var filter = 'all';
@@ -9,7 +9,9 @@
         var visible = 0;
         page.querySelectorAll('.community-feed-post').forEach(function (post) {
             var copy = post.querySelector('.community-copy').textContent.toLowerCase();
-            var text = post.textContent.toLowerCase();
+            var author = post.querySelector('.community-author');
+            var recipeTitle = post.querySelector('.community-recipe-title');
+            var text = copy + ' ' + (author ? author.textContent.toLowerCase() : '') + ' ' + (recipeTitle ? recipeTitle.textContent.toLowerCase() : '');
             var recipe = post.dataset.hasRecipe === 'true';
             var matches = filter === 'all' || (filter === 'recipes' && recipe) || (filter === 'discussions' && !recipe);
             var show = matches && text.includes(term);
@@ -174,7 +176,7 @@
     window.addEventListener('resize', updateVisibility);
     updateVisibility();
     button.addEventListener('click', function () {
-        var heading = document.querySelector('.community-feed-view h1');
+        var heading = document.querySelector('[data-community-feed] h1');
         if (heading) {
             heading.setAttribute('tabindex', '-1');
             heading.focus({ preventScroll: true });
@@ -250,8 +252,21 @@
         image.hidden = true;
         image.closest('.community-avatar').dataset.avatarPhoto = 'false';
     }
-    document.addEventListener('error', function (event) { fallback(event.target); }, true);
+    document.addEventListener('error', function (event) {
+        fallback(event.target);
+    }, true);
     document.querySelectorAll('[data-community-avatar-photo]').forEach(function (image) {
         if (image.complete && image.naturalWidth === 0) fallback(image);
     });
+}());
+
+(function () {
+    var postId = new URLSearchParams(window.location.search).get('post');
+    if (!postId || !/^\d+$/.test(postId)) return;
+    function revealPost() {
+        var post = document.querySelector('[data-post-id="' + postId + '"]');
+        if (post) post.scrollIntoView({ block: 'start', behavior: 'auto' });
+    }
+    if (document.readyState === 'complete') revealPost();
+    else window.addEventListener('load', revealPost, { once: true });
 }());

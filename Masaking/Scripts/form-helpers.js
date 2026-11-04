@@ -1,4 +1,25 @@
 (function () {
+    function updateCountryField(select) {
+        var container = document.getElementById(select.getAttribute('data-country-select'));
+        if (!container) return;
+        var input = container.querySelector('input');
+        if (!input) return;
+        var isOther = select.value === 'Other';
+        container.hidden = !isOther;
+        input.disabled = !isOther;
+        input.required = isOther;
+        select.setAttribute('aria-expanded', String(isOther));
+        select.setAttribute('aria-controls', container.id);
+    }
+
+    document.querySelectorAll('[data-country-select]').forEach(updateCountryField);
+    window.addEventListener('pageshow', function () {
+        document.querySelectorAll('[data-country-select]').forEach(updateCountryField);
+    });
+    document.addEventListener('change', function (event) {
+        if (event.target.matches('[data-country-select]')) updateCountryField(event.target);
+    });
+
     var eye = '<i class="bi bi-eye" aria-hidden="true"></i>';
     var eyeOff = '<i class="bi bi-eye-slash" aria-hidden="true"></i>';
     document.addEventListener('click', function (event) {
@@ -21,7 +42,9 @@
         if (error) error.textContent = '';
         if (!preview) return;
         if (input._previewUrl) URL.revokeObjectURL(input._previewUrl);
-        input._previewUrl = null; preview.removeAttribute('src'); preview.classList.remove('is-visible');
+        input._previewUrl = null;
+        preview.removeAttribute('src');
+        preview.classList.remove('is-visible');
         var file = input.files && input.files[0];
         var avatar = input.getAttribute('data-image-preview') === 'profileAvatarPreview' ? document.getElementById('imgAvatar') : null;
         if (avatar) {
@@ -31,9 +54,12 @@
         if (!file) return;
         if (!/^image\/(jpeg|png|gif)$/.test(file.type) || file.size > 5 * 1024 * 1024) {
             if (error) error.textContent = file.size > 5 * 1024 * 1024 ? 'Choose an image smaller than 5 MB.' : 'Choose a JPG, PNG or GIF image.';
-            input.value = ''; return;
+            input.value = '';
+            return;
         }
-        input._previewUrl = URL.createObjectURL(file); preview.src = input._previewUrl; preview.classList.add('is-visible');
+        input._previewUrl = URL.createObjectURL(file);
+        preview.src = input._previewUrl;
+        preview.classList.add('is-visible');
         if (avatar) avatar.src = input._previewUrl;
     });
 

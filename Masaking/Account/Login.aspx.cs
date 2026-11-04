@@ -9,10 +9,10 @@ namespace Masaking.Account
     {
         protected TextBox txtEmail, txtPassword;
         protected Label lblMessage;
-
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack && Database.UserId.HasValue) Response.Redirect("Profile.aspx");
+            if (!IsPostBack && Database.UserId.HasValue)
+                Response.Redirect("Profile.aspx");
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
@@ -24,24 +24,43 @@ namespace Masaking.Account
                 using (SqlDataReader rd = cmd.ExecuteReader())
                 {
                     if (!rd.Read() || !rd.GetBoolean(rd.GetOrdinal("isActive")) || !Database.VerifyPassword(txtPassword.Text, rd.GetString(rd.GetOrdinal("password"))))
-                    { Show("Email or password is incorrect, or this account is inactive."); return; }
-                    Session.Clear(); Session["UserId"] = rd.GetInt32(rd.GetOrdinal("userID"));
-                    Session["UserRole"] = rd.GetString(rd.GetOrdinal("role")); Session["DisplayName"] = rd.GetString(rd.GetOrdinal("displayName"));
+                    {
+                        Show("Email or password is incorrect, or this account is inactive.");
+                        return;
+                    }
+
+                    Session.Clear();
+                    Session["UserId"] = rd.GetInt32(rd.GetOrdinal("userID"));
+                    Session["UserRole"] = rd.GetString(rd.GetOrdinal("role"));
+                    Session["DisplayName"] = rd.GetString(rd.GetOrdinal("displayName"));
                     Session["UserImage"] = Database.AvatarUrl(rd["image"]);
                     if (!rd.GetString(rd.GetOrdinal("password")).StartsWith("PBKDF2$", StringComparison.Ordinal))
                     {
-                        string legacyPassword = rd.GetString(rd.GetOrdinal("password")); int userId = rd.GetInt32(rd.GetOrdinal("userID"));
-                        rd.Close(); using (SqlCommand migrate = new SqlCommand("UPDATE users SET password=@password WHERE userID=@id", cn))
-                        { migrate.Parameters.AddWithValue("@password", Database.HashPassword(legacyPassword)); migrate.Parameters.AddWithValue("@id", userId); migrate.ExecuteNonQuery(); }
+                        string legacyPassword = rd.GetString(rd.GetOrdinal("password"));
+                        int userId = rd.GetInt32(rd.GetOrdinal("userID"));
+                        rd.Close();
+                        using (SqlCommand migrate = new SqlCommand("UPDATE users SET password=@password WHERE userID=@id", cn))
+                        {
+                            migrate.Parameters.AddWithValue("@password", Database.HashPassword(legacyPassword));
+                            migrate.Parameters.AddWithValue("@id", userId);
+                            migrate.ExecuteNonQuery();
+                        }
                     }
                 }
             }
+
             string next = Request.QueryString["returnUrl"];
-            if (!String.IsNullOrEmpty(next) && next.StartsWith("/", StringComparison.Ordinal) && !next.StartsWith("//", StringComparison.Ordinal)) Response.Redirect(next, false);
-            else Response.Redirect(String.Equals(Database.UserRole, "Admin", StringComparison.OrdinalIgnoreCase) ? "../Admin/ManageRecipes.aspx" : "~/", false);
+            if (!String.IsNullOrEmpty(next) && next.StartsWith("/", StringComparison.Ordinal) && !next.StartsWith("//", StringComparison.Ordinal))
+                Response.Redirect(next, false);
+            else
+                Response.Redirect(String.Equals(Database.UserRole, "Admin", StringComparison.OrdinalIgnoreCase) ? "../Admin/ManageRecipes.aspx" : "~/", false);
             Context.ApplicationInstance.CompleteRequest();
         }
 
-        private void Show(string message) { lblMessage.Text = Server.HtmlEncode(message); lblMessage.CssClass = "alert alert-danger d-block"; }
+        private void Show(string message)
+        {
+            lblMessage.Text = Server.HtmlEncode(message);
+            lblMessage.CssClass = "alert alert-danger d-block";
+        }
     }
 }

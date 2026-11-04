@@ -21,15 +21,18 @@ namespace Masaking.Account
 
         protected string AvatarDisplayUrl
         {
-            get { return ProfileImage; }
+            get
+            {
+                return ProfileImage;
+            }
         }
 
         protected bool IsAdministrator
         {
             get
             {
-                return String.Equals(Database.UserRole, "Admin", StringComparison.OrdinalIgnoreCase) ||
-                       String.Equals(Database.UserRole, "Administrator", StringComparison.OrdinalIgnoreCase);
+                return String.Equals(Database.UserRole, "Admin", StringComparison.OrdinalIgnoreCase)
+                    || String.Equals(Database.UserRole, "Administrator", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -38,7 +41,9 @@ namespace Masaking.Account
             get
             {
                 string[] words = ProfileName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                return words.Length == 0 ? "M" : (words[0].Substring(0, 1) + (words.Length > 1 ? words[words.Length - 1].Substring(0, 1) : "")).ToUpperInvariant();
+                return words.Length == 0
+                    ? "M"
+                    : (words[0].Substring(0, 1) + (words.Length > 1 ? words[words.Length - 1].Substring(0, 1) : "")).ToUpperInvariant();
             }
         }
 
@@ -74,7 +79,9 @@ namespace Masaking.Account
                 cmd.Parameters.Add("@id", SqlDbType.Int).Value = Database.UserId.Value;
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    if (!reader.Read()) return;
+                    if (!reader.Read())
+                        return;
+
                     ProfileName = Convert.ToString(reader["displayName"]);
                     ProfileUsername = Convert.ToString(reader["username"]);
                     ProfileEmail = Convert.ToString(reader["email"]);
@@ -115,7 +122,10 @@ namespace Masaking.Account
             {
                 cmd.Parameters.Add("@id", SqlDbType.Int).Value = Database.UserId.Value;
                 DataTable table = new DataTable();
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd)) adapter.Fill(table);
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    adapter.Fill(table);
+                }
                 return table;
             }
         }
@@ -124,23 +134,38 @@ namespace Masaking.Account
         {
             string path = Convert.ToString(value).Replace('\\', '/');
             Uri uri;
-            if (Uri.TryCreate(path, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp)) return path;
-            if (path.StartsWith("~/", StringComparison.Ordinal)) path = path.Substring(1);
+
+            if (Uri.TryCreate(path, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp))
+                return path;
+
+            if (path.StartsWith("~/", StringComparison.Ordinal))
+                path = path.Substring(1);
+
             path = path.Replace("/Content/Uploads/Recipes/", "/Content/images/Uploads/Recipes/");
             const string prefix = "/Content/images/Uploads/Recipes/";
             Guid id;
             string file = Path.GetFileName(path);
-            return path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && path.Substring(prefix.Length) == file && file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) && Guid.TryParseExact(Path.GetFileNameWithoutExtension(file), "N", out id) ? ResolveUrl("~" + path) : "";
+
+            return path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+                && path.Substring(prefix.Length) == file
+                && file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
+                && Guid.TryParseExact(Path.GetFileNameWithoutExtension(file), "N", out id)
+                ? ResolveUrl("~" + path)
+                : "";
         }
 
         protected string RecipeUrl(object id, object status)
         {
-            return Convert.ToString(status) == "Approved" ? "../Recipes/RecipeDetails.aspx?id=" + Convert.ToInt32(id) : "../Recipes/MyRecipes.aspx";
+            return Convert.ToString(status) == "Approved"
+                ? "../Recipes/RecipeDetails.aspx?id=" + Convert.ToInt32(id)
+                : "../Recipes/MyRecipes.aspx";
         }
 
         protected string ActivityText(object kind)
         {
-            return Convert.ToString(kind) == "post" ? "You posted a new discussion" : "You commented on a discussion";
+            return Convert.ToString(kind) == "post"
+                ? "You posted a new discussion"
+                : "You commented on a discussion";
         }
 
         protected string Excerpt(object value)
@@ -153,10 +178,19 @@ namespace Masaking.Account
         {
             DateTime date = DateTime.SpecifyKind(Convert.ToDateTime(value), DateTimeKind.Utc);
             TimeSpan age = DateTime.UtcNow - date;
-            if (age.TotalMinutes < 1) return "Just now";
-            if (age.TotalHours < 1) return Math.Max(1, (int)age.TotalMinutes) + " min ago";
-            if (age.TotalDays < 1) return Math.Max(1, (int)age.TotalHours) + " hr ago";
-            if (age.TotalDays < 7) return Math.Max(1, (int)age.TotalDays) + " days ago";
+
+            if (age.TotalMinutes < 1)
+                return "Just now";
+
+            if (age.TotalHours < 1)
+                return Math.Max(1, (int)age.TotalMinutes) + " min ago";
+
+            if (age.TotalDays < 1)
+                return Math.Max(1, (int)age.TotalHours) + " hr ago";
+
+            if (age.TotalDays < 7)
+                return Math.Max(1, (int)age.TotalDays) + " days ago";
+
             return date.ToString("dd MMM yyyy", CultureInfo.InvariantCulture);
         }
     }
