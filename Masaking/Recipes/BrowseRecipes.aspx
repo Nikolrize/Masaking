@@ -151,10 +151,16 @@
                                             <asp:Label ID="recipeCategory" runat="server" />
                                         </p>
 
-                                        <!-- Prep Time -->
+                                        <!-- Prep Time, Budget, and Servings -->
                                         <span class="small text-muted">
                                             <i class="bi bi-clock me-1"></i>
                                             <asp:Label ID="recipePreparationTime" runat="server" />
+                                            &middot;
+                                            <i class="bi bi-cash me-1"></i>
+                                            <asp:Label ID="recipeBudget" runat="server" />
+                                            &middot;
+                                            <i class="bi bi-person me-1"></i>
+                                            <asp:Label ID="recipeServings" runat="server" />
                                         </span>
 
                                         <!-- Rating -->

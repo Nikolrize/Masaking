@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Masaking._Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <link href="/Content/css/home.css?v=2" rel="stylesheet" />
+    <link href="/Content/css/home.css" rel="stylesheet" />
     <link href="/Content/css/recipes.css" rel="stylesheet" />
 
     <main>
@@ -77,10 +77,16 @@
                                             <asp:Label ID="recipeCategory" runat="server" />
                                         </p>
 
-                                        <!-- Prep Time -->
+                                        <!-- Prep Time, Budget, and Servings -->
                                         <span class="small text-muted">
                                             <i class="bi bi-clock me-1"></i>
                                             <asp:Label ID="recipePreparationTime" runat="server" />
+                                            &middot;
+                                            <i class="bi bi-cash me-1"></i>
+                                            <asp:Label ID="recipeBudget" runat="server" />
+                                            &middot;
+                                            <i class="bi bi-person me-1"></i>
+                                            <asp:Label ID="recipeServings" runat="server" />
                                         </span>
 
                                         <!-- Rating -->

@@ -228,6 +228,8 @@ namespace Masaking.Recipes
                 Label recipeCuisine = (Label)e.Item.FindControl("recipeCuisine");
                 Label recipePreparationTime = (Label)e.Item.FindControl("recipePreparationTime");
                 Label recipeDifficulty = (Label)e.Item.FindControl("recipeDifficulty");
+                Label recipeBudget = (Label)e.Item.FindControl("recipeBudget");
+                Label recipeServings = (Label)e.Item.FindControl("recipeServings");
                 PlaceHolder phRatingStar = (PlaceHolder)e.Item.FindControl("phRatingStar");
 
                 recipeTitle.Text = Server.HtmlEncode(recipe["title"].ToString());
@@ -237,6 +239,8 @@ namespace Masaking.Recipes
                 recipeLink.NavigateUrl = "RecipeDetails.aspx?id=" + recipe["recipeID"].ToString();
                 recipeCuisine.Text = Server.HtmlEncode(recipe["cuisine"].ToString());
                 recipePreparationTime.Text = recipe["preparationTime"].ToString() + " mins";
+                recipeBudget.Text = "RM" + recipe["estimatedCost"].ToString();
+                recipeServings.Text = recipe["servings"].ToString();
 
                 string difficulty = recipe["difficulty"].ToString();
                 recipeDifficulty.Text = Server.HtmlEncode(difficulty);
