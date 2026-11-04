@@ -2,6 +2,7 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="/Content/css/home.css?v=2" rel="stylesheet" />
+    <link href="/Content/css/recipes.css" rel="stylesheet" />
 
     <main>
         <section class="row align-items-center g-4">
@@ -22,81 +23,80 @@
             <section>
                 <h4 class="mb-3">Browse By Category</h4>
 
-                <!-- Replace with actual categories -->
+                <!-- Categories -->
                 <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
-                    <div class="col">
-                        <a href="/Recipes/BrowseRecipes.aspx?category=Main%20Dishes"
-                            class="category-card tile-main">
-                            <i class="bi bi-egg-fried"></i>
-                            <span>Main Dishes</span>
-                        </a>
-                    </div>
-
-                    <div class="col">
-                        <a href="/Recipes/BrowseRecipes.aspx?category=Desserts"
-                            class="category-card tile-desserts">
-                            <i class="bi bi-cake2"></i>
-                            <span>Desserts</span>
-                        </a>
-                    </div>
-
-                    <div class="col">
-                        <a href="/Recipes/BrowseRecipes.aspx?category=Beverages"
-                            class="category-card tile-beverages">
-                            <i class="bi bi-cup-straw"></i>
-                            <span>Beverages</span>
-                        </a>
-                    </div>
-
-                    <div class="col">
-                        <a href="/Recipes/BrowseRecipes.aspx?category=Snacks"
-                            class="category-card tile-snacks">
-                            <i class="bi bi-cookie"></i>
-                            <span>Snacks</span>
-                        </a>
-                    </div>
-
-                    <div class="col">
-                        <a href="/Recipes/BrowseRecipes.aspx?category=Traditional"
-                            class="category-card tile-traditional">
-                            <i class="bi bi-basket"></i>
-                            <span>Traditional</span>
-                        </a>
-                    </div>
-
-                    <div class="col">
-                        <a href="/Recipes/BrowseRecipes.aspx?category=Others"
-                            class="category-card tile-others">
-                            <i class="bi bi-three-dots"></i>
-                            <span>Others</span>
-                        </a>
-                    </div>
+                    <asp:Repeater ID="rptCategories" runat="server"
+                        OnItemDataBound="rptCategories_ItemDataBound">
+                        <ItemTemplate>
+                            <div class="col">
+                                <asp:HyperLink ID="categoryLink" runat="server">
+                                    <i id="categoryIcon" runat="server"></i>
+                                    <asp:Label ID="categoryName" runat="server" />
+                                </asp:HyperLink>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </div>
             </section>
 
-            <section class="col-lg-9 mb-2">
+            <!-- Recipes -->
+            <section class="mb-2">
                 <h4 class="mb-3">Popular Recipes</h4>
 
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-3">
-                    <div class="col">
-                        <a href="RecipeDetails.aspx?id=1"
-                            class="card border border-subtle text-decoration-none text-dark hover-lift">
-                            <img src="/Content/images/home/roti canai.png"
-                                class="card-img-top"
-                                alt="Roti canai served with curry" />
+                <asp:Label ID="lblNoPopularRecipes" runat="server"
+                    Visible="false"
+                    Text="No recipes available yet."
+                    CssClass="text-muted" />
 
-                            <div class="card-body">
-                                <h5 class="card-title">Roti Canai</h5>
-                                <p class="card-text">Malaysian · Snack</p>
-                                <span class="text-warning">
-                                    <i class="bi bi-star-fill"></i>
-                                    4.6 (87)
-                                </span>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3">
+                    <asp:Repeater ID="rptPopularRecipes" runat="server"
+                        OnItemDataBound="rptPopularRecipes_ItemDataBound">
+                        <ItemTemplate>
+                            <div class="col">
+                                <asp:HyperLink ID="recipeLink" runat="server"
+                                    CssClass="card h-100 border text-decoration-none text-dark hover-lift">
+                                    <!-- Image -->
+                                    <div class="ratio ratio-4x3 bg-dark bg-opacity-25">
+                                        <asp:Image ID="recipeImage" runat="server"
+                                            CssClass="card-img-top object-fit-cover" />
+                                    </div>
+
+                                    <!-- Title and Difficulty -->
+                                    <div class="card-body d-flex flex-column gap-2">
+                                        <div class="d-flex justify-content-between align-items-center gap-2">
+                                            <h5 class="card-title recipe-card-title mb-0">
+                                                <asp:Label ID="recipeTitle" runat="server" />
+                                            </h5>
+                                            <asp:Label ID="recipeDifficulty" runat="server" />
+                                        </div>
+
+                                        <!-- Cuisine and Category -->
+                                        <p class="small text-muted mb-0">
+                                            <asp:Label ID="recipeCuisine" runat="server" />
+                                            &middot;
+                                            <asp:Label ID="recipeCategory" runat="server" />
+                                        </p>
+
+                                        <!-- Prep Time -->
+                                        <span class="small text-muted">
+                                            <i class="bi bi-clock me-1"></i>
+                                            <asp:Label ID="recipePreparationTime" runat="server" />
+                                        </span>
+
+                                        <!-- Rating -->
+                                        <div class="mt-auto pt-3 small">
+                                            <asp:PlaceHolder ID="phRatingStar"
+                                                runat="server" Visible="false">
+                                                <i class="bi bi-star-fill text-warning me-1"></i>
+                                            </asp:PlaceHolder>
+                                            <asp:Label ID="recipeRating" runat="server"
+                                                CssClass="text-muted" />
+                                        </div>
+                                    </div>
+                                </asp:HyperLink>
                             </div>
-                        </a>
-                    </div>
-
-                    <!-- Add more recipe cards here -->
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </div>
             </section>
         </div>

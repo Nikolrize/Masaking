@@ -178,10 +178,8 @@
 
     <script>
         (function () {
-            const budgetSlider =
-                document.getElementById("<%= rngBudget.ClientID %>");
-            const timeSlider =
-                document.getElementById("<%= rngTime.ClientID %>");
+            const budgetSlider = document.getElementById("<%= rngBudget.ClientID %>");
+            const timeSlider = document.getElementById("<%= rngTime.ClientID %>");
 
             const budgetDisplay = document.getElementById("budgetValue");
             const timeDisplay = document.getElementById("timeValue");
@@ -192,7 +190,6 @@
                     : "Up to RM" + budgetSlider.value;
 
                 budgetDisplay.textContent = text;
-                budgetSlider.setAttribute("aria-valuetext", text);
             }
 
             function updateTime() {
@@ -201,7 +198,6 @@
                     : "Up to " + timeSlider.value + " minutes";
 
                 timeDisplay.textContent = text;
-                timeSlider.setAttribute("aria-valuetext", text);
             }
 
             budgetSlider.addEventListener("input", updateBudget);
