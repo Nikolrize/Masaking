@@ -33,46 +33,7 @@ namespace Masaking.Recipes
 
         private void LoadRecipe(int recipeId)
         {
-            SqlConnection con = Database.Open();
-
-            SqlCommand cmd = new SqlCommand(@"
-                SELECT
-                    r.title,
-                    r.description,
-                    r.cuisine,
-                    r.difficulty,
-                    r.preparationTime,
-                    r.estimatedCost,
-                    r.servings,
-                    r.image,
-                    c.categoryName,
-                    COALESCE(ratings.reviewCount, 0) AS reviewCount,
-                    ratings.averageRating
-                FROM dbo.recipes AS r
-                LEFT JOIN dbo.recipesCategories AS rc
-                    ON rc.recipeID = r.recipeID
-                LEFT JOIN dbo.categories AS c
-                    ON c.categoryID = rc.categoryID
-                LEFT JOIN (
-                    SELECT
-                        recipeID,
-                        COUNT(*) AS reviewCount,
-                        AVG(CAST(rating AS decimal(10, 2))) AS averageRating
-                    FROM dbo.reviews
-                    WHERE status = 'Approved'
-                    GROUP BY recipeID
-                ) AS ratings
-                    ON ratings.recipeID = r.recipeID
-                WHERE r.recipeID = @recipeID
-                    AND r.status = 'Approved';", con);
-
-            cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
-
-            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-            DataTable recipes = new DataTable();
-            adapter.Fill(recipes);
-
-            con.Close();
+            DataTable recipes = RecipeRepository.GetRecipeById(recipeId);
 
             if (recipes.Rows.Count == 0)
             {
@@ -92,6 +53,10 @@ namespace Masaking.Recipes
             recipeCost.Text = Convert.ToDecimal(recipe["estimatedCost"]).ToString("0.00");
             recipeImage.ImageUrl = recipe["image"].ToString();
             recipeImage.AlternateText = recipe["title"].ToString();
+            recipeAuthor.Text = Server.HtmlEncode(recipe["displayName"].ToString());
+            authorAvatar.ImageUrl = Database.AvatarUrl(recipe["authorImage"]);
+
+            lnkAuthor.NavigateUrl = ResolveUrl("~/Account/Profile") + "?id=" + recipe["userID"].ToString();
 
             int reviewCount = Convert.ToInt32(recipe["reviewCount"]);
             phRatingStar.Visible = reviewCount > 0;
@@ -109,6 +74,18 @@ namespace Masaking.Recipes
 
             ingredientServings.Text = recipe["servings"].ToString();
             LoadRecipeContents(recipeId);
+
+            bool signedIn = Database.UserId.HasValue;
+            bool isAuthor = signedIn &&
+                Database.UserId.Value == Convert.ToInt32(recipe["userID"]);
+
+            pnlReviewForm.Visible = signedIn && !isAuthor;
+            lblReviewHint.Visible = !pnlReviewForm.Visible;
+            lblReviewHint.Text = isAuthor
+                ? "You cannot review your own recipe."
+                : "Sign in to rate this recipe and leave a comment.";
+
+            LoadReviews(recipeId);
         }
 
         private void LoadRecipeContents(int recipeId)
@@ -187,6 +164,44 @@ namespace Masaking.Recipes
                 btnFavourite.Attributes["aria-label"];
         }
 
+        private void LoadReviews(int recipeId)
+        {
+            SqlConnection con = Database.Open();
+            DataTable reviews = new DataTable();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(@"
+                    SELECT
+                        v.rating,
+                        v.comment,
+                        v.createdAt,
+                        v.updatedAt,
+                        u.displayName,
+                        u.image
+                    FROM dbo.reviews AS v
+                    INNER JOIN dbo.users AS u
+                        ON u.userID = v.userID
+                    WHERE v.recipeID = @recipeID
+                      AND v.status = 'Approved'
+                    ORDER BY v.createdAt DESC, v.reviewID DESC;", con);
+
+                cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                adapter.Fill(reviews);
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            rptReviews.DataSource = reviews;
+            rptReviews.DataBind();
+
+            lblNoReviews.Visible = reviews.Rows.Count == 0;
+        }
+
         protected void rptIngredients_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item ||
@@ -204,9 +219,7 @@ namespace Masaking.Recipes
                 }
 
                 ingredientCheck.Text = Server.HtmlEncode(name);
-
                 string quantity = Convert.ToDecimal(ingredient["quantity"]).ToString("0.##");
-
                 ingredientQuantity.Text = Server.HtmlEncode(quantity + " " + ingredient["unit"].ToString());
             }
         }
@@ -224,9 +237,7 @@ namespace Masaking.Recipes
                 Label stepInstruction = (Label)e.Item.FindControl("stepInstruction");
 
                 stepNumber.Text = step["stepNumber"].ToString();
-
                 stepInstruction.Text = Server.HtmlEncode(step["instruction"].ToString());
-
                 stepMinutes.Text = step["estimatedMinutes"].ToString() + " mins";
 
                 string image = step["image"].ToString();
@@ -234,6 +245,37 @@ namespace Masaking.Recipes
                 stepImage.Visible = !string.IsNullOrWhiteSpace(image);
                 stepImage.ImageUrl = image;
                 stepImage.AlternateText = "Step " + step["stepNumber"].ToString();
+            }
+        }
+
+        protected void rptReviews_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType == ListItemType.Item ||
+                e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                DataRowView review = (DataRowView)e.Item.DataItem;
+
+                Image avatar = (Image)e.Item.FindControl("reviewAvatar");
+                Label name = (Label)e.Item.FindControl("reviewName");
+                Label date = (Label)e.Item.FindControl("reviewDate");
+                Label stars = (Label)e.Item.FindControl("reviewStars");
+                Label comment = (Label)e.Item.FindControl("reviewComment");
+
+                avatar.ImageUrl = Database.AvatarUrl(review["image"]);
+                name.Text = Server.HtmlEncode(review["displayName"].ToString());
+
+
+                bool wasUpdated = review["updatedAt"] != DBNull.Value;
+                DateTime timestamp = Convert.ToDateTime(wasUpdated ? review["updatedAt"] : review["createdAt"]);
+                DateTime utcDate = DateTime.SpecifyKind(timestamp, DateTimeKind.Utc);
+                TimeZoneInfo malaysiaTime = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
+                date.Text = (wasUpdated ? "Updated on " : "") + TimeZoneInfo.ConvertTimeFromUtc(utcDate, malaysiaTime).ToString("dd MMM yyyy, hh:mm tt");
+
+                int rating = Convert.ToInt32(review["rating"]);
+                stars.Text = new string('★', rating) +
+                    new string('☆', 5 - rating);
+                comment.Text = Server.HtmlEncode(review["comment"].ToString());
+                comment.Visible = !string.IsNullOrWhiteSpace(review["comment"].ToString());
             }
         }
 
@@ -246,6 +288,17 @@ namespace Masaking.Recipes
 
             Response.StatusCode = 404;
             Response.TrySkipIisCustomErrors = true;
+        }
+
+        private void ShowReviewMessage(string message, bool success)
+        {
+            lblReviewMessage.Text = Server.HtmlEncode(message);
+
+            lblReviewMessage.CssClass = success
+                ? "alert alert-success d-block"
+                : "alert alert-danger d-block";
+
+            lblReviewMessage.Visible = true;
         }
 
         protected void btnFavourite_ServerClick(object sender, EventArgs e)
@@ -311,6 +364,117 @@ namespace Masaking.Recipes
             {
                 LoadFavourite(recipeId);
             }
+        }
+        protected void btnSubmitReview_Click(object sender, EventArgs e)
+        {
+            if (!Database.RequireUser(Response))
+            {
+                return;
+            }
+
+            int recipeId;
+
+            if (!int.TryParse(Request.QueryString["id"], out recipeId) ||
+                recipeId <= 0)
+            {
+                ShowRecipeNotFound();
+                return;
+            }
+
+            int rating;
+            string comment = txtReviewComment.Text.Trim();
+
+            if (!int.TryParse(ddlReviewRating.SelectedValue, out rating) ||
+                rating < 1 || rating > 5)
+            {
+                ShowReviewMessage("Choose a rating from 1 to 5.", false);
+                return;
+            }
+
+            if (comment.Length > 1000)
+            {
+                ShowReviewMessage("Keep your comment within 1,000 characters.", false);
+                return;
+            }
+
+            SqlConnection con = Database.Open();
+
+            try
+            {
+                SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable);
+
+                SqlCommand check = new SqlCommand(@"
+                    SELECT userID
+                    FROM dbo.recipes
+                    WHERE recipeID = @recipeID
+                        AND status = 'Approved';", con, transaction);
+
+                check.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+
+                object authorId = check.ExecuteScalar();
+
+                if (authorId == null)
+                {
+                    transaction.Rollback();
+                    ShowRecipeNotFound();
+                    return;
+                }
+
+                if (Convert.ToInt32(authorId) == Database.UserId.Value)
+                {
+                    transaction.Rollback();
+                    ShowReviewMessage("You cannot review your own recipe.", false);
+                    return;
+                }
+
+                SqlCommand cmd = new SqlCommand(@"
+                    IF EXISTS (
+                        SELECT 1
+                        FROM dbo.reviews WITH (UPDLOCK, HOLDLOCK)
+                        WHERE userID = @userID
+                          AND recipeID = @recipeID
+                    )
+                    BEGIN
+                        UPDATE dbo.reviews
+                        SET rating = @rating,
+                            comment = @comment,
+                            status = 'Approved',
+                            updatedAt = SYSUTCDATETIME()
+                        WHERE userID = @userID
+                          AND recipeID = @recipeID;
+                    END
+                    ELSE
+                    BEGIN
+                        INSERT INTO dbo.reviews
+                            (rating, comment, status, createdAt,
+                             updatedAt, userID, recipeID)
+                        VALUES
+                            (@rating, @comment, 'Approved', SYSUTCDATETIME(),
+                             NULL, @userID, @recipeID);
+                    END;", con, transaction);
+
+                cmd.Parameters.Add("@userID", SqlDbType.Int).Value = Database.UserId.Value;
+                cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+                cmd.Parameters.Add("@rating", SqlDbType.TinyInt).Value = rating;
+                cmd.Parameters.Add("@comment", SqlDbType.NVarChar, 1000).Value =
+                    string.IsNullOrWhiteSpace(comment)
+                        ? (object)DBNull.Value
+                        : comment;
+
+                cmd.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            LoadRecipe(recipeId);
+
+            txtReviewComment.Text = "";
+            ddlReviewRating.ClearSelection();
+
+            ShowReviewMessage("Your review has been saved.", true);
         }
     }
 }

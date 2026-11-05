@@ -720,3 +720,89 @@ stroke: #b88924;
     outline-offset: 4px;
     border-radius: 4px;
 }
+
+.recipe-summary-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-surface);
+    border-radius: 1rem;
+    box-shadow: 0 4px 16px rgb(38 53 44 / 5%);
+}
+
+.recipe-author-link {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.recipe-author-link:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.recipe-author-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+}
+
+.recipe-author-avatar {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-cream);
+}
+
+.rating-stars {
+    display: inline-flex;
+    gap: 0.35rem;
+    padding: 0;
+    list-style: none;
+}
+
+.rating-stars li {
+    position: relative;
+}
+
+.rating-stars input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.rating-stars label {
+    display: block;
+    color: var(--color-muted);
+    font-size: 0;
+    cursor: pointer;
+}
+
+.rating-stars label::before {
+    content: "★";
+    font-size: 2rem;
+    line-height: 1.2;
+}
+
+.rating-stars:has(input:checked) label {
+    color: var(--color-accent);
+}
+
+.rating-stars li:has(input:checked) ~ li label {
+    color: var(--color-muted);
+}
+
+.rating-stars:has(label:hover) label {
+    color: var(--color-accent);
+}
+
+.rating-stars li:has(label:hover) ~ li label {
+    color: var(--color-muted);
+}
+
+.rating-stars input:focus-visible + label {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: 4px;
+}

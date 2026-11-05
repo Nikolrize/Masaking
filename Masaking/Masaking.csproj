@@ -44,6 +44,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controls\RecipeCard.ascx.cs">
+      <DependentUpon>RecipeCard.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\RecipeCard.ascx.designer.cs">
+      <DependentUpon>RecipeCard.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\CategoryRepository.cs" />
     <Compile Include="Infrastructure\Database.cs" />
     <Compile Include="Infrastructure\ImageUpload.cs" />
     <Reference Include="Microsoft.CSharp" />
@@ -108,6 +116,7 @@
     <Content Include="Account\Profile.aspx" />
     <Content Include="Account\EditProfile.aspx" />
     <Content Include="Content\images\profile\nasilemak_satay_roti.png" />
+    <Content Include="Controls\RecipeCard.ascx" />
     <Content Include="Scripts\profile.js" />
     <Content Include="Account\Register.aspx" />
     <Content Include="Admin\ManageChallenges.aspx" />
@@ -263,6 +272,7 @@
     <Compile Include="Account\ResetPassword.aspx.designer.cs">
       <DependentUpon>ResetPassword.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\RecipeRepository.cs" />
     <Compile Include="Search.aspx.cs">
       <DependentUpon>Search.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
