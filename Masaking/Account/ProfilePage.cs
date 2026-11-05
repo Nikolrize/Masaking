@@ -9,7 +9,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Account
 {
-    public abstract class ProfilePage : Page
+    public abstract class ProfilePage : ResponsivePage
     {
         protected string ProfileName = "Community member";
         protected string ProfileUsername = "";

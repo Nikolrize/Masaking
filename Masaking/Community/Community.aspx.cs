@@ -76,18 +76,9 @@ namespace Masaking.Community
         {
             var panel = (Panel)item.FindControl("pnlComments");
             panel.Visible = expanded;
-            foreach (string id in new[]
-            {
-                "lnkPost",
-                "lnkPost2"
-            }
-
-            )
-            {
-                var button = (LinkButton)item.FindControl(id);
-                button.Attributes["aria-expanded"] = expanded ? "true" : "false";
-                button.Attributes["aria-controls"] = panel.ClientID;
-            }
+            var button = (LinkButton)item.FindControl("lnkPost");
+            button.Attributes["aria-expanded"] = expanded ? "true" : "false";
+            button.Attributes["aria-controls"] = panel.ClientID;
         }
 
         private void CommentMessage(RepeaterItem item, string message, bool success)
@@ -152,12 +143,6 @@ namespace Masaking.Community
             login.Visible = !currentUserIsActive;
             login.NavigateUrl = "../Account/Login.aspx?returnUrl=" + Server.UrlEncode(ResolveUrl("~/Community/Community.aspx") + "?post=" + postId);
             SetCommentsExpanded(item, true);
-        }
-
-        protected void ddlCommentSort_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var item = CommentPostItem((Control)sender);
-            RunCommentAction(item, () => BindComments(item));
         }
 
         protected void btnComment_Click(object sender, EventArgs e)
@@ -310,12 +295,12 @@ namespace Masaking.Community
                 if (!Int32.TryParse(Convert.ToString(e.CommandArgument), out int postId) || postId <= 0)
                     return;
                 using (SqlConnection cn = Database.Open())
-                using (SqlCommand cmd = new SqlCommand("UPDATE posts SET status='Approved' WHERE postID=@post AND userID=@user AND status='Deleted' " + "AND (recipeID IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipes.recipeID=posts.recipeID AND recipes.status='Approved'))", cn))
+                using (SqlCommand cmd = new SqlCommand("UPDATE posts SET status='Approved' WHERE postID=@post AND userID=@user AND status='Deleted' " + "AND (recipeID IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipes.recipeID=posts.recipeID AND recipes.status='Approved' AND recipes.userID=@user))", cn))
                 {
                     cmd.Parameters.Add("@post", SqlDbType.Int).Value = postId;
                     cmd.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
                     if (cmd.ExecuteNonQuery() != 1)
-                        Show("This post could not be restored. Its attached recipe may no longer be available.", false);
+                        Show("This post could not be restored. Its attached recipe must be one of your approved recipes.", false);
                     else
                         Show("Your post has been restored to the community feed.", true);
                 }
@@ -385,10 +370,8 @@ namespace Masaking.Community
             btnLike.Text = Convert.ToString(GetLikeButtonText(row["likeCount"]));
             var lnkPost = (LinkButton)e.Item.FindControl("lnkPost");
             lnkPost.Text = Convert.ToString(row["commentCount"]);
-            var lnkPost2 = (LinkButton)e.Item.FindControl("lnkPost2");
             int postId = Convert.ToInt32(row["postID"]);
             lnkPost.CommandArgument = postId.ToString();
-            lnkPost2.CommandArgument = postId.ToString();
             SetCommentsExpanded(e.Item, false);
             int requestedPost;
             if (!IsPostBack && Int32.TryParse(Request.QueryString["post"], out requestedPost) && requestedPost == postId)
@@ -413,6 +396,10 @@ namespace Masaking.Community
             if (e.Item.ItemType != ListItemType.Item && e.Item.ItemType != ListItemType.AlternatingItem)
                 return;
             var row = (System.Data.DataRowView)e.Item.DataItem;
+            var commentRow = (HtmlGenericControl)e.Item.FindControl("commentRow");
+            commentRow.Attributes["data-comment-created"] = Convert.ToDateTime(row["createdAt"])
+                .ToString("yyyy-MM-ddTHH:mm:ss.fffffff", System.Globalization.CultureInfo.InvariantCulture);
+            commentRow.Attributes["data-comment-id"] = Convert.ToString(row["postCommentID"], System.Globalization.CultureInfo.InvariantCulture);
             var pnlEditComment = (Panel)e.Item.FindControl("pnlEditComment");
             var lblAuthorAvatar2 = (Label)e.Item.FindControl("lblAuthorAvatar2");
             lblAuthorAvatar2.Text = Convert.ToString(CommunityAvatar(row["profilePicture"], row["displayName"], "Comment author"));

@@ -9,7 +9,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Recipes
 {
-    public partial class SubmitRecipe : System.Web.UI.Page
+    public partial class SubmitRecipe : ResponsivePage
     {
         protected TextBox txtTitle, txtDescription, txtCuisine, txtRegion, txtServings, txtPrep, txtCost, txtIngredients, txtSteps, txtStepImages;
         protected FileUpload uploadRecipeImage;
@@ -38,6 +38,12 @@ namespace Masaking.Recipes
             if (!Database.RequireUser(Response))
                 return;
             Form.Enctype = "multipart/form-data";
+            Title = EditId.HasValue ? "Edit recipe | Masaking" : "Share a recipe | Masaking";
+            recipeHeading.InnerText = EditId.HasValue ? "Edit your recipe" : "Share your recipe";
+            btnSave.Text = EditId.HasValue ? "Save changes" : "Submit for review";
+            lblApprovalNotice.Text = Server.HtmlEncode(EditId.HasValue
+                ? "Your changes are saved without another approval request. The recipe keeps its current approval status."
+                : "New recipes need administrator approval before they appear publicly.");
             if (!IsPostBack && EditId.HasValue)
                 LoadRecipe();
         }
@@ -95,7 +101,6 @@ namespace Masaking.Recipes
                 txtStepImages.Text = String.Join(Environment.NewLine, stepImageUrls.ToArray());
             }
 
-            btnSave.Text = "Save changes for review";
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -188,13 +193,15 @@ namespace Masaking.Recipes
                     if (EditId.HasValue)
                     {
                         recipeId = EditId.Value;
-                        using (SqlCommand cmd = new SqlCommand("UPDATE recipes SET title=@title,description=@description,cuisine=@cuisine,region=@region,difficulty=@difficulty,preparationTime=@prep,estimatedCost=@cost,servings=@servings,image=@image,status='Pending',updatedAt=@updated WHERE recipeID=@id AND userID=@user", cn, tx))
+                        // Editing preserves the current approval status; only new recipes enter review.
+                        using (SqlCommand cmd = new SqlCommand("UPDATE recipes SET title=@title,description=@description,cuisine=@cuisine,region=@region,difficulty=@difficulty,preparationTime=@prep,estimatedCost=@cost,servings=@servings,image=@image,updatedAt=@updated WHERE recipeID=@id AND userID=@user", cn, tx))
                         {
                             AddRecipeParameters(cmd, servings, prep, cost, savedRecipeImage);
                             cmd.Parameters.AddWithValue("@updated", DateTime.UtcNow);
                             cmd.Parameters.AddWithValue("@id", recipeId);
                             cmd.Parameters.AddWithValue("@user", Database.UserId.Value);
-                            cmd.ExecuteNonQuery();
+                            if (cmd.ExecuteNonQuery() != 1)
+                                throw new InvalidOperationException("The recipe could not be updated. You can only edit your own recipes.");
                         }
 
                         using (SqlCommand cmd = new SqlCommand("DELETE FROM ingredients WHERE recipeID=@id; DELETE FROM steps WHERE recipeID=@id", cn, tx))
@@ -260,7 +267,7 @@ namespace Masaking.Recipes
                     foreach (string old in oldStepImages)
                         if (!String.IsNullOrEmpty(old) && !keptStepImages.Contains(old))
                             ImageUpload.DeleteUploaded(old, "Steps");
-                    Response.Redirect("MyRecipes.aspx?saved=1", false);
+                    Response.Redirect(EditId.HasValue ? "MyRecipes.aspx?saved=updated" : "MyRecipes.aspx?saved=1", false);
                     Context.ApplicationInstance.CompleteRequest();
                 }
                 catch (Exception ex)

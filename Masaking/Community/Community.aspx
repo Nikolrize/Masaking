@@ -4,14 +4,7 @@
     <link href="../Content/css/community.css" rel="stylesheet" />
     <link href="../Content/css/community-responsive.css" rel="stylesheet" />
 
-    <!-- Official Bootstrap Icons v1.13.1, stored locally with the MIT license. -->
     <main data-community-page data-community-feed class="position-relative">
-        <div class="community-page-decor" aria-hidden="true">
-            <asp:Image runat="server" ID="imgDecoration" class="community-botanical community-botanical-left" ImageUrl="~/Content/images/community/community-botanical.png" AlternateText="" GenerateEmptyAlternateText="true" decoding="async" />
-            <asp:Image runat="server" ID="imgDecoration2" class="community-botanical community-botanical-right" ImageUrl="~/Content/images/community/community-botanical.png" AlternateText="" GenerateEmptyAlternateText="true" decoding="async" />
-        </div>
-
-        <!-- Bootstrap header and filters, aligned with the home page. -->
         <header class="row align-items-center g-4 mb-3">
             <div class="col-md-6">
                 <h1 class="mb-2">Community Kitchen</h1>
@@ -27,7 +20,11 @@
             </div>
 
             <div class="col-md-6">
-                <asp:Image runat="server" ID="imgDecoration3" class="community-hero-image img-fluid d-block mx-auto" ImageUrl="~/Content/images/community/three_plates_food.png?v=20261024-34" AlternateText="" GenerateEmptyAlternateText="true" aria-hidden="true" />
+                <div class="community-hero-art position-relative d-flex align-items-center justify-content-center" aria-hidden="true">
+                    <asp:Image runat="server" ID="imgDecoration" class="community-hero-botanical community-hero-botanical-left" ImageUrl="~/Content/images/community/community-botanical.png" AlternateText="" GenerateEmptyAlternateText="true" decoding="async" />
+                    <asp:Image runat="server" ID="imgDecoration3" class="community-hero-image img-fluid d-block mx-auto" ImageUrl="~/Content/images/community/three_plates_food.png?v=20261024-34" AlternateText="" GenerateEmptyAlternateText="true" />
+                    <asp:Image runat="server" ID="imgDecoration2" class="community-hero-botanical community-hero-botanical-right" ImageUrl="~/Content/images/community/community-botanical.png" AlternateText="" GenerateEmptyAlternateText="true" decoding="async" />
+                </div>
             </div>
 
             <asp:Panel ID="pnlSort" runat="server" class="community-filter-row col-12">
@@ -108,9 +105,7 @@
                                         </asp:PlaceHolder>
                                     </header>
 
-                                    <p class="community-copy mb-3">
-                                        <asp:Label ID="lblContent" runat="server" />
-                                    </p>
+                                    <p class="community-copy mb-3"><asp:Label ID="lblContent" runat="server" /></p>
 
                                     <div class="community-post-media">
                                         <asp:Image ID="imgPost" runat="server" class="community-post-photo img-fluid rounded-2 mb-3" AlternateText="Shared cooking photo" />
@@ -142,9 +137,6 @@
                                                     <asp:LinkButton ID="lnkPost" runat="server" role="button" CommandName="toggleComments" CausesValidation="false" Text="0" class="bi bi-chat btn btn-sm text-secondary p-0 border-0 d-inline-flex align-items-center gap-2" aria-label="Read comments" />
                                                 </div>
 
-                                                <asp:LinkButton ID="lnkPost2" runat="server" role="button" CommandName="toggleComments" CausesValidation="false" class="btn btn-sm btn-outline-secondary rounded-pill px-3 d-none d-md-inline-flex align-items-center gap-1">
-                                                    <i class="bi bi-chat community-icon" aria-hidden="true"></i><span class="small">Comment</span>
-                                                </asp:LinkButton>
                                             </footer>
 
                                             <asp:Panel ID="pnlComments" runat="server" Visible="false" class="community-comments border-top mt-3 pt-3" role="region" aria-label="Post comments">
@@ -152,7 +144,7 @@
 
                                                 <div class="community-thread-heading d-flex justify-content-between align-items-center mb-2">
                                                     <h2 class="h6 mb-0 fw-bold">Comments (<asp:Label ID="lblThreadCommentCount" runat="server" />)</h2>
-                                                    <asp:DropDownList ID="ddlCommentSort" runat="server" data-community-sort="Sort comments" AutoPostBack="true" OnSelectedIndexChanged="ddlCommentSort_SelectedIndexChanged" class="form-select form-select-sm community-sort" aria-label="Sort comments">
+                                                    <asp:DropDownList ID="ddlCommentSort" runat="server" data-community-sort="Sort comments" data-community-comment-sort="true" class="form-select form-select-sm community-sort" aria-label="Sort comments">
                                                         <asp:ListItem Value="newest">Latest</asp:ListItem>
                                                         <asp:ListItem Value="oldest">Oldest</asp:ListItem>
                                                     </asp:DropDownList>
@@ -160,7 +152,7 @@
 
                                                 <asp:Repeater ID="rptComments" runat="server" OnItemDataBound="rptComments_ItemDataBound">
                                                     <itemtemplate>
-                                                        <article class="community-comment-row d-flex gap-3 py-3 border-bottom">
+                                                        <article id="commentRow" runat="server" class="community-comment-row d-flex gap-3 py-3 border-bottom">
                                                             <asp:Label ID="lblAuthorAvatar2" runat="server" class="d-inline-flex flex-shrink-0" />
                                                             <div class="community-content flex-grow-1">
                                                                 <header class="d-flex justify-content-between gap-2">
@@ -195,9 +187,7 @@
                                                                     </asp:PlaceHolder>
                                                                 </header>
 
-                                                                <p class="community-copy small mt-1 mb-0">
-                                                                    <asp:Label ID="lblContent3" runat="server" />
-                                                                </p>
+                                                                <p class="community-copy small mt-1 mb-0"><asp:Label ID="lblContent3" runat="server" /></p>
 
                                                                 <asp:Panel ID="pnlEditComment" runat="server" class="collapse mt-2">
                                                                     <asp:Label runat="server" AssociatedControlID="txtEditComment" Text="Edit your comment" class="visually-hidden" />
@@ -214,7 +204,7 @@
                                                     No comments yet. Start the conversation.
                                                 </asp:Panel>
 
-                                                <asp:Panel ID="pnlCommentForm" runat="server" class="community-comment-form d-flex align-items-start gap-3 pt-3">
+                                                <asp:Panel ID="pnlCommentForm" runat="server" class="community-comment-form d-flex align-items-start gap-3 pt-3" DefaultButton="btnComment">
                                                     <asp:Label ID="lblCurrentUserAvatar" runat="server" class="d-inline-flex flex-shrink-0" />
                                                     <div class="flex-grow-1">
                                                         <asp:Label runat="server" AssociatedControlID="txtComment" Text="Your comment" class="visually-hidden" />
@@ -266,9 +256,7 @@
                                 <itemtemplate>
                                     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 border-top py-3">
                                         <div class="flex-grow-1">
-                                            <p class="community-copy mb-1 text-dark small">
-                                                <asp:Label ID="lblContent2" runat="server" />
-                                            </p>
+                                            <p class="community-copy mb-1 text-dark small"><asp:Label ID="lblContent2" runat="server" /></p>
                                             <span class="small text-secondary">Deleted ·
                                                 <asp:Label ID="lblContentDate2" runat="server" />
                                             </span>
@@ -297,6 +285,6 @@
         </asp:Panel>
     </div>
 
-    <script src="../Scripts/form-helpers.js?v=20261024-39"></script>
-    <script src="../Scripts/community.js?v=20261104-1"></script>
+    <script src="../Scripts/form-helpers.js"></script>
+    <script src="../Scripts/community.js"></script>
 </asp:Content>

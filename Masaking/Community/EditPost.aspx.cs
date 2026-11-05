@@ -63,6 +63,8 @@ namespace Masaking.Community
                 ListItem recipe = ddlRecipe.Items.FindByValue(Convert.ToString(post["recipeID"]));
                 if (recipe != null)
                     ddlRecipe.SelectedValue = recipe.Value;
+                else if (post["recipeID"] != DBNull.Value)
+                    Show("The previous attachment is unavailable. Choose one of your approved recipes or publish without an attachment.", false);
             });
         }
 
@@ -71,15 +73,18 @@ namespace Masaking.Community
             ddlRecipe.Items.Clear();
             ddlRecipe.Items.Add(new ListItem("No recipe attached", ""));
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand("SELECT recipeID, title, image, cuisine FROM recipes WHERE status='Approved' ORDER BY title", cn))
-            using (SqlDataReader reader = cmd.ExecuteReader())
+            using (SqlCommand cmd = new SqlCommand("SELECT recipeID, title, image, cuisine FROM recipes WHERE status='Approved' AND userID=@user ORDER BY title", cn))
             {
-                while (reader.Read())
+                cmd.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    ListItem item = new ListItem(Convert.ToString(reader["title"]), Convert.ToString(reader["recipeID"]));
-                    item.Attributes["data-image"] = RecipeImageUrl(reader["image"]);
-                    item.Attributes["data-summary"] = Convert.ToString(reader["cuisine"]);
-                    ddlRecipe.Items.Add(item);
+                    while (reader.Read())
+                    {
+                        ListItem item = new ListItem(Convert.ToString(reader["title"]), Convert.ToString(reader["recipeID"]));
+                        item.Attributes["data-image"] = RecipeImageUrl(reader["image"]);
+                        item.Attributes["data-summary"] = Convert.ToString(reader["cuisine"]);
+                        ddlRecipe.Items.Add(item);
+                    }
                 }
             }
         }
@@ -123,7 +128,7 @@ namespace Masaking.Community
                 {
                     if (!Int32.TryParse(ddlRecipe.SelectedValue, out parsedRecipe) || parsedRecipe <= 0 || ddlRecipe.Items.FindByValue(ddlRecipe.SelectedValue) == null)
                     {
-                        Show("Choose an available recipe or leave it empty.", false);
+                        Show("Choose one of your approved recipes or leave it empty.", false);
                         return;
                     }
 
@@ -143,10 +148,10 @@ namespace Masaking.Community
                     string sql = IsEditing ? @"UPDATE posts SET content=@content, image=@image, recipeID=@recipe, updatedAt=SYSUTCDATETIME()
                         OUTPUT INSERTED.postID WHERE postID=@post AND userID=@user AND status='Approved'
                         AND createdAt>=DATEADD(day,-7,SYSUTCDATETIME()) AND createdAt<=SYSUTCDATETIME()
-                        AND (@recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID=@recipe AND status='Approved'))" : @"INSERT INTO posts(content,image,likes,status,createdAt,updatedAt,userID,recipeID)
+                        AND (@recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID=@recipe AND status='Approved' AND userID=@user))" : @"INSERT INTO posts(content,image,likes,status,createdAt,updatedAt,userID,recipeID)
                         OUTPUT INSERTED.postID
                         SELECT @content,@image,0,'Approved',SYSUTCDATETIME(),NULL,@user,@recipe
-                        WHERE @recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID=@recipe AND status='Approved')";
+                        WHERE @recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID=@recipe AND status='Approved' AND userID=@user)";
                     using (SqlConnection cn = Database.Open())
                     using (SqlCommand cmd = new SqlCommand(sql, cn))
                     {
@@ -158,7 +163,7 @@ namespace Masaking.Community
                         object result = cmd.ExecuteScalar();
                         if (result == null || result == DBNull.Value)
                         {
-                            Show("The post could not be saved. Its editing window or attached recipe may no longer be available.", false);
+                            Show("The post could not be saved. Its editing window may have expired, or the recipe is no longer one of your approved recipes.", false);
                             return;
                         }
 

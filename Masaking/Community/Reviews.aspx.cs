@@ -6,22 +6,22 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Community
 {
-    public partial class Reviews : System.Web.UI.Page
+    public partial class Reviews : CommunityPage
     {
-        protected Label lblMessage;
         protected Panel pnlForm, pnlSignIn, pnlEmpty;
         protected DropDownList ddlRecipe, ddlRating;
         protected TextBox txtComment;
         protected Repeater rptReviews;
         protected void Page_Load(object sender, EventArgs e)
         {
-            pnlForm.Visible = Database.UserId.HasValue;
-            pnlSignIn.Visible = !Database.UserId.HasValue;
+            pnlForm.Visible = currentUserIsActive;
+            pnlSignIn.Visible = !currentUserIsActive;
             if (!IsPostBack)
-            {
-                BindRecipeOptions();
-                BindReviews();
-            }
+                RunDatabaseAction(() =>
+                {
+                    BindRecipeOptions();
+                    BindReviews();
+                });
         }
 
         private void BindRecipeOptions()
@@ -44,7 +44,7 @@ namespace Masaking.Community
         private void BindReviews()
         {
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand("SELECT v.recipeID,r.title,u.displayName,REPLICATE(N'★',v.rating) stars,COALESCE(v.comment,N'Rated this recipe.') comment,v.createdAt FROM reviews v JOIN recipes r ON r.recipeID=v.recipeID JOIN users u ON u.userID=v.userID WHERE v.status='Approved' AND r.status='Approved' ORDER BY v.createdAt DESC", cn))
+            using (SqlCommand cmd = new SqlCommand("SELECT v.recipeID,r.title,u.displayName,REPLICATE(N'★',v.rating) stars,COALESCE(v.comment,N'Rated this recipe.') comment,v.createdAt FROM reviews v JOIN recipes r ON r.recipeID=v.recipeID JOIN users u ON u.userID=v.userID WHERE v.status='Approved' AND r.status='Approved' AND u.isActive=1 ORDER BY v.createdAt DESC", cn))
             {
                 DataTable dt = new DataTable();
                 using (SqlDataAdapter da = new SqlDataAdapter(cmd))
@@ -57,12 +57,14 @@ namespace Masaking.Community
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
+            RunDatabaseAction(SaveReview);
+        }
+
+        private void SaveReview()
+        {
             int recipeId, rating;
-            if (!Database.UserId.HasValue)
-            {
-                Response.Redirect("../Account/Login.aspx");
+            if (!RequireCurrentUser())
                 return;
-            }
 
             if (!Int32.TryParse(ddlRecipe.SelectedValue, out recipeId) || !Int32.TryParse(ddlRating.SelectedValue, out rating) || rating < 1 || rating > 5 || txtComment.Text.Trim().Length > 1000)
             {
@@ -104,12 +106,6 @@ namespace Masaking.Community
             }
 
             BindReviews();
-        }
-
-        private void Show(string text, bool success)
-        {
-            lblMessage.Text = Server.HtmlEncode(text);
-            lblMessage.CssClass = success ? "alert alert-success d-block" : "alert alert-danger d-block";
         }
 
         protected void rptReviews_ItemDataBound(object sender, RepeaterItemEventArgs e)

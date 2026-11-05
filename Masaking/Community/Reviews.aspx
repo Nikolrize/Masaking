@@ -65,7 +65,7 @@
                             <article class="community-card rounded-3 p-4 h-100">
                                 <div class="d-flex justify-content-between gap-2">
                                     <h2 class="h5 page-heading">
-                                        <asp:HyperLink ID="lnkRecipeDetails" runat="server" ClientIDMode="Static" class="text-reset text-decoration-none">
+                                        <asp:HyperLink ID="lnkRecipeDetails" runat="server" class="text-reset text-decoration-none">
                                             <asp:Label ID="lblTitle" runat="server" />
                                         </asp:HyperLink>
                                     </h2>
@@ -91,5 +91,5 @@
         </button>
     </div>
 
-    <script src="../Scripts/community.js?v=20261104-1"></script>
+    <script src="../Scripts/community.js"></script>
 </asp:Content>

@@ -151,5 +151,5 @@
         </div>
     </main>
 
-    <script src="../Scripts/profile.js?v=5"></script>
+    <script src="../Scripts/profile.js"></script>
 </asp:Content>

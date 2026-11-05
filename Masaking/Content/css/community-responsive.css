@@ -57,15 +57,6 @@
         right: max(1.5rem, env(safe-area-inset-right));
     }
 
-    .masaking-nav:has(~ [data-community-page]) .container {
-        gap: .75rem;
-    }
-
-    .masaking-nav:has(~ [data-community-page]) .navbar-nav {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: .25rem 1rem;
-    }
 }
 
 @media (max-width: 767.98px) {
@@ -172,10 +163,6 @@
         max-height: 320px;
     }
 
-    .community-detail .community-post-media {
-        display: block;
-    }
-
     [data-community-page] .community-recipe {
         gap: .625rem !important;
     }
@@ -214,11 +201,6 @@
 
     [data-community-page] .community-comment-form .form-control {
         min-height: 44px;
-    }
-
-    [data-community-page] #comments > .d-flex {
-        flex-wrap: wrap;
-        gap: .75rem;
     }
 
     .community-composer .community-attachment {
@@ -410,6 +392,14 @@
         font-size: .6875rem;
     }
 
+    [data-community-page] .community-comment-row .community-menu > summary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        min-height: 24px;
+    }
+
     [data-community-page] .community-comment-row .community-copy {
         font-size: .875rem;
     }
@@ -429,7 +419,7 @@
     }
 
     [data-community-page] .community-feed-post .community-comment-form > .btn {
-        grid-column: auto;
+        grid-column: 3;
         grid-row: 1;
         min-height: 36px;
         padding: .375rem .5rem !important;

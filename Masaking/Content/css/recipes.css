@@ -104,8 +104,7 @@
 
 /* Guided recipe submission, scoped so other recipe pages keep their layout. */
 .recipe-submit-page {
-    max-width: 1100px;
-    padding-block: 2.5rem 3rem;
+    padding-bottom: 3rem;
 }
 
 .recipe-form-header {
@@ -227,6 +226,7 @@
 }
 
 .recipe-submit-page .form-control, .recipe-submit-page .form-select {
+    max-width: none;
     min-height: 42px;
     font-size: .9rem;
     background-color: #fffdf8;
@@ -473,7 +473,7 @@
 
 @media (max-width: 767.98px) {
     .recipe-submit-page {
-        padding-block: 1.5rem 2rem;
+        padding-bottom: 2rem;
     }
 
     .recipe-form-section {

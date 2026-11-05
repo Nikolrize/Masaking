@@ -162,6 +162,7 @@
     function coverState() {
         var file = mainUpload.files && mainUpload.files[0];
         var selected = !!file && /^image\/(jpeg|png|gif)$/.test(file.type) && file.size <= 5 * 1024 * 1024;
+        coverPreview.classList.toggle('d-none', !selected);
         if (existing) existing.hidden = selected;
         empty.hidden = selected || !!existing;
         if (!selected) coverPreview.classList.remove('is-visible');

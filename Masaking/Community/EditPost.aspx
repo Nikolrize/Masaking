@@ -66,8 +66,8 @@
                     <div class="col-12 col-md-6">
                         <section class="community-attachment border rounded-2 p-3 h-100">
                             <asp:Label runat="server" AssociatedControlID="ddlRecipe" class="small fw-semibold d-block mb-2">Recipe <span class="text-secondary fw-normal">(optional)</span></asp:Label>
-                            <asp:Label runat="server" ID="lblComposerRecipeSearch" AssociatedControlID="composerRecipeSearch" class="visually-hidden">Search recipes</asp:Label>
-                            <asp:TextBox runat="server" ClientIDMode="Static" ID="composerRecipeSearch" TextMode="Search" class="form-control form-control-sm mb-2" placeholder="Search for a recipe..." />
+                            <asp:Label runat="server" ID="lblComposerRecipeSearch" AssociatedControlID="composerRecipeSearch" class="visually-hidden">Search your approved recipes</asp:Label>
+                            <asp:TextBox runat="server" ClientIDMode="Static" ID="composerRecipeSearch" TextMode="Search" class="form-control form-control-sm mb-2" placeholder="Search your approved recipes..." />
                             <asp:DropDownList ID="ddlRecipe" ClientIDMode="Static" runat="server" class="form-select form-select-sm mb-3" />
                             
                             <div id="composerRecipeCard" class="community-recipe border rounded-2 p-2 d-none">
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
                             
-                            <p id="composerRecipeHint" class="small text-secondary mb-0">Choose a recipe to share its ingredients and cooking steps.</p>
+                            <p id="composerRecipeHint" class="small text-secondary mb-0">You can attach only recipes you created that have been approved.</p>
                         </section>
                     </div>
                 </div>
@@ -108,6 +108,6 @@
         </button>
     </div>
 
-    <script src="../Scripts/community.js?v=20261104-1"></script>
+    <script src="../Scripts/community.js"></script>
     <script src="../Scripts/community-composer.js"></script>
 </asp:Content>

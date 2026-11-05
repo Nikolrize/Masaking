@@ -8,7 +8,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Community
 {
-    public abstract class CommunityPage : Page
+    public abstract class CommunityPage : ResponsivePage
     {
         protected Label lblMessage;
         protected const int EditWindowDays = 7;

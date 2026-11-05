@@ -8,7 +8,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Recipes
 {
-    public partial class MyRecipes : System.Web.UI.Page
+    public partial class MyRecipes : ResponsivePage
     {
         protected Repeater rptRecipes;
         protected Panel pnlEmpty;
@@ -21,6 +21,8 @@ namespace Masaking.Recipes
             {
                 if (Request.QueryString["saved"] == "1")
                     Show("Your recipe has been submitted for approval.", true);
+                else if (Request.QueryString["saved"] == "updated")
+                    Show("Your recipe changes have been saved.", true);
                 BindRecipes();
             }
         }

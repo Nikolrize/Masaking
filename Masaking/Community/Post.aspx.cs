@@ -3,7 +3,7 @@ using System.Web.UI;
 
 namespace Masaking.Community
 {
-    // Keep existing discussion links working after moving comments into the feed.
+    // Preserve saved discussion links now that comments are displayed in the feed.
     public partial class Post : Page
     {
         protected void Page_Load(object sender, EventArgs e)
