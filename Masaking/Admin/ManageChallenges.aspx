@@ -76,6 +76,7 @@
                             <asp:TemplateField HeaderText="Actions">
                                 <ItemTemplate>
                                     <asp:LinkButton ID="btnEditQuiz" runat="server" Text="Edit settings" CssClass="btn btn-sm btn-outline-success" CausesValidation="False" CommandName="EditQuiz" CommandArgument='<%# Eval("challengeID") %>' />
+                                    &nbsp;<asp:HyperLink ID="lnkQuestions" runat="server" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# "QuizQuestions.aspx?id=" + Eval("challengeID") %>' >Questions</asp:HyperLink>
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>
