@@ -469,7 +469,6 @@ namespace Masaking.Recipes
                 con.Close();
             }
 
-            // Refresh both the average rating and the reviews below.
             LoadRecipe(recipeId);
 
             txtReviewComment.Text = "";
