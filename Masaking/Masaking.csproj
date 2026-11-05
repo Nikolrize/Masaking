@@ -44,6 +44,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Admin\QuizQuestions.aspx.cs">
+      <DependentUpon>QuizQuestions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\QuizQuestions.aspx.designer.cs">
+      <DependentUpon>QuizQuestions.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Infrastructure\Database.cs" />
     <Compile Include="Infrastructure\ImageUpload.cs" />
     <Reference Include="Microsoft.CSharp" />
@@ -107,6 +114,7 @@
     <Content Include="Account\ResetPassword.aspx" />
     <Content Include="Account\Profile.aspx" />
     <Content Include="Account\EditProfile.aspx" />
+    <Content Include="Admin\QuizQuestions.aspx" />
     <Content Include="Content\images\profile\nasilemak_satay_roti.png" />
     <Content Include="Scripts\profile.js" />
     <Content Include="Account\Register.aspx" />
