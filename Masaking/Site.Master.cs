@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Masaking.Infrastructure;
+using System;
 using System.Web.UI;
-using Masaking.Infrastructure;
 
 namespace Masaking
 {
@@ -11,6 +11,7 @@ namespace Masaking
             bool signedIn = Database.UserId.HasValue;
             phGuestNav.Visible = !signedIn;
             phAuthenticatedNav.Visible = signedIn;
+            phMyRecipesNav.Visible = signedIn;
             if (signedIn)
             {
                 string name = Convert.ToString(Session["DisplayName"]);
