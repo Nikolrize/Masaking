@@ -75,8 +75,12 @@
                             <asp:BoundField DataField="attemptCount" HeaderText="Attempts" />
                             <asp:TemplateField HeaderText="Actions">
                                 <ItemTemplate>
+                                    <div class="d-flex flex-wrap gap-2">
                                     <asp:LinkButton ID="btnEditQuiz" runat="server" Text="Edit settings" CssClass="btn btn-sm btn-outline-success" CausesValidation="False" CommandName="EditQuiz" CommandArgument='<%# Eval("challengeID") %>' />
                                     &nbsp;<asp:HyperLink ID="lnkQuestions" runat="server" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# "QuizQuestions.aspx?id=" + Eval("challengeID") %>' >Questions</asp:HyperLink>
+                                    &nbsp;<asp:LinkButton ID="btnPublish" runat="server" CausesValidation="False" CommandName="PublishQuiz" CssClass="btn btn-sm btn-success" CommandArgument='<%# Eval("challengeID") %>' Visible='<%# !Convert.ToBoolean(Eval("isActive")) %>' OnClientClick="return confirm('Publish this quiz for members?');" >Publish</asp:LinkButton>
+                                    &nbsp;<asp:LinkButton ID="btnUnpublish" runat="server" CausesValidation="False" CommandName="UnpublishQuiz" CssClass="btn btn-sm btn-outline-secondary" CommandArgument='<%# Eval("challengeID") %>' Visible='<%# Convert.ToBoolean(Eval("isActive")) %>' OnClientClick="return confirm('Unpublish this quiz to prevent new attempts?');">Unpublish</asp:LinkButton>
+                                        </div>
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>

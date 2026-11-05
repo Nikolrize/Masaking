@@ -85,7 +85,10 @@
                             <asp:BoundField DataField="correctOption" HeaderText="Correct answer" />
                             <asp:TemplateField HeaderText="Actions">
                                 <ItemTemplate>
+                                        <div class="d-flex flex-wrap gap-2">
                                     <asp:LinkButton ID="btnEditQuestion" runat="server" Text="Edit" CssClass="btn btn-sm btn-outline-success" CausesValidation="False" CommandName="EditQuestion" CommandArgument='<%# Eval("questionID") %>' />
+                                    <asp:Button ID="btnDeleteQuestion" runat="server" CausesValidation="False" CommandName="RemoveQuestion" CssClass="btn btn-sm btn-outline-danger" OnClientClick="return confirm('Delete this question? You may need to renumber the remaining questions.');" CommandArgument='<%# Eval("questionID") %>' Text="Delete" />
+                                        </div>
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>

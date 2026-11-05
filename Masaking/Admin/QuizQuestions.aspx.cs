@@ -111,8 +111,7 @@ namespace Masaking.Admin
                     using (SqlCommand check =
                         new SqlCommand(eligibility, cn, tx))
                     {
-                        check.Parameters.Add(
-                            "@id", SqlDbType.Int).Value = QuizId;
+                        check.Parameters.Add("@id", SqlDbType.Int).Value = QuizId;
 
                         if (check.ExecuteScalar() == null)
                         {
@@ -170,13 +169,19 @@ namespace Masaking.Admin
             object sender, GridViewCommandEventArgs e)
         {
             if (!Database.RequireAdmin(Response)) return;
-            if (e.CommandName != "EditQuestion") return;
+            if (e.CommandName != "EditQuestion" && e.CommandName != "RemoveQuestion") return;
 
             int id;
             if (!Int32.TryParse(
                 Convert.ToString(e.CommandArgument), out id) || id <= 0)
             {
                 ShowMessage("Invalid question selection.", false);
+                return;
+            }
+
+            if (e.CommandName == "RemoveQuestion")
+            {
+                DeleteQuestion(id);
                 return;
             }
 
@@ -238,5 +243,55 @@ namespace Masaking.Admin
             lblMessage.Text = message;
             lblMessage.CssClass = success ? "alert alert-success d-block" : "alert alert-warning d-block";
         }
+
+        private void DeleteQuestion(int questionId)
+        {
+            const string sql = @"
+                IF EXISTS (SELECT challengeID FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK)
+                    WHERE challengeID=@quiz AND isActive=0
+                      AND NOT EXISTS (SELECT 1 FROM dbo.challengeAttempts WHERE challengeID=@quiz))
+                BEGIN
+                    DELETE FROM dbo.challengeQuestions WHERE questionID=@question AND challengeID=@quiz;
+
+                    SELECT @@ROWCOUNT;
+                END
+                ELSE
+                    SELECT -1;";
+
+                    try
+                    {
+                        int result;
+
+                        using (SqlConnection cn = Database.Open())
+                        using (SqlTransaction tx =
+                            cn.BeginTransaction(IsolationLevel.Serializable))
+                        using (SqlCommand cmd = new SqlCommand(sql, cn, tx))
+                        {
+                            cmd.Parameters.Add("@quiz", SqlDbType.Int).Value = QuizId;
+
+                            cmd.Parameters.Add("@question", SqlDbType.Int).Value = questionId;
+
+                            result = Convert.ToInt32(cmd.ExecuteScalar());
+                            tx.Commit();
+                        }
+
+                        if (result == 1)
+                        {
+                            ResetEditor();
+                            ShowMessage("Question deleted. Check the remaining question numbers.", true);
+                        }
+                        else
+                        {
+                            ShowMessage(
+                                result == -1 ? "Only unpublished quizzes without attempts can change." : "The question no longer exists.", false);
+                        }
+
+                        BindQuestions();
+                    }
+                    catch (SqlException ex) when (ex.Number == 547)
+                    {
+                        ShowMessage("This question has saved answers and cannot be deleted.", false);
+                    }
+                }
     }
 }

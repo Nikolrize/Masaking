@@ -121,7 +121,7 @@ namespace Masaking.Admin
             object sender, GridViewCommandEventArgs e)
         {
             if (!Database.RequireAdmin(Response)) return;
-            if (e.CommandName != "EditQuiz") return;
+            if (e.CommandName != "EditQuiz" && e.CommandName != "PublishQuiz" && e.CommandName != "UnpublishQuiz") { return;}
 
             int id;
 
@@ -129,6 +129,12 @@ namespace Masaking.Admin
                 Convert.ToString(e.CommandArgument), out id) || id <= 0)
             {
                 ShowMessage("Invalid quiz selection.", false);
+                return;
+            }
+
+            if (e.CommandName == "PublishQuiz" || e.CommandName == "UnpublishQuiz")
+            {
+                ChangePublication(id, e.CommandName == "PublishQuiz");
                 return;
             }
 
@@ -210,5 +216,89 @@ namespace Masaking.Admin
             lblMessage.Text = message;
             lblMessage.CssClass = success ? "alert alert-success d-block" : "alert alert-warning d-block";
         }
+
+        private void ChangePublication(int quizId, bool publish)
+        {
+            const string sql = @"
+                DECLARE @found INT;
+
+                SELECT @found=challengeID
+                FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK)
+                WHERE challengeID=@id;
+
+                IF @found IS NULL
+                    SELECT 0;
+                ELSE IF @publish=1 AND
+                (
+                    EXISTS (
+                        SELECT 1 FROM dbo.challenges
+                        WHERE challengeID=@id
+                          AND (LEN(LTRIM(RTRIM(title)))=0 OR difficulty NOT IN ('Easy','Medium','Hard') OR timeLimit < 60 OR timeLimit > 3600 OR timeLimit % 60 <> 0)
+                    )
+                    OR NOT EXISTS (
+                        SELECT 1 FROM dbo.challengeQuestions
+                        WHERE challengeID=@id
+                    )
+                    OR EXISTS (
+                        SELECT 1 FROM dbo.challengeQuestions
+                        WHERE challengeID=@id
+                          AND (LEN(LTRIM(RTRIM(questionText)))=0 OR LEN(LTRIM(RTRIM(optionA)))=0 OR LEN(LTRIM(RTRIM(optionB)))=0 OR LEN(LTRIM(RTRIM(optionC)))=0 OR LEN(LTRIM(RTRIM(optionD)))=0 OR correctOption NOT IN ('A','B','C','D') OR questionNumber < 1 OR questionNumber > 100)
+                    )
+                    OR (
+                        SELECT MIN(questionNumber)
+                        FROM dbo.challengeQuestions
+                        WHERE challengeID=@id
+                    ) <> 1
+                    OR (
+                        SELECT MAX(questionNumber)
+                        FROM dbo.challengeQuestions
+                        WHERE challengeID=@id
+                    ) <> (
+                        SELECT COUNT(*)
+                        FROM dbo.challengeQuestions
+                        WHERE challengeID=@id
+                    )
+                )
+                    SELECT -1;
+                ELSE
+                BEGIN
+                    UPDATE dbo.challenges
+                    SET isActive=@publish
+                    WHERE challengeID=@id;
+
+                    SELECT 1;
+                END;";
+
+                    int result;
+
+                    using (SqlConnection cn = Database.Open())
+                    using (SqlTransaction tx =
+                        cn.BeginTransaction(IsolationLevel.Serializable))
+                    using (SqlCommand cmd = new SqlCommand(sql, cn, tx))
+                    {
+                        cmd.Parameters.Add("@id", SqlDbType.Int).Value = quizId;
+
+                        cmd.Parameters.Add("@publish", SqlDbType.Bit).Value = publish;
+
+                        result = Convert.ToInt32(cmd.ExecuteScalar());
+                        tx.Commit();
+                    }
+
+                    if (result == 1)
+                    {
+                        ResetEditor();
+                        ShowMessage(publish ? "Quiz published." : "Quiz unpublished.", true);
+                    }
+                    else if (result == -1)
+                    {
+                        ShowMessage("Publishing requires a valid title, difficulty and whole-minute " + "time limit of 1–60 minutes, plus complete questions numbered " + "consecutively from 1. Check the quiz settings and questions.", false);
+                    }
+                    else
+                    {
+                        ShowMessage("The quiz no longer exists.", false);
+                    }
+
+                    BindQuizzes();
+                }
     }
 }
