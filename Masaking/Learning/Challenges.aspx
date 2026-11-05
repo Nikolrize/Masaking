@@ -1,43 +1,72 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Challenges.aspx.cs" Inherits="Masaking.Learning.Challenges" %>
 
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head runat="server">
-    <link href="<%= ResolveUrl("~/Content/bootstrap-icons.min.css?v=1") %>" rel="stylesheet" />
-    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cooking Quizzes - Masaking</title>
+
+    <link href="../Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="../Content/Site.css" rel="stylesheet" />
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
-            <asp:Label ID="lblTitle" runat="server" Text="Cooking Quiz Challenge" Font-Bold="True" Font-Size="X-Large"></asp:Label>
-            <br />
-            <br />
-            <asp:Label ID="lblIntroduction" runat="server" Text="Test your knowledge of Malaysian cooking."></asp:Label>
-            <br />
-            <br />
-            <asp:Label ID="lblQuestionNumber" runat="server" Text="Sample Question 1 of 1"></asp:Label>
-            <br />
-            <br />
-            <asp:Label ID="lblQuestion" runat="server" Text="&quot;What is the exact ratio of coconut milk to water for perfectly fluffy coconut rice?&quot;"></asp:Label>
-            <asp:RadioButtonList ID="rblAnswers" runat="server">
-                <asp:ListItem Value="3:1">3 parts coconut milk to 1 part water</asp:ListItem>
-                <asp:ListItem Value="1:3">1 part coconut milk to 3 parts water</asp:ListItem>
-                <asp:ListItem Value="1:1">1 part coconut milk to 1 part water (1:1)</asp:ListItem>
-                <asp:ListItem Value="1:0">Pure coconut milk with no added water at all</asp:ListItem>
-            </asp:RadioButtonList>
-            <br />
-            <asp:Button ID="btnCheckAnswer" runat="server" OnClick="btnCheckAnswer_Click" Text="Check Answer" />
-            <br />
-            <br />
-            <asp:Label ID="lblFeedback" runat="server"></asp:Label>
-            <br />
-            <br />
-            <asp:HyperLink ID="lnkSimulation" runat="server" NavigateUrl="~/Learning/CookingSimulation.aspx">Try Cooking Simulation</asp:HyperLink>
-            <br />
-            <br />
-            <asp:HyperLink ID="lnkProgress" runat="server" NavigateUrl="~/Learning/Progress.aspx">My Progress</asp:HyperLink>
-        </div>
+        <main class="container py-4 py-md-5">
+
+            <asp:HyperLink ID="lnkHome" runat="server" NavigateUrl="~/Default.aspx" Text="Back to home" CssClass="btn btn-outline-success mb-3" />
+
+            <asp:Label ID="lblTitle" runat="server" Text="Cooking Quizzes" CssClass="h1 d-block" />
+
+            <asp:Label ID="lblIntroduction" runat="server" Text="Test your cooking knowledge with timed quizzes." CssClass="text-secondary d-block mb-4" />
+
+            <div class="card p-3 p-md-4 mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-12 col-md-6">
+                        <asp:Label ID="lblSearch" runat="server" AssociatedControlID="txtSearch" Text="Quiz title" CssClass="form-label" />
+
+                        <asp:TextBox ID="txtSearch" runat="server" MaxLength="150" CssClass="form-control" />
+                    </div>
+
+                    <div class="col-12 col-md-3">
+                        <asp:Label ID="lblDifficulty" runat="server" AssociatedControlID="ddlDifficulty" Text="Difficulty" CssClass="form-label" />
+
+                        <asp:DropDownList ID="ddlDifficulty" runat="server" CssClass="form-select">
+                            <asp:ListItem Value="">All difficulties</asp:ListItem>
+                            <asp:ListItem Value="Easy">Easy</asp:ListItem>
+                            <asp:ListItem Value="Medium">Medium</asp:ListItem>
+                            <asp:ListItem Value="Hard">Hard</asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+
+                    <div class="col-12 col-md-3">
+                        <asp:Button ID="btnSearch" runat="server" Text="Find quizzes" CssClass="btn btn-success w-100" OnClick="btnSearch_Click" />
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card p-3 p-md-4">
+                <div class="table-responsive">
+
+                    <asp:GridView ID="gvQuizzes" runat="server" AutoGenerateColumns="False" AllowPaging="True" CssClass="table align-middle" GridLines="None" EmptyDataText="No published quizzes match your filters." OnPageIndexChanging="gvQuizzes_PageIndexChanging">
+
+                        <Columns>
+                            <asp:BoundField DataField="title" HeaderText="Quiz" />
+                            <asp:BoundField DataField="description" HeaderText="Description" />
+                            <asp:BoundField DataField="difficulty" HeaderText="Difficulty" />
+                            <asp:BoundField DataField="minutes" HeaderText="Time limit (minutes)" DataFormatString="{0:0.#}" />
+                            <asp:BoundField DataField="questionCount" HeaderText="Questions" />
+                            <asp:TemplateField HeaderText="Action">
+                                <ItemTemplate>
+                                    <asp:HyperLink ID="lnkStartQuiz" runat="server" Text="Start / reopen" CssClass="btn btn-success" NavigateUrl='<%# "TakeQuiz.aspx?id=" + Eval("challengeID") %>' />
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                    </asp:GridView>
+                </div>
+            </div>
+        </main>
     </form>
 </body>
 </html>

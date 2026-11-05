@@ -24,6 +24,15 @@ namespace Masaking.Learning
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// lnkHome control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkHome;
+
+        /// <summary>
         /// lblTitle control.
         /// </summary>
         /// <remarks>
@@ -42,66 +51,57 @@ namespace Masaking.Learning
         protected global::System.Web.UI.WebControls.Label lblIntroduction;
 
         /// <summary>
-        /// lblQuestionNumber control.
+        /// lblSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblQuestionNumber;
+        protected global::System.Web.UI.WebControls.Label lblSearch;
 
         /// <summary>
-        /// lblQuestion control.
+        /// txtSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblQuestion;
+        protected global::System.Web.UI.WebControls.TextBox txtSearch;
 
         /// <summary>
-        /// rblAnswers control.
+        /// lblDifficulty control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList rblAnswers;
+        protected global::System.Web.UI.WebControls.Label lblDifficulty;
 
         /// <summary>
-        /// btnCheckAnswer control.
+        /// ddlDifficulty control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCheckAnswer;
+        protected global::System.Web.UI.WebControls.DropDownList ddlDifficulty;
 
         /// <summary>
-        /// lblFeedback control.
+        /// btnSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblFeedback;
+        protected global::System.Web.UI.WebControls.Button btnSearch;
 
         /// <summary>
-        /// lnkSimulation control.
+        /// gvQuizzes control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkSimulation;
-
-        /// <summary>
-        /// lnkProgress control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkProgress;
+        protected global::System.Web.UI.WebControls.GridView gvQuizzes;
     }
 }
