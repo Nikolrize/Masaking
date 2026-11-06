@@ -197,7 +197,8 @@ namespace Masaking.Account
             var row = (System.Data.DataRowView)e.Item.DataItem;
             var lnkPost = (HyperLink)e.Item.FindControl("lnkPost");
             lnkPost.Attributes["data-activity-kind"] = Convert.ToString(row["kind"]);
-            lnkPost.NavigateUrl = Convert.ToString("../Community/Post.aspx?ID=" + row["postID"] + (Convert.ToString(row["kind"]) == "comment" ? "#comments" : ""));
+            int postId = Convert.ToInt32(row["postID"]);
+            lnkPost.NavigateUrl = $"~/Community/Community.aspx?post={postId}#post-{postId}";
             var lblInitials2 = (Label)e.Item.FindControl("lblInitials2");
             lblInitials2.Text = Server.HtmlEncode(Convert.ToString(Initials));
             var imgDecoration3 = (Image)e.Item.FindControl("imgDecoration3");

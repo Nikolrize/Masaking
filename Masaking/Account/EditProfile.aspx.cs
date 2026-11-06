@@ -262,7 +262,8 @@ namespace Masaking.Account
                 return;
             var row = (System.Data.DataRowView)e.Item.DataItem;
             var lnkPost = (HyperLink)e.Item.FindControl("lnkPost");
-            lnkPost.NavigateUrl = Convert.ToString("../Community/Post.aspx?ID=" + row["postID"] + (Convert.ToString(row["kind"]) == "comment" ? "#comments" : ""));
+            int postId = Convert.ToInt32(row["postID"]);
+            lnkPost.NavigateUrl = $"~/Community/Community.aspx?post={postId}#post-{postId}";
             lnkPost.Attributes["data-rail-kind"] = Convert.ToString(row["kind"]);
             var imgDecoration = (Image)e.Item.FindControl("imgDecoration");
             imgDecoration.ImageUrl = Convert.ToString(Picture(row["image"]));

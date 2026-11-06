@@ -194,7 +194,6 @@
     </Content>
     <Content Include="Community\Community.aspx" />
     <Content Include="Community\EditPost.aspx" />
-    <Content Include="Community\Post.aspx" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -412,13 +411,6 @@
     <Compile Include="Community\EditPost.aspx.cs">
       <DependentUpon>EditPost.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Community\Post.aspx.cs">
-      <DependentUpon>Post.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Community\Post.aspx.designer.cs">
-      <DependentUpon>Post.aspx</DependentUpon>
     </Compile>
     <Compile Include="Community\EditPost.aspx.designer.cs">
       <DependentUpon>EditPost.aspx</DependentUpon>
