@@ -120,6 +120,7 @@
     <Content Include="Account\Profile.aspx" />
     <Content Include="Account\EditProfile.aspx" />
     <Content Include="Content\images\profile\nasilemak_satay_roti.png" />
+    <Content Include="Controls\RecipeCard.ascx" />
     <Content Include="Scripts\profile.js" />
     <Content Include="Account\Register.aspx" />
     <Content Include="Admin\ManageChallenges.aspx" />
@@ -274,6 +275,7 @@
     <Compile Include="Account\ResetPassword.aspx.designer.cs">
       <DependentUpon>ResetPassword.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\RecipeRepository.cs" />
     <Compile Include="Search.aspx.cs">
       <DependentUpon>Search.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
