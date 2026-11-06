@@ -76,7 +76,8 @@ namespace Masaking
             if (e.Item.ItemType != ListItemType.Item && e.Item.ItemType != ListItemType.AlternatingItem)
                 return;
             var row = (DataRowView)e.Item.DataItem;
-            ((HyperLink)e.Item.FindControl("lnkPostResult")).NavigateUrl = "~/Community/Post.aspx?id=" + Convert.ToInt32(row["postID"]);
+            int postId = Convert.ToInt32(row["postID"]);
+            ((HyperLink)e.Item.FindControl("lnkPostResult")).NavigateUrl = $"~/Community/Community.aspx?post={postId}#post-{postId}";
             ((Label)e.Item.FindControl("lblPostAuthor")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["displayName"]));
             ((Label)e.Item.FindControl("lblUsername")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["username"]));
             ((Label)e.Item.FindControl("lblSnippet")).Text = System.Web.HttpUtility.HtmlEncode(Snippet(row["content"]));
