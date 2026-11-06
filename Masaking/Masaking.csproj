@@ -278,6 +278,7 @@
       <DependentUpon>Search.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Account\CountrySelection.cs" />
     <Compile Include="Account\ProfilePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

@@ -12,11 +12,19 @@ namespace Masaking.Account
     public partial class EditProfile : ProfilePage
     {
         protected TextBox txtUsername, txtName, txtEmail, txtCountry, txtCurrentPassword, txtNewPassword, txtConfirmPassword;
+        protected DropDownList ddlCountry;
         protected FileUpload uploadAvatar;
         protected Image imgAvatar;
         protected Button btnResetAvatar, btnSaveProfile, btnChangePassword;
         protected Label lblMessage;
         protected Repeater rptActivity;
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            CountrySelection.Populate(ddlCountry);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Database.RequireUser(Response))
@@ -32,7 +40,7 @@ namespace Masaking.Account
                     txtUsername.Text = ProfileUsername;
                     txtName.Text = ProfileName;
                     txtEmail.Text = ProfileEmail;
-                    txtCountry.Text = ProfileCountry;
+                    CountrySelection.SelectSaved(ddlCountry, txtCountry, ProfileCountry);
                     rptActivity.DataSource = UserActivity();
                     rptActivity.DataBind();
                 }
@@ -49,7 +57,8 @@ namespace Masaking.Account
         {
             if (!btnSaveProfile.Enabled)
                 return;
-            string username = txtUsername.Text.Trim(), name = txtName.Text.Trim(), email = txtEmail.Text.Trim(), country = txtCountry.Text.Trim();
+            string username = txtUsername.Text.Trim(), name = txtName.Text.Trim(), email = txtEmail.Text.Trim();
+            string country = CountrySelection.Read(ddlCountry, txtCountry);
             if (!Regex.IsMatch(username, @"^[a-zA-Z0-9_.-]{3,50}$"))
             {
                 Show("Use 3–50 letters, numbers, dots, underscores or hyphens for your username.", false);

@@ -49,22 +49,12 @@
                 </div>
 
                 <div class="profile-field">
-                    <asp:Label runat="server" AssociatedControlID="txtCountry">Country <span class="profile-required">*</span></asp:Label>
-                    <asp:TextBox ID="txtCountry" runat="server" ClientIDMode="Static" class="form-control" MaxLength="100" autocomplete="country-name" list="profileCountries" required="required" />
-                    <datalist id="profileCountries">
-                        <option value="Malaysia" />
-                        <option value="Singapore" />
-                        <option value="Indonesia" />
-                        <option value="Thailand" />
-                        <option value="Brunei" />
-                        <option value="Philippines" />
-                        <option value="Vietnam" />
-                        <option value="India" />
-                        <option value="China" />
-                        <option value="United Kingdom" />
-                        <option value="Australia" />
-                        <option value="United States" />
-                    </datalist>
+                    <asp:Label runat="server" AssociatedControlID="ddlCountry">Country <span class="profile-required">*</span></asp:Label>
+                    <asp:DropDownList ID="ddlCountry" runat="server" class="form-select" required="required" data-country-select="countryOther" />
+                    <div id="countryOther" class="profile-field mt-3 mb-0">
+                        <asp:Label runat="server" AssociatedControlID="txtCountry">Your country (if you selected Other)</asp:Label>
+                        <asp:TextBox ID="txtCountry" runat="server" class="form-control" MaxLength="100" autocomplete="country-name" />
+                    </div>
                 </div>
 
                 <div class="profile-editor-actions">
@@ -151,5 +141,6 @@
         </div>
     </main>
 
+    <script src="../Scripts/form-helpers.js?v=20261024-39"></script>
     <script src="../Scripts/profile.js"></script>
 </asp:Content>

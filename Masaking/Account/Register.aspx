@@ -39,29 +39,7 @@
 
                     <div class="mb-3">
                         <asp:Label runat="server" ID="lblCountry" class="form-label" AssociatedControlID="ddlCountry">Country</asp:Label>
-                        <asp:DropDownList ID="ddlCountry" runat="server" ClientIDMode="Static" class="form-select" required="required" data-country-select="countryOther">
-                            <asp:ListItem Value="">Select your country</asp:ListItem>
-                            <asp:ListItem>Malaysia</asp:ListItem>
-                            <asp:ListItem>Singapore</asp:ListItem>
-                            <asp:ListItem>Indonesia</asp:ListItem>
-                            <asp:ListItem>Thailand</asp:ListItem>
-                            <asp:ListItem>Brunei</asp:ListItem>
-                            <asp:ListItem>Philippines</asp:ListItem>
-                            <asp:ListItem>Vietnam</asp:ListItem>
-                            <asp:ListItem>Cambodia</asp:ListItem>
-                            <asp:ListItem>Laos</asp:ListItem>
-                            <asp:ListItem>Myanmar</asp:ListItem>
-                            <asp:ListItem>China</asp:ListItem>
-                            <asp:ListItem>India</asp:ListItem>
-                            <asp:ListItem>Japan</asp:ListItem>
-                            <asp:ListItem>South Korea</asp:ListItem>
-                            <asp:ListItem>Australia</asp:ListItem>
-                            <asp:ListItem>New Zealand</asp:ListItem>
-                            <asp:ListItem>United Kingdom</asp:ListItem>
-                            <asp:ListItem>United States</asp:ListItem>
-                            <asp:ListItem>Canada</asp:ListItem>
-                            <asp:ListItem Value="Other">Other</asp:ListItem>
-                        </asp:DropDownList>
+                        <asp:DropDownList ID="ddlCountry" runat="server" ClientIDMode="Static" class="form-select" required="required" data-country-select="countryOther" />
 
                         <div id="countryOther" class="mt-3">
                             <asp:Label runat="server" ID="lblCountry2" class="form-label" AssociatedControlID="txtCountry">Your country (if you selected Other)</asp:Label>

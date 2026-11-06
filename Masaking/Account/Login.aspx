@@ -35,19 +35,13 @@
                     </div>
                 </div>
 
-                <asp:Button ID="btnLogin" runat="server" Text="Sign in" class="btn btn-primary w-100 mt-3" OnClick="btnLogin_Click" />
-
-                <div class="text-center mt-3">
+                <div class="text-end mt-3">
                     <asp:HyperLink runat="server" ID="lnkForgotPassword" NavigateUrl="ForgotPassword.aspx">Forgot password?</asp:HyperLink>
                 </div>
 
-                <div class="d-flex align-items-center gap-3 my-4" aria-hidden="true">
-                    <hr class="flex-grow-1 m-0" />
-                    <span class="small text-secondary">or</span>
-                    <hr class="flex-grow-1 m-0" />
-                </div>
+                <asp:Button ID="btnLogin" runat="server" Text="Sign in" class="btn btn-primary w-100 mt-3" OnClick="btnLogin_Click" />
 
-                <p class="mb-0 text-center small">
+                <p class="mt-4 mb-0 text-center small">
                     New to Masaking? <asp:HyperLink runat="server" ID="lnkCreateAnAccount" class="fw-semibold" NavigateUrl="Register.aspx">Create an account</asp:HyperLink>
                 </p>
             </section>

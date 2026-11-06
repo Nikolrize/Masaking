@@ -13,8 +13,10 @@ namespace Masaking.Account
         protected DropDownList ddlCountry;
         protected System.Web.UI.HtmlControls.HtmlInputCheckBox chkTerms;
         protected Label lblMessage;
-        protected void Page_Load(object sender, EventArgs e)
+        protected override void OnInit(EventArgs e)
         {
+            base.OnInit(e);
+            CountrySelection.Populate(ddlCountry);
         }
 
         protected void btnRegister_Click(object sender, EventArgs e)
@@ -22,7 +24,7 @@ namespace Masaking.Account
             string name = txtName.Text.Trim();
             string username = txtUsername.Text.Trim();
             string email = txtEmail.Text.Trim();
-            string country = ddlCountry.SelectedValue == "Other" ? txtCountry.Text.Trim() : ddlCountry.SelectedValue;
+            string country = CountrySelection.Read(ddlCountry, txtCountry);
             if (String.IsNullOrWhiteSpace(country))
             {
                 Message("Select your country, or choose Other and enter your country.", false);
