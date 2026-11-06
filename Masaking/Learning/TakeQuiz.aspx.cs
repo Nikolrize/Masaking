@@ -86,7 +86,7 @@ namespace Masaking.Learning
             using (SqlTransaction tx =
                 cn.BeginTransaction(IsolationLevel.Serializable))
             {
-                // Lock the parent quiz consistently with admin editing.
+                //lock the parent quiz to prevent concurrent attempts from creating duplicates
                 using (SqlCommand quiz = new SqlCommand(@"
                     SELECT challengeID
                     FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK)
@@ -101,7 +101,7 @@ namespace Masaking.Learning
                     }
                 }
 
-                // Reopen an unfinished attempt instead of duplicating it.
+                //reopen an existing attempt rather than duplicating it 
                 using (SqlCommand existing = new SqlCommand(@"
                     SELECT TOP (1) attemptID
                     FROM dbo.challengeAttempts
