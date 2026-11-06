@@ -3,7 +3,7 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="../Content/css/recipes.css" rel="stylesheet" />
 
-    <main class="recipe-submit-page" data-recipe-form>
+    <main class="recipe-submit-page mx-auto" data-recipe-form>
         <header class="recipe-form-header">
             <asp:HyperLink runat="server" ID="lnkMyRecipes" class="recipe-form-back" NavigateUrl="MyRecipes.aspx">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i> <span>My recipes</span>

@@ -91,7 +91,7 @@ textarea {
     }
 }
 
-/* Official Bootstrap Icons, loaded locally by the shared bundle or page head. */
+
 i.cost-icon {
     color: var(--color-accent);
 }

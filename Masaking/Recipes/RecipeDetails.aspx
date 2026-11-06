@@ -27,14 +27,14 @@
                     </div>
 
                     <div class="col-lg-8">
-                        <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-2 gap-md-3 mb-2">
                             <!-- Title -->
-                            <h1 class="mb-0">
+                            <h1 class="mb-0 text-break">
                                 <asp:Label ID="recipeTitle" runat="server" />
                             </h1>
 
                             <!-- Buttons -->
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex flex-wrap align-items-center gap-2">
                                 <button id="btnFavourite"
                                     runat="server"
                                     type="submit"
@@ -48,7 +48,7 @@
                                 <asp:HyperLink ID="lnkStartLearning"
                                     runat="server"
                                     NavigateUrl="~/Learning/CookingSimulation"
-                                    CssClass="btn btn-primary text-nowrap">
+                                    CssClass="btn btn-primary">
                                 <i class="bi bi-play-circle me-1"></i>
                                 Start Learning
                                 </asp:HyperLink>
