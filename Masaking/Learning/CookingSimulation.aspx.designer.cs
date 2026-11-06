@@ -15,18 +15,22 @@ namespace Masaking.Learning
     {
 
         /// <summary>
-        /// BodyContent control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Content BodyContent;
-
-        /// <summary>
-        /// lnkBackToRecipe control.
+        /// lnkBrowse control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkBackToRecipe;
+        protected global::System.Web.UI.WebControls.HyperLink lnkBrowse;
+
+        /// <summary>
+        /// lnkProgress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkProgress;
 
         /// <summary>
         /// lblTitle control.
@@ -38,13 +42,67 @@ namespace Masaking.Learning
         protected global::System.Web.UI.WebControls.Label lblTitle;
 
         /// <summary>
-        /// lblIntroduction control.
+        /// lblDescription control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblIntroduction;
+        protected global::System.Web.UI.WebControls.Label lblDescription;
+
+        /// <summary>
+        /// upGame control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upGame;
+
+        /// <summary>
+        /// lblMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMessage;
+
+        /// <summary>
+        /// pnlStart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlStart;
+
+        /// <summary>
+        /// lblInstructions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblInstructions;
+
+        /// <summary>
+        /// btnStart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnStart;
+
+        /// <summary>
+        /// pnlGame control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlGame;
 
         /// <summary>
         /// lblStep control.
@@ -56,6 +114,15 @@ namespace Masaking.Learning
         protected global::System.Web.UI.WebControls.Label lblStep;
 
         /// <summary>
+        /// lblMistakes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMistakes;
+
+        /// <summary>
         /// lblInstruction control.
         /// </summary>
         /// <remarks>
@@ -65,202 +132,85 @@ namespace Masaking.Learning
         protected global::System.Web.UI.WebControls.Label lblInstruction;
 
         /// <summary>
-        /// pnlIngredients control.
+        /// progressTrack control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlIngredients;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl progressTrack;
 
         /// <summary>
-        /// lblIngredientsTitle control.
+        /// progressBar control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblIngredientsTitle;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl progressBar;
 
         /// <summary>
-        /// imgOil control.
+        /// imgCookware control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgOil;
+        protected global::System.Web.UI.WebControls.Image imgCookware;
 
         /// <summary>
-        /// lblOil control.
+        /// pnlCookwarePlaceholder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblOil;
+        protected global::System.Web.UI.WebControls.Panel pnlCookwarePlaceholder;
 
         /// <summary>
-        /// imgGarlic control.
+        /// rptIngredients control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgGarlic;
+        protected global::System.Web.UI.WebControls.Repeater rptIngredients;
 
         /// <summary>
-        /// lblGarlic control.
+        /// pnlResult control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblGarlic;
+        protected global::System.Web.UI.WebControls.Panel pnlResult;
 
         /// <summary>
-        /// imgEgg control.
+        /// imgCompleted control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgEgg;
+        protected global::System.Web.UI.WebControls.Image imgCompleted;
 
         /// <summary>
-        /// lblEgg control.
+        /// lblResult control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEgg;
+        protected global::System.Web.UI.WebControls.Label lblResult;
 
         /// <summary>
-        /// imgRice control.
+        /// pnlAttemptActions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgRice;
-
-        /// <summary>
-        /// lblRice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRice;
-
-        /// <summary>
-        /// imgSeasoning control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgSeasoning;
-
-        /// <summary>
-        /// lblSeasoning control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSeasoning;
-
-        /// <summary>
-        /// pnlWok control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlWok;
-
-        /// <summary>
-        /// lblWokTitle control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblWokTitle;
-
-        /// <summary>
-        /// imgWok control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgWok;
-
-        /// <summary>
-        /// lblDropHint control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblDropHint;
-
-        /// <summary>
-        /// pnlCompletion control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlCompletion;
-
-        /// <summary>
-        /// lblCompletedTitle control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCompletedTitle;
-
-        /// <summary>
-        /// imgCompletedDish control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgCompletedDish;
-
-        /// <summary>
-        /// lblCompletedMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCompletedMessage;
-
-        /// <summary>
-        /// lnkCompletedBack control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkCompletedBack;
-
-        /// <summary>
-        /// lblFeedback control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblFeedback;
+        protected global::System.Web.UI.WebControls.Panel pnlAttemptActions;
 
         /// <summary>
         /// btnRestart control.
@@ -270,5 +220,41 @@ namespace Masaking.Learning
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnRestart;
+
+        /// <summary>
+        /// hfIngredient control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfIngredient;
+
+        /// <summary>
+        /// hfEffect control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfEffect;
+
+        /// <summary>
+        /// btnDrop control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDrop;
+
+        /// <summary>
+        /// lnkRecipe control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkRecipe;
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Web.UI;
 using System.Globalization;
 using Masaking.Infrastructure;
@@ -23,7 +23,7 @@ namespace Masaking
                 string initials = words.Length == 0 ? "M" : words[0].Substring(0, 1)
                     + (words.Length > 1 ? words[words.Length - 1].Substring(0, 1) : "");
                 lblNavInitials.Text = Server.HtmlEncode(initials.ToUpperInvariant());
-                lnkNavProfile.ToolTip = String.IsNullOrWhiteSpace(name) ? "My profile" : name + " — My profile";
+                lnkNavProfile.ToolTip = String.IsNullOrWhiteSpace(name) ? "My profile" : name + " - My profile";
                 string avatar = Database.AvatarUrl(Session["UserImage"]);
                 imgNavAvatar.ImageUrl = avatar;
                 imgNavAvatar.Visible = avatar != Database.DefaultAvatar;

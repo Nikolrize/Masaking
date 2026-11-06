@@ -44,12 +44,45 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Learning\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Learning\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Content Include="Learning\Default.aspx" />
+    <Content Include="Content\css\learning.css" />
+    <Compile Include="Infrastructure\SimulationImages.cs" />
+    <Content Include="Scripts\simulation-upload.js" />
+    <Compile Include="Admin\ManageSimulations.aspx.cs">
+      <DependentUpon>ManageSimulations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageSimulations.aspx.designer.cs">
+      <DependentUpon>ManageSimulations.aspx</DependentUpon>
+    </Compile>
+    <Content Include="Admin\ManageSimulations.aspx" />
     <Compile Include="Admin\Admin.Master.cs">
       <DependentUpon>Admin.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Admin\Admin.Master.designer.cs">
       <DependentUpon>Admin.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\SimulationSteps.aspx.cs">
+      <DependentUpon>SimulationSteps.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\SimulationSteps.aspx.designer.cs">
+      <DependentUpon>SimulationSteps.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Learning\Simulations.aspx.cs">
+      <DependentUpon>Simulations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Learning\Simulations.aspx.designer.cs">
+      <DependentUpon>Simulations.aspx</DependentUpon>
     </Compile>
     <Compile Include="Learning\TakeQuiz.aspx.cs">
       <DependentUpon>TakeQuiz.aspx</DependentUpon>
@@ -59,23 +92,26 @@
       <DependentUpon>TakeQuiz.aspx</DependentUpon>
     </Compile>
     <Content Include="Admin\Admin.Master" />
+    <Content Include="Admin\SimulationSteps.aspx" />
+    <Content Include="Content\css\simulation.css" />
+    <Content Include="Learning\Simulations.aspx" />
     <Content Include="Learning\TakeQuiz.aspx" />
     <Content Include="Content\css\admin.css" />
-	  <Compile Include="Admin\QuizQuestions.aspx.cs">
-		  <DependentUpon>QuizQuestions.aspx</DependentUpon>
-		  <SubType>ASPXCodeBehind</SubType>
-	  </Compile>
-	  <Compile Include="Admin\QuizQuestions.aspx.designer.cs">
-		  <DependentUpon>QuizQuestions.aspx</DependentUpon>
-	  </Compile>
-	  <Compile Include="Controls\RecipeCard.ascx.cs">
-		  <DependentUpon>RecipeCard.ascx</DependentUpon>
-		  <SubType>ASPXCodeBehind</SubType>
-	  </Compile>
-	  <Compile Include="Controls\RecipeCard.ascx.designer.cs">
-		  <DependentUpon>RecipeCard.ascx</DependentUpon>
-	  </Compile>
-	  <Compile Include="Infrastructure\CategoryRepository.cs" />
+    <Compile Include="Admin\QuizQuestions.aspx.cs">
+      <DependentUpon>QuizQuestions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\QuizQuestions.aspx.designer.cs">
+      <DependentUpon>QuizQuestions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RecipeCard.ascx.cs">
+      <DependentUpon>RecipeCard.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\RecipeCard.ascx.designer.cs">
+      <DependentUpon>RecipeCard.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\CategoryRepository.cs" />
     <Compile Include="Infrastructure\Database.cs" />
     <Compile Include="Infrastructure\ImageUpload.cs" />
     <Compile Include="Infrastructure\ResponsivePage.cs">
@@ -247,6 +283,7 @@
     <Content Include="Scripts\jquery-3.7.0.slim.js" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\simulation.js" />
     <Content Include="Scripts\WebForms\DetailsView.js" />
     <Content Include="Scripts\WebForms\Focus.js" />
     <Content Include="Scripts\WebForms\GridView.js" />

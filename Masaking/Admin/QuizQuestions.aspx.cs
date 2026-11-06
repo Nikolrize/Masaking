@@ -86,7 +86,7 @@ namespace Masaking.Admin
                 || number < 1 || number > 100 || question.Length == 0 || question.Length > 1000 || explanation.Length > 1000
                 || (ddlCorrect.SelectedValue != "A" && ddlCorrect.SelectedValue != "B" && ddlCorrect.SelectedValue != "C" && ddlCorrect.SelectedValue != "D"))
             {
-                ShowMessage("Enter a question number from 1–100, question text " + "within 1,000 characters and a valid correct answer. " + "Keep explanations within 1,000 characters.", false);
+                ShowMessage("Enter a question number from 1-100, question text " + "within 1,000 characters and a valid correct answer. " + "Keep explanations within 1,000 characters.", false);
                 return;
             }
 

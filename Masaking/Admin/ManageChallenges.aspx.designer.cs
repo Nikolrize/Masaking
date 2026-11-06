@@ -15,11 +15,6 @@ namespace Masaking.Admin
     {
 
         /// <summary>
-        /// BodyContent control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Content BodyContent;
-
-        /// <summary>
         /// lnkDashboard control.
         /// </summary>
         /// <remarks>

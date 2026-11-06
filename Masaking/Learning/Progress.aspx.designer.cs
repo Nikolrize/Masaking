@@ -15,63 +15,13 @@ namespace Masaking.Learning
     {
 
         /// <summary>
-        /// BodyContent control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Content BodyContent;
-
-        /// <summary>
-        /// lblTitle control.
+        /// lnkQuizzes control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTitle;
-
-        /// <summary>
-        /// lblIntroduction control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblIntroduction;
-
-        /// <summary>
-        /// lblDemoNotice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblDemoNotice;
-
-        /// <summary>
-        /// lblSimulationHeading control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSimulationHeading;
-
-        /// <summary>
-        /// lblSimulationSummary control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSimulationSummary;
-
-        /// <summary>
-        /// lblSimulationRecord control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSimulationRecord;
+        protected global::System.Web.UI.WebControls.HyperLink lnkQuizzes;
 
         /// <summary>
         /// lnkSimulation control.
@@ -83,48 +33,66 @@ namespace Masaking.Learning
         protected global::System.Web.UI.WebControls.HyperLink lnkSimulation;
 
         /// <summary>
-        /// lblChallengeHeading control.
+        /// lblCompleted control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblChallengeHeading;
+        protected global::System.Web.UI.WebControls.Label lblCompleted;
 
         /// <summary>
-        /// lblChallengeSummary control.
+        /// lblTimedOut control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblChallengeSummary;
+        protected global::System.Web.UI.WebControls.Label lblTimedOut;
 
         /// <summary>
-        /// lblChallengeRecord control.
+        /// lblUnfinished control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblChallengeRecord;
+        protected global::System.Web.UI.WebControls.Label lblUnfinished;
 
         /// <summary>
-        /// lnkChallenges control.
+        /// lblBest control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkChallenges;
+        protected global::System.Web.UI.WebControls.Label lblBest;
 
         /// <summary>
-        /// lnkRecipes control.
+        /// gvAttempts control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkRecipes;
+        protected global::System.Web.UI.WebControls.GridView gvAttempts;
+
+        /// <summary>
+        /// lblSimulationSummary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblSimulationSummary;
+
+        /// <summary>
+        /// gvSimulations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvSimulations;
     }
 }

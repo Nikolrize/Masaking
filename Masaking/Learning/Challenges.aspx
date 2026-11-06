@@ -5,7 +5,9 @@
 
         <asp:HyperLink ID="lnkHome" runat="server" NavigateUrl="~/Default.aspx" Text="Back to home" CssClass="btn btn-outline-success mb-3" />
 
-        <asp:Label ID="lblTitle" runat="server" Text="Cooking Quizzes" CssClass="h1 d-block" />
+        &nbsp;<asp:HyperLink ID="lnkProgress" runat="server" CssClass="btn btn-outline-success mb-3" NavigateUrl="~/Learning/Progress.aspx">My Progress</asp:HyperLink>
+    <asp:HyperLink ID="lnkSimulations" runat="server" CssClass="btn btn-outline-success mb-3" NavigateUrl="~/Learning/Simulations.aspx">Cooking simulations</asp:HyperLink>
+&nbsp;<asp:Label ID="lblTitle" runat="server" Text="Cooking Quizzes" CssClass="h1 d-block" />
 
         <asp:Label ID="lblIntroduction" runat="server" Text="Test your cooking knowledge with timed quizzes." CssClass="text-secondary d-block mb-4" />
 

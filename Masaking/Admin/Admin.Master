@@ -15,23 +15,17 @@
     <form id="form1" runat="server">
         <div class="admin-layout">
             <aside class="admin-sidebar">
-                <asp:HyperLink ID="lnkBrand" runat="server" NavigateUrl="~/Default.aspx"
-                    CssClass="admin-brand" Text="Masaking" />
+                <asp:HyperLink ID="lnkBrand" runat="server" NavigateUrl="~/Default.aspx" CssClass="admin-brand" Text="Masaking" />
                 <p class="small">Administration</p>
 
                 <nav aria-label="Administrator navigation">
-                    <asp:HyperLink ID="lnkDashboard" runat="server"
-                        NavigateUrl="~/Admin/Dashboard.aspx" Text="Dashboard" />
-                    <asp:HyperLink ID="lnkRecipes" runat="server"
-                        NavigateUrl="~/Admin/ManageRecipes.aspx" Text="Manage recipes" />
-                    <asp:HyperLink ID="lnkUsers" runat="server"
-                        NavigateUrl="~/Admin/ManageUsers.aspx" Text="Manage users" />
-                    <asp:HyperLink ID="lnkCommunity" runat="server"
-                        NavigateUrl="~/Admin/ManageCommunity.aspx" Text="Moderate community" />
-                    <asp:HyperLink ID="lnkQuizzes" runat="server"
-                        NavigateUrl="~/Admin/ManageChallenges.aspx" Text="Manage quizzes" />
-                    <asp:HyperLink ID="lnkWebsite" runat="server"
-                        NavigateUrl="~/Default.aspx" Text="Back to website" />
+                    <asp:HyperLink ID="lnkDashboard" runat="server" NavigateUrl="~/Admin/Dashboard.aspx" Text="Dashboard" />
+                    <asp:HyperLink ID="lnkRecipes" runat="server" NavigateUrl="~/Admin/ManageRecipes.aspx" Text="Manage recipes" />
+                    <asp:HyperLink ID="lnkUsers" runat="server" NavigateUrl="~/Admin/ManageUsers.aspx" Text="Manage users" />
+                    <asp:HyperLink ID="lnkCommunity" runat="server" NavigateUrl="~/Admin/ManageCommunity.aspx" Text="Moderate community" />
+                    <asp:HyperLink ID="lnkQuizzes" runat="server" NavigateUrl="~/Admin/ManageChallenges.aspx" Text="Manage quizzes" />
+                    <asp:HyperLink ID="lnkSimulations" runat="server" NavigateUrl="~/Admin/ManageSimulations.aspx" Text="Manage simulations" />
+                    <asp:HyperLink ID="lnkWebsite" runat="server" NavigateUrl="~/Default.aspx" Text="Back to website" />
                 </nav>
             </aside>
 

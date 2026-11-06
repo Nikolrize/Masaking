@@ -24,6 +24,24 @@ namespace Masaking.Learning
         protected global::System.Web.UI.WebControls.HyperLink lnkHome;
 
         /// <summary>
+        /// lnkProgress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkProgress;
+
+        /// <summary>
+        /// lnkSimulations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSimulations;
+
+        /// <summary>
         /// lblTitle control.
         /// </summary>
         /// <remarks>

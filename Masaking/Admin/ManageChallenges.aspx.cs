@@ -291,7 +291,7 @@ namespace Masaking.Admin
                     }
                     else if (result == -1)
                     {
-                        ShowMessage("Publishing requires a valid title, difficulty and whole-minute " + "time limit of 1–60 minutes, plus complete questions numbered " + "consecutively from 1. Check the quiz settings and questions.", false);
+                        ShowMessage("Publishing requires a valid title, difficulty and whole-minute " + "time limit of 1-60 minutes, plus complete questions numbered " + "consecutively from 1. Check the quiz settings and questions.", false);
                     }
                     else
                     {

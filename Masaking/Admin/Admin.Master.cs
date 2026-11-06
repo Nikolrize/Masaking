@@ -21,8 +21,8 @@ namespace Masaking.Admin
             MarkCurrent(lnkRecipes, page == "ManageRecipes.aspx");
             MarkCurrent(lnkUsers, page == "ManageUsers.aspx");
             MarkCurrent(lnkCommunity, page == "ManageCommunity.aspx");
-            MarkCurrent(lnkQuizzes,
-                page == "ManageChallenges.aspx" || page == "QuizQuestions.aspx");
+            MarkCurrent(lnkQuizzes,page == "ManageChallenges.aspx" || page == "QuizQuestions.aspx");
+            MarkCurrent(lnkSimulations, page == "ManageSimulations.aspx" || page == "SimulationSteps.aspx");
 
             base.OnPreRender(e);
         }

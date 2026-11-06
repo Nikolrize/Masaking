@@ -34,7 +34,7 @@
             </div>
 
             <div class="col-12 col-md-6">
-                <asp:Label ID="lblMinutes" runat="server" AssociatedControlID="txtMinutes" Text="Time limit in minutes (1–60)" CssClass="form-label" />
+                <asp:Label ID="lblMinutes" runat="server" AssociatedControlID="txtMinutes" Text="Time limit in minutes (1-60)" CssClass="form-label" />
                 <asp:TextBox ID="txtMinutes" runat="server" TextMode="Number" Text="5" min="1" max="60" step="1" CssClass="form-control" />
             </div>
             <div class="col-12 d-flex flex-wrap gap-2">

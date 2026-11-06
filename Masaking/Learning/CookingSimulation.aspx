@@ -1,187 +1,87 @@
-﻿<%@ Page Title="Fried Rice Simulation" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="CookingSimulation.aspx.cs" Inherits="Masaking.Learning.CookingSimulation" %>
-
+﻿<%@ Page Title="Cooking Simulation" Language="C#" MasterPageFile="~/Site.Master"
+    AutoEventWireup="true" CodeBehind="CookingSimulation.aspx.cs" Inherits="Masaking.Learning.CookingSimulation" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <main class="py-4 py-md-5">
-        <asp:HyperLink ID="lnkBackToRecipe" runat="server" NavigateUrl="~/Recipes/BrowseRecipes.aspx">Back to Recipes</asp:HyperLink>
-        <br />
-        <br />
-        <asp:Label ID="lblTitle" runat="server" Font-Bold="True" Font-Size="X-Large" Text="Fried Rice Simulation"></asp:Label>
-        <br />
-        <br />
-        <asp:Label ID="lblIntroduction" runat="server" Text="Add the ingredients in the correct order. Take your time!"></asp:Label>
-        <br />
-        <br />
-        <asp:Label ID="lblStep" runat="server" Text="Step 1 of 5" ClientIDMode="Static"></asp:Label>
-        <br />
-        <br />
-        <asp:Label ID="lblInstruction" runat="server" Text="First, add the cooking oil." ClientIDMode="Static"></asp:Label>
-        <br />
-        <br />
-        <asp:Panel ID="pnlIngredients" runat="server">
-            <asp:Label ID="lblIngredientsTitle" runat="server" Text="Ingredients"></asp:Label>
-            <br />
-            <br />
-            <asp:Image
-                ID="imgOil" runat="server" AlternateText="Cooking oil" ClientIDMode="Static" ImageUrl="~/Content/images/simulation/oil.png" Width="94px" Height="77px" draggable="true" ondragstart="dragIngredient(event)"/>
-            <br />
-            <asp:Label ID="lblOil" runat="server" Text="Cooking Oil"></asp:Label>
-            <br />
-            <br />
-            <asp:Image ID="imgGarlic" runat="server" AlternateText="Garlic" ClientIDMode="Static" draggable="true" ondragstart="dragIngredient(event)"/>
-            <br />
-            <asp:Label ID="lblGarlic" runat="server" Text="Chopped garlic "></asp:Label>
-            <br />
-            <br />
-            <asp:Image ID="imgEgg" runat="server" AlternateText="Egg" ClientIDMode="Static" draggable="true" ondragstart="dragIngredient(event)"/>
-            <br />
-            <asp:Label ID="lblEgg" runat="server" Text="Beaten egg "></asp:Label>
-            <br />
-            <br />
-            <asp:Image ID="imgRice" runat="server" AlternateText="Rice" ClientIDMode="Static" draggable="true" ondragstart="dragIngredient(event)"/>
-            <br />
-            <asp:Label ID="lblRice" runat="server" Text="Cooked rice "></asp:Label>
-            <br />
-            <br />
-            <asp:Image ID="imgSeasoning" runat="server" AlternateText="Seasoning" ClientIDMode="Static" draggable="true" ondragstart="dragIngredient(event)"/>
-            <br />
-            <asp:Label ID="lblSeasoning" runat="server" Text="Seasoning"></asp:Label>
-        </asp:Panel>
-        <br />
-        <asp:Panel ID="pnlWok" runat="server" ClientIDMode="Static" ondragover="allowDrop(event)" ondrop="dropIngredient(event)" BorderStyle="Dashed" BorderWidth="2px" Height="220px" Width="300px">
-            <asp:Label ID="lblWokTitle" runat="server" Text="Your wok"></asp:Label>
-            <br />
-            <br />
-            <asp:Image ID="imgWok" runat="server" AlternateText="Cooking wok" ClientIDMode="Static" />
-            <br />
-            <br />
-            <asp:Label ID="lblDropHint" runat="server" Text="Drop ingredients here.  "></asp:Label>
-            <br />
-        </asp:Panel>
-        <br />
-        <asp:Panel ID="pnlCompletion" runat="server" ClientIDMode="Static" style="display: none;">
-            <asp:Label ID="lblCompletedTitle" runat="server" Text="Well done! Your fried rice is ready."></asp:Label>
-            <br />
-            <asp:Image ID="imgCompletedDish" runat="server" AlternateText="Completed fried rice" Width="250px" />
-            <br />
-            <br />
-            <asp:Label ID="lblCompletedMessage" runat="server" Text="You added all ingredients in the correct order."></asp:Label>
-            <br />
-            <asp:HyperLink ID="lnkCompletedBack" runat="server" NavigateUrl="~/Recipes/BrowseRecipes.aspx">Back to Recipes</asp:HyperLink>
-        </asp:Panel>
-        <br />
-        <asp:Label ID="lblFeedback" runat="server" Text="Ready to begin? Find the cooking oil." ClientIDMode="Static"></asp:Label>
-        <br />
-        <br />
-        <asp:Button ID="btnRestart" runat="server" Text="Restart" ClientIDMode="Static" OnClientClick="restartSimulation(); return false"/>
-        <br />
+    <link runat="server" href="~/Content/css/simulation.css" rel="stylesheet" />
+    <main class="simulation-page py-4 py-md-5">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <asp:HyperLink ID="lnkBrowse" runat="server" Text="All simulations" NavigateUrl="~/Learning/Simulations.aspx" CssClass="btn btn-outline-success" />
+            <asp:HyperLink ID="lnkProgress" runat="server" Text="My progress" NavigateUrl="~/Learning/Progress.aspx" CssClass="btn btn-outline-secondary" />
+        </div>
+        <asp:Label ID="lblTitle" runat="server" Text="Cooking simulation" CssClass="h1 d-block mb-2" />
+        <asp:Label ID="lblDescription" runat="server" CssClass="d-block text-secondary mb-3" />
+
+        <asp:UpdatePanel ID="upGame" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <asp:Label ID="lblMessage" runat="server" EnableViewState="False" CssClass="d-block mb-3" role="status" aria-live="polite" />
+                <asp:Panel ID="pnlStart" runat="server" Visible="False" CssClass="card p-3 p-md-4">
+                    <asp:Label ID="lblInstructions" runat="server" CssClass="d-block mb-3" />
+                    <p>There is no time limit. Drag an ingredient into the cooking area, or select its Add button. Each choice is saved automatically.</p>
+                    <asp:Button ID="btnStart" runat="server" Text="Start cooking"
+                        CssClass="btn btn-success align-self-start" CausesValidation="False" OnClick="btnStart_Click" />
+                </asp:Panel>
+
+                <asp:Panel ID="pnlGame" runat="server" Visible="False">
+                    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+                        <asp:Label ID="lblStep" runat="server" CssClass="fw-bold" />
+                        <asp:Label ID="lblMistakes" runat="server" CssClass="text-secondary" />
+                    </div>
+                    <asp:Label ID="lblInstruction" runat="server" CssClass="h5 d-block mb-3" />
+                    <div id="progressTrack" runat="server" class="progress mb-4" role="progressbar" aria-label="Simulation progress">
+                        <div id="progressBar" runat="server" class="progress-bar bg-success"></div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-12 col-lg-6">
+                            <div id="dropZone" class="cooking-area card p-3 p-md-4"
+                                aria-label="Drop an ingredient into the cooking area">
+                                <h2 class="h5">Cooking area</h2>
+                                <div class="cookware">
+                                    <asp:Image ID="imgCookware" runat="server" AlternateText="Cookware for this recipe" CssClass="cookware-image" />
+                                    <asp:Panel ID="pnlCookwarePlaceholder" runat="server" CssClass="cookware-placeholder" aria-hidden="true" />
+                                    <div class="steam" aria-hidden="true"><span></span><span></span><span></span></div>
+                                </div>
+                                <p class="text-secondary mb-0">Drop an ingredient here, or use its Add button.</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <h2 class="h5">Ingredients</h2>
+                            <div class="row g-3">
+                                <asp:Repeater ID="rptIngredients" runat="server" OnItemCommand="rptIngredients_ItemCommand">
+                                    <ItemTemplate>
+                                        <div class="col-6 col-sm-4 col-lg-6">
+                                            <div class="ingredient-card card p-2 h-100" draggable="true" data-ingredient='<%# Eval("ingredientID") %>'>
+                                                <asp:Image ID="imgIngredient" runat="server" ImageUrl='<%# Eval("imageUrl") %>' AlternateText='<%# Eval("ingredientName") %>' Visible='<%# !String.IsNullOrEmpty(Convert.ToString(Eval("imageUrl"))) %>' CssClass="ingredient-image" draggable="false" onerror="this.hidden=true;" />
+                                                <span class="fw-semibold d-block mb-2"><%#: Eval("ingredientName") %></span>
+                                                <asp:LinkButton ID="btnIngredient" runat="server" Text="Add" CssClass="btn btn-outline-success btn-sm mt-auto" CausesValidation="False" CommandName="AddIngredient" CommandArgument='<%# Eval("ingredientID") %>' />
+                                            </div>
+                                        </div>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="small text-secondary mt-3"> Leaving this page keeps your progress. Reopen this simulation to continue. Some recipes use the same ingredient in more than one step.</p>
+                </asp:Panel>
+
+                <asp:Panel ID="pnlResult" runat="server" Visible="False" ClientIDMode="Static" CssClass="card p-3 p-md-4 text-center">
+                    <h2>Dish completed!</h2>
+                    <asp:Image ID="imgCompleted" runat="server" AlternateText="The completed dish" CssClass="completed-image mx-auto mb-3" />
+                    <asp:Label ID="lblResult" runat="server" CssClass="fs-4 d-block mb-2" />
+                    <p class="small text-secondary"> Accuracy = correct ingredient additions divided by all ingredient choices.</p>
+                </asp:Panel>
+
+                <asp:Panel ID="pnlAttemptActions" runat="server" Visible="False" CssClass="d-flex flex-wrap gap-2 mt-4">
+                    <asp:Button ID="btnRestart" runat="server" Text="Start a new attempt" CssClass="btn btn-outline-success" CausesValidation="False" OnClientClick="return confirm('Start a new attempt? Your current run will remain in your history.');" OnClick="btnRestart_Click" />
+                </asp:Panel>
+                <asp:HiddenField ID="hfIngredient" runat="server" ClientIDMode="Static" />
+                <asp:HiddenField ID="hfEffect" runat="server" ClientIDMode="Static" />
+                <asp:Button ID="btnDrop" runat="server" Text="Add dropped ingredient" ClientIDMode="Static" CausesValidation="False" UseSubmitBehavior="False" Style="display:none;" OnClick="btnDrop_Click" />
+            </ContentTemplate>
+        </asp:UpdatePanel>
+
+        <div class="d-flex flex-wrap gap-2 align-items-center mt-4">
+            <asp:HyperLink ID="lnkRecipe" runat="server" Text="Back to recipe details" Visible="False" CssClass="btn btn-success" />
+            <button type="button" id="btnSound" class="btn btn-outline-secondary" aria-pressed="false">Sound: off</button>
+        </div>
     </main>
-
-    <script>
-    const cookingSteps = [
-        {
-            ingredientId: "imgOil",
-            instruction: "First, add the cooking oil to the heated wok."
-        },
-        {
-            ingredientId: "imgGarlic",
-            instruction: "Next, add the chopped garlic and stir until fragrant."
-        },
-        {
-            ingredientId: "imgEgg",
-            instruction: "Add the beaten egg and scramble it."
-        },
-        {
-            ingredientId: "imgRice",
-            instruction: "Add the cooked rice and stir to combine."
-        },
-        {
-            ingredientId: "imgSeasoning",
-            instruction: "Finally, add the seasoning and mix well."
-        }
-    ];
-
-    let currentStep = 0;
-
-    function dragIngredient(event) {
-        event.dataTransfer.setData("text/plain", event.target.id);
-        event.dataTransfer.effectAllowed = "move";
-    }
-
-    function allowDrop(event) {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = "move";
-    }
-
-    function dropIngredient(event) {
-        event.preventDefault();
-
-        if (currentStep >= cookingSteps.length) {
-            return;
-        }
-
-        const ingredientId =
-            event.dataTransfer.getData("text/plain");
-
-        const expectedStep = cookingSteps[currentStep];
-
-        const feedback =
-            document.getElementById("lblFeedback");
-
-        if (ingredientId !== expectedStep.ingredientId) {
-            feedback.textContent =
-                "Not yet! " + expectedStep.instruction;
-            return;
-        }
-
-        document.getElementById(ingredientId).hidden = true;
-
-        currentStep++;
-
-        if (currentStep === cookingSteps.length) {
-            document.getElementById("lblStep").textContent =
-                "Completed: 5 of 5 steps";
-
-            document.getElementById("lblInstruction").textContent =
-                "Your fried rice is ready!";
-
-            feedback.textContent =
-                "Well done! You added every ingredient in the correct order.";
-
-            document.getElementById("pnlWok").style.display = "none";
-
-            document.getElementById("pnlCompletion").style.display = "block";
-        }
-        else {
-            document.getElementById("lblStep").textContent =
-                "Step " + (currentStep + 1) + " of " + cookingSteps.length;
-
-            document.getElementById("lblInstruction").textContent =
-                cookingSteps[currentStep].instruction;
-
-            feedback.textContent =
-                "Correct! Follow the next instruction.";
-        }
-    }
-
-    function restartSimulation() {
-        currentStep = 0;
-
-        document.getElementById("pnlWok").style.display = "block";
-
-        document.getElementById("pnlCompletion").style.display = "none";
-
-        for (const step of cookingSteps) {
-            document.getElementById(step.ingredientId).hidden = false;
-        }
-
-        document.getElementById("lblStep").textContent =
-            "Step 1 of " + cookingSteps.length;
-
-        document.getElementById("lblInstruction").textContent =
-            cookingSteps[0].instruction;
-
-        document.getElementById("lblFeedback").textContent =
-            "Ready to begin? Find the cooking oil.";
-    }
-    </script>
+    <script src="<%= ResolveUrl("~/Scripts/simulation.js") %>"></script>
 </asp:Content>
