@@ -324,6 +324,9 @@ namespace Masaking.Community
             var postCard = (HtmlGenericControl)e.Item.FindControl("postCard");
             postCard.Attributes["data-post-id"] = Convert.ToString(row["postID"]);
             postCard.Attributes["data-has-recipe"] = Convert.ToString(row["recipeID"] != DBNull.Value ? "true" : "false");
+            var lnkAuthorProfile = (HyperLink)e.Item.FindControl("lnkAuthorProfile");
+            lnkAuthorProfile.NavigateUrl = "~/Account/Profile?id=" + Convert.ToInt32(row["userID"]);
+            lnkAuthorProfile.Attributes["aria-label"] = "View profile for " + Convert.ToString(row["displayName"]);
             var lblAuthorAvatar = (Label)e.Item.FindControl("lblAuthorAvatar");
             lblAuthorAvatar.Text = Convert.ToString(CommunityAvatar(row["authorImage"], row["displayName"], "Post author"));
             var lblDisplayName = (Label)e.Item.FindControl("lblDisplayName");

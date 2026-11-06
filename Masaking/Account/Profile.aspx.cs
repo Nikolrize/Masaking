@@ -15,8 +15,14 @@ namespace Masaking.Account
         protected Panel pnlNoRecipes;
         protected LinkButton btnSignOut;
         protected int PendingRecipes, PendingCommunity;
+        protected bool IsPublicProfile { get; private set; }
+        private bool publicProfileLoaded;
+
         protected void btnSignOut_Click(object sender, EventArgs e)
         {
+            if (IsPublicProfile)
+                return;
+
             Session.Clear();
             Session.Abandon();
             FormsAuthentication.SignOut();
@@ -48,6 +54,39 @@ namespace Masaking.Account
         {
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetNoStore();
+            string requestedId = Request.QueryString["id"];
+            int profileId = 0;
+            if (requestedId != null && (!Int32.TryParse(requestedId, out profileId) || profileId <= 0))
+            {
+                IsPublicProfile = true;
+                ShowPublicProfileError(404, "This profile is unavailable.");
+                return;
+            }
+
+            IsPublicProfile = requestedId != null && Database.UserId != profileId;
+            if (IsPublicProfile)
+            {
+                try
+                {
+                    if (!LoadAccount(profileId, true))
+                    {
+                        ShowPublicProfileError(404, "This profile is unavailable.");
+                        return;
+                    }
+                    BindRecipes(profileId);
+                    rptActivity.DataSource = UserActivity(profileId);
+                    rptActivity.DataBind();
+                    publicProfileLoaded = true;
+                    Title = "Member profile | Masaking";
+                }
+                catch (SqlException ex)
+                {
+                    Trace.Warn("Profile", "Unable to load the public profile.", ex);
+                    ShowPublicProfileError(503, "This profile is temporarily unavailable. Please try again later.");
+                }
+                return;
+            }
+
             // Signing out must still work when profile data cannot be loaded.
             if (IsPostBack && Request.Form["__EVENTTARGET"] == btnSignOut.UniqueID)
                 return;
@@ -62,10 +101,7 @@ namespace Masaking.Account
                 }
                 else if (!IsPostBack)
                 {
-                    var recipes = UserRecipes();
-                    rptRecipes.DataSource = recipes;
-                    rptRecipes.DataBind();
-                    pnlNoRecipes.Visible = recipes.Rows.Count == 0;
+                    BindRecipes(Database.UserId.Value);
                     rptActivity.DataSource = UserActivity();
                     rptActivity.DataBind();
                 }
@@ -78,19 +114,49 @@ namespace Masaking.Account
             }
         }
 
+        private void BindRecipes(int profileId)
+        {
+            var recipes = UserRecipes(profileId, IsPublicProfile);
+            rptRecipes.DataSource = recipes;
+            rptRecipes.DataBind();
+            pnlNoRecipes.Visible = recipes.Rows.Count == 0;
+        }
+
+        private void ShowPublicProfileError(int statusCode, string message)
+        {
+            Response.StatusCode = statusCode;
+            Response.TrySkipIisCustomErrors = true;
+            lblMessage.CssClass = "alert alert-warning d-block";
+            lblMessage.Text = message;
+        }
+
         protected override void OnPreRender(EventArgs e)
         {
-            if (!IsAdministrator)
+            bool showAdmin = !IsPublicProfile && IsAdministrator;
+            if (!showAdmin && (!IsPublicProfile || publicProfileLoaded))
                 profilePage.Attributes["data-profile-screen"] = "";
             else
                 profilePage.Attributes.Remove("data-profile-screen");
-            phAdminSection.Visible = IsAdministrator;
-            phAdminSection2.Visible = IsAdministrator;
-            phMemberSection.Visible = !(IsAdministrator);
-            phAdminSection3.Visible = IsAdministrator;
-            phMemberSection2.Visible = !(IsAdministrator);
+            profileHero.Visible = !IsPublicProfile || publicProfileLoaded;
+            profileEmailContact.Visible = !IsPublicProfile;
+            profileActions.Visible = !IsPublicProfile;
+            if (IsPublicProfile)
+            {
+                btnRecipes.InnerText = "Recipes";
+                btnPosts.InnerText = "Posts";
+                btnComments.InnerText = "Comments";
+            }
+            lnkViewAll.Visible = !IsPublicProfile;
+            lnkShareYourFirstRecipe.Visible = !IsPublicProfile;
+            phAdminSection.Visible = showAdmin;
+            phAdminSection2.Visible = showAdmin;
+            phMemberSection.Visible = !IsPublicProfile && !showAdmin;
+            phAdminSection3.Visible = showAdmin;
+            phMemberSection2.Visible = IsPublicProfile ? publicProfileLoaded : !showAdmin;
             lblInitials.Text = Server.HtmlEncode(Convert.ToString(Initials));
             imgDecoration.ImageUrl = Convert.ToString(AvatarDisplayUrl);
+            if (IsPublicProfile)
+                imgDecoration.AlternateText = "Profile photo";
             lblProfileName.Text = Server.HtmlEncode(Convert.ToString(ProfileName));
             lblProfileUsername.Text = Server.HtmlEncode(Convert.ToString(ProfileUsername));
             lblProfileCountry.Text = Server.HtmlEncode(Convert.ToString(ProfileCountry));
@@ -137,7 +203,7 @@ namespace Masaking.Account
             var imgDecoration3 = (Image)e.Item.FindControl("imgDecoration3");
             imgDecoration3.ImageUrl = Convert.ToString(AvatarDisplayUrl);
             var lblKind = (Label)e.Item.FindControl("lblKind");
-            lblKind.Text = Server.HtmlEncode(Convert.ToString(ActivityText(row["kind"])));
+            lblKind.Text = Server.HtmlEncode(ActivityText(row["kind"], IsPublicProfile));
             var lblContent = (Label)e.Item.FindControl("lblContent");
             lblContent.Text = Server.HtmlEncode(Convert.ToString(Excerpt(row["content"])));
             var postCard = (HtmlGenericControl)e.Item.FindControl("postCard");

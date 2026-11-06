@@ -70,38 +70,48 @@ namespace Masaking.Account
 
         protected void LoadAccount()
         {
+            LoadAccount(Database.UserId.Value, false);
+        }
+
+        protected bool LoadAccount(int userId, bool publicView)
+        {
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@"SELECT username, displayName, email, country, image,
+            using (SqlCommand cmd = new SqlCommand(@"SELECT username, displayName,
+                CASE WHEN @publicView=0 THEN email END AS email, country, image,
                 (SELECT COUNT(*) FROM recipes WHERE userID=@id) AS recipeCount,
                 (SELECT COUNT(*) FROM posts WHERE userID=@id AND status='Approved') AS postCount
                 FROM users WHERE userID=@id AND isActive=1", cn))
             {
-                cmd.Parameters.Add("@id", SqlDbType.Int).Value = Database.UserId.Value;
+                cmd.Parameters.Add("@id", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@publicView", SqlDbType.Bit).Value = publicView;
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (!reader.Read())
-                        return;
+                        return false;
 
                     ProfileName = Convert.ToString(reader["displayName"]);
                     ProfileUsername = Convert.ToString(reader["username"]);
                     ProfileEmail = Convert.ToString(reader["email"]);
                     ProfileCountry = Convert.ToString(reader["country"]);
                     ProfileImage = Database.AvatarUrl(reader["image"]);
-                    Session["UserImage"] = ProfileImage;
+                    if (!publicView)
+                        Session["UserImage"] = ProfileImage;
                     RecipeCount = Convert.ToInt32(reader["recipeCount"]);
                     PostCount = Convert.ToInt32(reader["postCount"]);
+                    return true;
                 }
             }
         }
 
-        protected DataTable UserRecipes()
+        protected DataTable UserRecipes(int userId, bool approvedOnly)
         {
+            string statusFilter = approvedOnly ? " AND r.status='Approved'" : "";
             return Read(@"SELECT TOP (12) r.recipeID, r.title, r.cuisine, r.preparationTime, r.image, r.status,
                 (SELECT COUNT(*) FROM favourites f WHERE f.recipeID=r.recipeID) AS saves
-                FROM recipes r WHERE r.userID=@id ORDER BY r.createdAt DESC, r.recipeID DESC");
+                FROM recipes r WHERE r.userID=@id" + statusFilter + " ORDER BY r.createdAt DESC, r.recipeID DESC", userId);
         }
 
-        protected DataTable UserActivity()
+        protected DataTable UserActivity(int? userId = null)
         {
             return Read(@"SELECT TOP (30) activity.* FROM (
                 SELECT p.postID, p.content, p.createdAt, 'post' AS kind, r.image AS image, r.title AS recipeTitle
@@ -112,15 +122,15 @@ namespace Masaking.Account
                 FROM postComments c JOIN posts p ON p.postID=c.postID JOIN users u ON u.userID=p.userID
                 LEFT JOIN recipes r ON r.recipeID=p.recipeID
                 WHERE c.userID=@id AND c.status='Approved' AND p.status='Approved' AND u.isActive=1
-                ) activity ORDER BY activity.createdAt DESC, activity.postID DESC");
+                ) activity ORDER BY activity.createdAt DESC, activity.postID DESC", userId);
         }
 
-        private DataTable Read(string sql)
+        private DataTable Read(string sql, int? userId = null)
         {
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))
             {
-                cmd.Parameters.Add("@id", SqlDbType.Int).Value = Database.UserId.Value;
+                cmd.Parameters.Add("@id", SqlDbType.Int).Value = userId ?? Database.UserId.Value;
                 DataTable table = new DataTable();
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                 {
@@ -161,8 +171,11 @@ namespace Masaking.Account
                 : "../Recipes/MyRecipes.aspx";
         }
 
-        protected string ActivityText(object kind)
+        protected string ActivityText(object kind, bool publicView = false)
         {
+            if (publicView)
+                return Convert.ToString(kind) == "post" ? "Posted a new discussion" : "Commented on a discussion";
+
             return Convert.ToString(kind) == "post"
                 ? "You posted a new discussion"
                 : "You commented on a discussion";

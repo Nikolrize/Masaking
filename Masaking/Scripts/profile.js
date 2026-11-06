@@ -41,7 +41,9 @@
                 if (visible) shown++;
             });
             screen.querySelector('[data-activity-empty]').hidden = shown > 0;
-            screen.querySelector('[data-activity-heading]').textContent = tab === 'posts' ? 'My Posts' : tab === 'comments' ? 'My Comments' : 'Recent Community Activity';
+            var activityTab = screen.querySelector('.profile-tabs [data-profile-tab="' + tab + '"]');
+            screen.querySelector('[data-activity-heading]').textContent = tab === 'posts' || tab === 'comments'
+                ? activityTab.textContent : 'Recent Community Activity';
         }
         screen.querySelectorAll('[data-profile-tab]').forEach(function (button) {
             button.addEventListener('click', function (event) {

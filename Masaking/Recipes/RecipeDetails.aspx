@@ -221,7 +221,7 @@
 
                     <asp:TextBox ID="txtReviewComment" runat="server"
                         TextMode="MultiLine" Rows="3"
-                        CssClass="form-control mw-100 mb-2" />
+                        CssClass="form-control mb-2" />
 
                     <p class="small text-muted">
                         Maximum 1,000 characters. Submitting again updates your review.

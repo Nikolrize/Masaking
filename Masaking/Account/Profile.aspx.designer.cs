@@ -18,6 +18,9 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl profilePage;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileHero;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileEmailContact;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileActions;
         /// <summary>
         /// lblInitials control.
         /// </summary>
