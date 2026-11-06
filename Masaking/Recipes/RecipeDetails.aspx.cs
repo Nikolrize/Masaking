@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace Masaking.Recipes
 {
-    public partial class RecipeDetails : System.Web.UI.Page
+    public partial class RecipeDetails : ResponsivePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

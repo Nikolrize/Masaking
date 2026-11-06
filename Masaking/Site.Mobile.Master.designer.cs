@@ -33,16 +33,7 @@ namespace Masaking
         protected global::System.Web.UI.WebControls.PlaceHolder phGuestNav;
 
         /// <summary>
-        /// phAuthenticatedNav control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder phAuthenticatedNav;
-
-        /// <summary>
-        /// lnkNavProfile control.
+        /// FeaturedContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.

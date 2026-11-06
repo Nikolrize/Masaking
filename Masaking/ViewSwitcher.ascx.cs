@@ -38,6 +38,9 @@ namespace Masaking
             var url = GetRouteUrl(switchViewRouteName, new { view = AlternateView, __FriendlyUrls_SwitchViews = true });
             url += "?ReturnUrl=" + HttpUtility.UrlEncode(Request.RawUrl);
             SwitchUrl = url;
+            lblCurrentView.Text = HttpUtility.HtmlEncode(CurrentView);
+            lnkSwitchView.NavigateUrl = SwitchUrl;
+            lnkSwitchView.Text = HttpUtility.HtmlEncode("Switch to " + AlternateView);
         }
     }
 }

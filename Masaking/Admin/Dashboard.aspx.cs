@@ -3,7 +3,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
-    public partial class Dashboard : System.Web.UI.Page
+    public partial class Dashboard : Masaking.Infrastructure.ResponsivePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
