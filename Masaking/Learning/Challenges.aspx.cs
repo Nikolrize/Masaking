@@ -6,7 +6,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Learning
 {
-    public partial class Challenges : System.Web.UI.Page
+    public partial class Challenges : Masaking.Infrastructure.ResponsivePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

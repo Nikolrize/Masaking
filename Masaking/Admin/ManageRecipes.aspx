@@ -1,4 +1,4 @@
-<%@ Page Title="Manage Recipes" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageRecipes.aspx.cs" Inherits="Masaking.Admin.ManageRecipes" %>
+﻿<%@ Page Title="Manage Recipes" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageRecipes.aspx.cs" Inherits="Masaking.Admin.ManageRecipes" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
         <asp:HyperLink ID="lnkDashboard" runat="server" NavigateUrl="~/Admin/Dashboard.aspx" CssClass="btn btn-outline-success mb-3" Text="Back to Dashboard" />

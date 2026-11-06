@@ -1,4 +1,4 @@
-<%@ Page Title="Community moderation" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageCommunity.aspx.cs" Inherits="Masaking.Admin.ManageCommunity" %>
+﻿<%@ Page Title="Community moderation" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageCommunity.aspx.cs" Inherits="Masaking.Admin.ManageCommunity" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <p class="text-brand fw-semibold">ADMINISTRATION</p>

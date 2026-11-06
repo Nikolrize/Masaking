@@ -11,5 +11,7 @@ namespace Masaking {
     
     
     public partial class ViewSwitcher {
+        protected global::System.Web.UI.WebControls.Label lblCurrentView;
+        protected global::System.Web.UI.WebControls.HyperLink lnkSwitchView;
     }
 }

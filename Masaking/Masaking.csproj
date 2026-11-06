@@ -44,6 +44,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Admin\Admin.Master.cs">
+      <DependentUpon>Admin.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin.Master.designer.cs">
+      <DependentUpon>Admin.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Learning\TakeQuiz.aspx.cs">
+      <DependentUpon>TakeQuiz.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Learning\TakeQuiz.aspx.designer.cs">
+      <DependentUpon>TakeQuiz.aspx</DependentUpon>
+    </Compile>
+    <Content Include="Admin\Admin.Master" />
+    <Content Include="Learning\TakeQuiz.aspx" />
+    <Content Include="Content\css\admin.css" />
 	  <Compile Include="Admin\QuizQuestions.aspx.cs">
 		  <DependentUpon>QuizQuestions.aspx</DependentUpon>
 		  <SubType>ASPXCodeBehind</SubType>
@@ -61,6 +78,9 @@
 	  <Compile Include="Infrastructure\CategoryRepository.cs" />
     <Compile Include="Infrastructure\Database.cs" />
     <Compile Include="Infrastructure\ImageUpload.cs" />
+    <Compile Include="Infrastructure\ResponsivePage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
@@ -139,7 +159,6 @@
     <Content Include="Community\Community.aspx" />
     <Content Include="Community\EditPost.aspx" />
     <Content Include="Community\Post.aspx" />
-    <Content Include="Community\Reviews.aspx" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -175,7 +194,6 @@
     <Content Include="Content\css\mobile-artwork.css" />
     <Content Include="Content\css\profile.css" />
     <Content Include="Content\css\recipes.css" />
-    <Content Include="Content\css\admin.css" />
     <Content Include="Content\css\community.css" />
     <Content Include="Content\css\community-responsive.css" />
     <Content Include="Default.aspx" />
@@ -285,6 +303,7 @@
       <DependentUpon>Search.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Account\CountrySelection.cs" />
     <Compile Include="Account\ProfilePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -353,16 +372,16 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Community\EditPost.aspx.cs">
+      <DependentUpon>EditPost.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Community\Post.aspx.cs">
       <DependentUpon>Post.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Community\Post.aspx.designer.cs">
       <DependentUpon>Post.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Community\EditPost.aspx.cs">
-      <DependentUpon>EditPost.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Community\EditPost.aspx.designer.cs">
       <DependentUpon>EditPost.aspx</DependentUpon>
@@ -376,13 +395,6 @@
     </Compile>
     <Compile Include="Community\Community.aspx.designer.cs">
       <DependentUpon>Community.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Community\Reviews.aspx.cs">
-      <DependentUpon>Reviews.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Community\Reviews.aspx.designer.cs">
-      <DependentUpon>Reviews.aspx</DependentUpon>
     </Compile>
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>

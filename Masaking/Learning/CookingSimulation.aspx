@@ -1,4 +1,4 @@
-<%@ Page Title="Fried Rice Simulation" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="CookingSimulation.aspx.cs" Inherits="Masaking.Learning.CookingSimulation" %>
+﻿<%@ Page Title="Fried Rice Simulation" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="CookingSimulation.aspx.cs" Inherits="Masaking.Learning.CookingSimulation" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <main class="py-4 py-md-5">

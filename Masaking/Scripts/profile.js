@@ -7,7 +7,10 @@
             if (avatar) avatar.classList.remove('has-photo');
         }
         function loaded() {
-            if (!image.getAttribute('src') || image.getAttribute('src').indexOf('data:image/gif;base64,') === 0) { fallback(); return; }
+            if (!image.getAttribute('src') || image.getAttribute('src').indexOf('data:image/gif;base64,') === 0) {
+                fallback();
+                return;
+            }
             image.hidden = false;
             if (avatar) avatar.classList.add('has-photo');
         }
@@ -38,10 +41,15 @@
                 if (visible) shown++;
             });
             screen.querySelector('[data-activity-empty]').hidden = shown > 0;
-            screen.querySelector('[data-activity-heading]').textContent = tab === 'posts' ? 'My Posts' : tab === 'comments' ? 'My Comments' : 'Recent Community Activity';
+            var activityTab = screen.querySelector('.profile-tabs [data-profile-tab="' + tab + '"]');
+            screen.querySelector('[data-activity-heading]').textContent = tab === 'posts' || tab === 'comments'
+                ? activityTab.textContent : 'Recent Community Activity';
         }
         screen.querySelectorAll('[data-profile-tab]').forEach(function (button) {
-            button.addEventListener('click', function (event) { event.preventDefault(); selectTab(button.dataset.profileTab); });
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                selectTab(button.dataset.profileTab);
+            });
         });
         var requestedTab = new URLSearchParams(window.location.search).get('tab');
         selectTab(['overview', 'recipes', 'posts', 'comments'].indexOf(requestedTab) >= 0 ? requestedTab : 'overview');
@@ -63,7 +71,11 @@
             rail.querySelector('[data-rail-empty]').hidden = shown > 0;
             rail.querySelector('[data-rail-label]').textContent = (tab === 'post' ? 'My Posts' : 'My Comments') + ' (' + shown + ')';
         }
-        rail.querySelectorAll('[data-rail-tab]').forEach(function (button) { button.addEventListener('click', function () { railTab(button.dataset.railTab); }); });
+        rail.querySelectorAll('[data-rail-tab]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                railTab(button.dataset.railTab);
+            });
+        });
         railTab('post');
     }
     document.querySelectorAll('[data-profile-password]').forEach(function (button) {
@@ -83,7 +95,10 @@
             var image = document.getElementById('imgAvatar');
             var error = document.getElementById('profilePhotoError');
             if (!image.dataset.savedSrc) image.dataset.savedSrc = image.getAttribute('src') || '';
-            if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = null;
+            }
             image.src = image.dataset.savedSrc;
             image.hidden = false;
             error.textContent = '';
@@ -98,7 +113,9 @@
             image.src = previewUrl;
             image.hidden = false;
         });
-        window.addEventListener('pagehide', function () { if (previewUrl) URL.revokeObjectURL(previewUrl); });
+        window.addEventListener('pagehide', function () {
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+        });
     }
     if (window.location.hash === '#security') {
         var password = document.getElementById('txtCurrentPassword');

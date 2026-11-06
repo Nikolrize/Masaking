@@ -1,4 +1,4 @@
-<%@ Page Title="My Learning Progress" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Progress.aspx.cs" Inherits="Masaking.Learning.Progress" %>
+﻿<%@ Page Title="My Learning Progress" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Progress.aspx.cs" Inherits="Masaking.Learning.Progress" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <main class="py-4 py-md-5">

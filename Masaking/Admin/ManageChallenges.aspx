@@ -1,4 +1,4 @@
-<%@ Page Title="Manage Quizzes" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageChallenges.aspx.cs" Inherits="Masaking.Admin.ManageChallenges" %>
+﻿<%@ Page Title="Manage Quizzes" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageChallenges.aspx.cs" Inherits="Masaking.Admin.ManageChallenges" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <asp:HyperLink ID="lnkDashboard" runat="server" NavigateUrl="~/Admin/Dashboard.aspx" Text="Back to Dashboard" CssClass="btn btn-outline-success mb-3" />

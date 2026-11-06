@@ -7,66 +7,28 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Masaking
-{
+namespace Masaking {
 
 
-    public partial class Site_Mobile
-    {
+    public partial class Site_Mobile {
 
         /// <summary>
-        /// phMyRecipesNav control.
+        /// HeadContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder phMyRecipesNav;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder HeadContent;
 
         /// <summary>
-        /// phGuestNav control.
+        /// FeaturedContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder phGuestNav;
-
-        /// <summary>
-        /// phAuthenticatedNav control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder phAuthenticatedNav;
-
-        /// <summary>
-        /// lnkNavProfile control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkNavProfile;
-
-        /// <summary>
-        /// litNavInitials control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litNavInitials;
-
-        /// <summary>
-        /// imgNavAvatar control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgNavAvatar;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder FeaturedContent;
 
         /// <summary>
         /// MainContent control.

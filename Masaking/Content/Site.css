@@ -1,9 +1,8 @@
-/* Site-wide design tokens, branding, layout, buttons, forms, validation, shared avatars and previews. */
+/* Site-wide design tokens, layout, typography, forms, buttons, and search styles. */
 :root {
     --color-primary: #28583d; /* Deep leafy green */
     --color-primary-dark: #1d432e;
     --color-accent: #e58a45; /* Terracotta orange */
-    --color-accent-red: #c85d46;
     --color-cream: #f7f2e6; /* Warm page background */
     --color-surface: #fffdf7; /* Cards and header */
     --color-text: #26352c;
@@ -11,24 +10,11 @@
     --color-border: #e8e1d3;
 }
 
-.brand-mark {
-    width: 116px;
-    height: auto;
-    object-fit: contain;
-}
-
 .page-heading {
     color: var(--color-primary-dark);
     font-family: "Segoe UI", Arial, sans-serif;
     font-weight: 700;
     letter-spacing: -.025em;
-}
-
-.masaking-card {
-    background: rgba(255,253,248,.96);
-    border: 1px solid var(--color-border);
-    border-radius: 1rem;
-    box-shadow: 0 10px 28px rgba(40,88,61,.07);
 }
 
 .form-control, .form-select {
@@ -47,51 +33,6 @@
 
 .text-brand {
     color: var(--color-primary);
-}
-
-.badge-pending {
-    color: #765100;
-    background: #fff0c8;
-}
-
-.field-validation-error {
-    color: #b42318;
-    font-size: .875rem;
-}
-
-.validation-summary-errors {
-    color: #b42318;
-}
-
-.auth-ornament {
-    color: var(--color-accent);
-}
-
-.avatar-small {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--color-border);
-}
-
-.image-preview {
-    display: none;
-    max-width: 100%;
-    max-height: 280px;
-    object-fit: cover;
-    border: 1px solid var(--color-border);
-    border-radius: .8rem;
-}
-
-.image-preview.is-visible {
-    display: block;
-}
-
-.avatar-preview {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
 }
 
 body {
@@ -127,38 +68,9 @@ body {
     border-color: var(--color-primary-dark);
 }
 
-.btn-accent {
-    background-color: var(--color-accent);
-    border-color: var(--color-accent);
-    color: #fff;
-}
-
 .card {
     background-color: var(--color-surface);
     border-color: var(--color-border);
-}
-
-.password-toggle {
-    display: inline-grid;
-    place-items: center;
-    min-width: 2.75rem;
-}
-
-.password-toggle svg, .form-icon svg {
-    width: 1.15rem;
-    height: 1.15rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.form-icon {
-    display: inline-flex;
-    align-items: center;
-    gap: .55rem;
-    color: var(--color-primary);
 }
 
 .body-content {
@@ -179,11 +91,6 @@ textarea {
     }
 }
 
-/* Official Bootstrap Icons, loaded locally by the shared bundle or page head. */
-.password-toggle .bi, .form-icon .bi {
-    font-size: 1.15rem;
-    line-height: 1;
-}
 
 i.cost-icon {
     color: var(--color-accent);

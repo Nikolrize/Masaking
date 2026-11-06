@@ -1,4 +1,4 @@
-<%@ Page Title="Cooking Quizzes" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Challenges.aspx.cs" Inherits="Masaking.Learning.Challenges" %>
+﻿<%@ Page Title="Cooking Quizzes" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Challenges.aspx.cs" Inherits="Masaking.Learning.Challenges" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <main class="py-4 py-md-5">
