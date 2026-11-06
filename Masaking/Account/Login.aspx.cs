@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 using Masaking.Infrastructure;
@@ -53,7 +53,7 @@ namespace Masaking.Account
             if (!String.IsNullOrEmpty(next) && next.StartsWith("/", StringComparison.Ordinal) && !next.StartsWith("//", StringComparison.Ordinal))
                 Response.Redirect(next, false);
             else
-                Response.Redirect(String.Equals(Database.UserRole, "Admin", StringComparison.OrdinalIgnoreCase) ? "../Admin/ManageRecipes.aspx" : "~/", false);
+                Response.Redirect(String.Equals(Database.UserRole, "Admin", StringComparison.OrdinalIgnoreCase) ? "../Admin/Dashboard.aspx" : "~/", false);
             Context.ApplicationInstance.CompleteRequest();
         }
 

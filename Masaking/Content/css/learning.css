@@ -1,0 +1,161 @@
+.learning-page h1,
+.learning-page h2 {
+    color: var(--color-primary-dark);
+    font-weight: 700;
+}
+
+.learning-page .intro-label {
+    color: var(--color-primary);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+}
+
+.learning-page .heading-icon {
+    width: 4.5rem;
+    height: 4.5rem;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+    font-size: 3rem;
+    transform: rotate(-12deg);
+}
+
+.learning-page .card {
+    border-radius: .85rem;
+    box-shadow: 0 3px 15px rgba(38, 53, 44, .035);
+}
+
+.learning-page .section-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.2rem;
+    height: 2.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: .65rem;
+    color: #98602b;
+    background: #fff4e5;
+    font-size: 1.25rem;
+}
+
+.learning-page .browse-link {
+    flex-shrink: 0;
+    margin-top: .25rem;
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.learning-page .browse-link:hover,
+.learning-page .browse-link:focus-visible {
+    text-decoration: underline;
+}
+
+.learning-page .simulation-preview + .simulation-preview {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.learning-page .preview-image,
+.learning-page .preview-placeholder {
+    width: clamp(4rem, 8vw, 5.5rem);
+    aspect-ratio: 1;
+    flex-shrink: 0;
+    border-radius: .65rem;
+    object-fit: cover;
+}
+
+.learning-page .preview-placeholder {
+    display: grid;
+    place-items: center;
+    color: var(--color-primary);
+    background: #edf2e7;
+    font-size: 1.8rem;
+}
+
+.learning-page .preview-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.learning-page .progress {
+    height: .42rem;
+    background: var(--color-border);
+    border-radius: 1rem;
+}
+
+.learning-page .progress-bar {
+    background: var(--color-primary);
+    border-radius: 1rem;
+}
+
+.learning-page .preview-note {
+    padding: .85rem 1rem;
+    border-left: 3px solid #aec2a3;
+    border-radius: 0 .5rem .5rem 0;
+    background: #f0f3e9;
+    overflow-wrap: anywhere;
+}
+
+.learning-page .challenge-time {
+    padding: 1.25rem .75rem;
+    border: 1px solid #f0dec6;
+    border-radius: .65rem;
+    color: #825a28;
+    background: #fff0dd;
+}
+
+.learning-page .challenge-time > i {
+    font-size: 2.8rem;
+}
+
+.learning-page .time-value {
+    color: var(--color-text);
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.learning-page .detail-tag {
+    padding: .25rem .55rem;
+    border: 1px solid var(--color-border);
+    border-radius: .4rem;
+    color: var(--color-muted);
+    font-size: .78rem;
+}
+
+.learning-page .challenge-button {
+    border-color: var(--color-accent);
+    color: #342411;
+    background: var(--color-accent);
+    font-weight: 700;
+}
+
+.learning-page .challenge-button:hover,
+.learning-page .challenge-button:focus-visible {
+    border-color: #c77436;
+    color: #342411;
+    background: #efa569;
+}
+
+.learning-page .progress-icon {
+    color: #98602b;
+    font-size: 1.5rem;
+}
+
+.learning-page .empty-message {
+    padding: 2rem 1rem;
+    border: 1px dashed var(--color-border);
+    border-radius: .65rem;
+    color: var(--color-primary);
+    background: #faf8f0;
+    text-align: center;
+}
+
+@media (max-width: 575px) {
+    .learning-page h1 { font-size: 1.85rem; }
+    .learning-page .section-icon { display: none; }
+}

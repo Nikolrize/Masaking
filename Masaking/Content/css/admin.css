@@ -1,0 +1,78 @@
+﻿/* Administration dashboard summary tiles. */
+.admin-stat-recipes {
+    background: #edf4e9;
+}
+
+.admin-stat-pending {
+    background: #fff2e5;
+}
+
+.admin-stat-users {
+    background: #edf3f8;
+}
+
+.admin-layout{
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 230px minmax(0,1fr);
+    background: #faf6ed;
+    color: #234332;
+}
+
+.admin-sidebar {
+    padding: 28px 20px;
+    background: #284d38;
+    color: #fffdf5;
+}
+
+.admin-brand {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #fffdf5;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.admin-sidebar nav a {
+    display: block;
+    padding: 12px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    color: #fffdf5;
+    text-decoration: none;
+}
+
+.admin-sidebar nav a:hover,
+.admin-sidebar nav a:focus-visible,
+.admin-sidebar nav a[aria-current="page"] {
+    background: #3c654b;
+}
+
+.admin-main {
+    min-width: 0;
+    padding: 32px;
+}
+
+.admin-summary-card {
+    padding: 24px;
+    border: 1px solid #e5ddcd;
+    border-radius: 14px;
+    background: #fffdf8;
+}
+
+@media (max-width: 767px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-sidebar nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .admin-main {
+        padding: 20px;
+    }
+}
