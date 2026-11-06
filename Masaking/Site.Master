@@ -55,12 +55,18 @@
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Recipes/BrowseRecipes">Recipes</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Learning/CookingSimulation">Learn</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Community/Community">Community</a></li>
+                        <asp:PlaceHolder ID="phMyRecipesNav" runat="server" Visible="false">
+                            <li class="nav-item">
+                                <a class="nav-link" runat="server" href="~/Recipes/MyRecipes">My Recipes
+                                </a>
+                            </li>
+                        </asp:PlaceHolder>
                     </ul>
                     <asp:PlaceHolder ID="phGuestNav" runat="server">
-                    <ul class="navbar-nav flex-grow-1 justify-content-end gap-2">
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Account/Login">Login</a></li>
-                        <li class="nav-item"><a class="btn btn-primary" runat="server" href="~/Account/Register">Sign Up</a></li>
-                    </ul>
+                        <ul class="navbar-nav flex-grow-1 justify-content-end gap-2">
+                            <li class="nav-item"><a class="nav-link" runat="server" href="~/Account/Login">Login</a></li>
+                            <li class="nav-item"><a class="btn btn-primary" runat="server" href="~/Account/Register">Sign Up</a></li>
+                        </ul>
                     </asp:PlaceHolder>
                     <asp:PlaceHolder ID="phAuthenticatedNav" runat="server" Visible="false">
                         <div class="site-nav-member-actions">
@@ -70,7 +76,8 @@
                                 <input id="siteSearchInput" type="search" maxlength="100" placeholder="Search recipes or posts…" autocomplete="off" />
                             </div>
                             <asp:HyperLink ID="lnkNavProfile" runat="server" NavigateUrl="~/Account/Profile.aspx" CssClass="site-nav-profile" aria-label="Open my profile">
-                                <span class="site-nav-initials" aria-hidden="true"><asp:Literal ID="litNavInitials" runat="server" /></span>
+                                <span class="site-nav-initials" aria-hidden="true">
+                                    <asp:Literal ID="litNavInitials" runat="server" /></span>
                                 <asp:Image ID="imgNavAvatar" runat="server" CssClass="site-nav-avatar" AlternateText="Your profile" />
                             </asp:HyperLink>
                         </div>

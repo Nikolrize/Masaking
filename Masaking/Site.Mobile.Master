@@ -2,24 +2,102 @@
 <%@ Register Src="~/ViewSwitcher.ascx" TagPrefix="friendlyUrls" TagName="ViewSwitcher" %>
 
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+<html lang="en">
 <head runat="server">
     <link href="<%= ResolveUrl("~/Content/bootstrap-icons.min.css?v=1") %>" rel="stylesheet" />
-    <meta name="viewport" content="width=device-width" />
-    <title></title>
-    <asp:ContentPlaceHolder runat="server" ID="HeadContent" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - My ASP.NET Application</title>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+    </asp:PlaceHolder>
+
+    <webopt:BundleReference runat="server" Path="~/Content/css" />
+    <link href="<%= ResolveUrl("~/Content/css/navbar-controls.css?v=1") %>" rel="stylesheet" />
+    <link href="<%= ResolveUrl("~/Content/css/mobile-artwork.css?v=3") %>" rel="stylesheet" />
+    <link href="<%= ResolveUrl("~/Content/css/back-links.css?v=2") %>" rel="stylesheet" />
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
 </head>
 <body>
-    <form id="form1" runat="server">
-    <asp:ScriptManager ID="MobileScriptManager" runat="server" />
-    <div>
-        <h1>Mobile Master Page</h1>
-        <asp:ContentPlaceHolder runat="server" ID="FeaturedContent" />
-        <section class="content-wrapper main-content clear-fix">
-            <asp:ContentPlaceHolder runat="server" ID="MainContent" />
-        </section>
-        <friendlyUrls:ViewSwitcher runat="server" />
-    </div>
+    <form runat="server">
+        <asp:ScriptManager runat="server">
+            <Scripts>
+                <%--To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
+                <%--Framework Scripts--%>
+                <asp:ScriptReference Name="MsAjaxBundle" />
+                <asp:ScriptReference Name="jquery" />
+                <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
+                <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
+                <asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
+                <asp:ScriptReference Name="GridView.js" Assembly="System.Web" Path="~/Scripts/WebForms/GridView.js" />
+                <asp:ScriptReference Name="DetailsView.js" Assembly="System.Web" Path="~/Scripts/WebForms/DetailsView.js" />
+                <asp:ScriptReference Name="TreeView.js" Assembly="System.Web" Path="~/Scripts/WebForms/TreeView.js" />
+                <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
+                <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
+                <asp:ScriptReference Name="WebFormsBundle" />
+                <%--Site Scripts--%>
+            </Scripts>
+        </asp:ScriptManager>
+
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm site-header">
+            <div class="container">
+                <a class="navbar-brand" runat="server" href="~/">
+                    <img src="<%= ResolveUrl("~/Content/images/Masaking Logo.png") %>" alt="Masaking" width="100" height="24" class="mb-1"></a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#siteNavbar" title="Toggle navigation" aria-controls="siteNavbar"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div id="siteNavbar" class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Recipes/BrowseRecipes">Recipes</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Learning/CookingSimulation">Learn</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Community/Community">Community</a></li>
+                        <asp:PlaceHolder ID="phMyRecipesNav" runat="server" Visible="false">
+                            <li class="nav-item">
+                                <a class="nav-link" runat="server" href="~/Recipes/MyRecipes">My Recipes
+                                </a>
+                            </li>
+                        </asp:PlaceHolder>
+                    </ul>
+                    <asp:PlaceHolder ID="phGuestNav" runat="server">
+                        <ul class="navbar-nav flex-grow-1 justify-content-end gap-2">
+                            <li class="nav-item"><a class="nav-link" runat="server" href="~/Account/Login">Login</a></li>
+                            <li class="nav-item"><a class="btn btn-primary" runat="server" href="~/Account/Register">Sign Up</a></li>
+                        </ul>
+                    </asp:PlaceHolder>
+                    <asp:PlaceHolder ID="phAuthenticatedNav" runat="server" Visible="false">
+                        <div class="site-nav-member-actions">
+                            <div class="site-nav-search" role="search" data-nav-search data-search-url="<%= ResolveUrl("~/Search.aspx") %>">
+                                <button type="button" class="site-nav-search-submit" data-nav-search-submit aria-label="Search recipes and community posts"><i class="bi bi-search" aria-hidden="true"></i></button>
+                                <label for="siteSearchInput" class="visually-hidden">Search recipes and community posts</label>
+                                <input id="siteSearchInput" type="search" maxlength="100" placeholder="Search recipes or posts…" autocomplete="off" />
+                            </div>
+                            <asp:HyperLink ID="lnkNavProfile" runat="server" NavigateUrl="~/Account/Profile.aspx" CssClass="site-nav-profile" aria-label="Open my profile">
+                                <span class="site-nav-initials" aria-hidden="true">
+                                    <asp:Literal ID="litNavInitials" runat="server" /></span>
+                                <asp:Image ID="imgNavAvatar" runat="server" CssClass="site-nav-avatar" AlternateText="Your profile" />
+                            </asp:HyperLink>
+                        </div>
+                    </asp:PlaceHolder>
+                </div>
+            </div>
+        </nav>
+        <div class="container body-content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+            <hr />
+            <footer>
+                <p>&copy; <%: DateTime.Now.Year %> - Masaking</p>
+            </footer>
+        </div>
     </form>
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/Scripts/bootstrap.js") %>
+    </asp:PlaceHolder>
+    <script src="<%= ResolveUrl("~/Scripts/site-nav.js?v=3") %>"></script>
 </body>
 </html>
