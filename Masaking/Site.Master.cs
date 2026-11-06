@@ -15,6 +15,7 @@ namespace Masaking
             bool signedIn = Database.UserId.HasValue;
             phGuestNav.Visible = !signedIn;
             phAuthenticatedNav.Visible = signedIn;
+            phMyRecipesNav.Visible = signedIn;
             if (signedIn)
             {
                 string name = Convert.ToString(Session["DisplayName"]);

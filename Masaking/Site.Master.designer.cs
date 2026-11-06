@@ -17,6 +17,7 @@ namespace Masaking
         protected global::System.Web.UI.WebControls.Label lblCopyrightYear;
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl navSearch;
         protected global::System.Web.UI.WebControls.ContentPlaceHolder HeadContent;
+        protected global::System.Web.UI.WebControls.PlaceHolder phMyRecipesNav;
 
         /// <summary>
         /// phGuestNav control.

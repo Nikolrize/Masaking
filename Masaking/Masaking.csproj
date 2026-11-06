@@ -44,8 +44,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controls\RecipeCard.ascx.cs">
+      <DependentUpon>RecipeCard.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\RecipeCard.ascx.designer.cs">
+      <DependentUpon>RecipeCard.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\CategoryRepository.cs" />
     <Compile Include="Infrastructure\Database.cs" />
     <Compile Include="Infrastructure\ImageUpload.cs" />
+    <Compile Include="Infrastructure\RecipeRepository.cs" />
     <Compile Include="Infrastructure\ResponsivePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -125,7 +134,6 @@
     <Content Include="Community\Community.aspx" />
     <Content Include="Community\EditPost.aspx" />
     <Content Include="Community\Post.aspx" />
-    <Content Include="Community\Reviews.aspx" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -161,7 +169,7 @@
     <Content Include="Content\css\mobile-artwork.css" />
     <Content Include="Content\css\profile.css" />
     <Content Include="Content\css\recipes.css" />
-    <Content Include="Content\css\admin.css" />
+    <Content Include="Controls\RecipeCard.ascx" />
     <Content Include="Content\css\community.css" />
     <Content Include="Content\css\community-responsive.css" />
     <Content Include="Default.aspx" />
@@ -361,13 +369,6 @@
     </Compile>
     <Compile Include="Community\Community.aspx.designer.cs">
       <DependentUpon>Community.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Community\Reviews.aspx.cs">
-      <DependentUpon>Reviews.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Community\Reviews.aspx.designer.cs">
-      <DependentUpon>Reviews.aspx</DependentUpon>
     </Compile>
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>

@@ -52,6 +52,9 @@
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Recipes/BrowseRecipes">Recipes</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Learning/CookingSimulation">Learn</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Community/Community">Community</a></li>
+                        <asp:PlaceHolder ID="phMyRecipesNav" runat="server" Visible="false">
+                            <li class="nav-item"><a class="nav-link" runat="server" href="~/Recipes/MyRecipes">My Recipes</a></li>
+                        </asp:PlaceHolder>
                     </ul>
                     <asp:PlaceHolder ID="phGuestNav" runat="server">
                     <ul class="navbar-nav flex-row align-items-center flex-grow-1 justify-content-end gap-3 gap-sm-2 mt-2 mt-sm-0 pb-2 pb-sm-0">

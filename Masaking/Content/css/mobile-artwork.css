@@ -38,12 +38,6 @@
     }
     body .profile-edit-screen .profile-edit-topline { min-height: 64px; padding-right: 104px; }
 
-    .auth-background .auth-wrap {
-        position: relative;
-        margin-top: 1rem;
-        padding-top: 0;
-    }
-
     .recipe-submit-page .recipe-form-header::after {
         content: "";
         display: block;

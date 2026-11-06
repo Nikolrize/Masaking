@@ -1,47 +1,7 @@
-/* Recipe cards, ratings, cooking steps, upload editors and recipe icons. Also used by reviews. */
-.recipe-image {
-    width: 100%;
-    max-height: 340px;
-    object-fit: cover;
-    border-radius: .8rem;
-    background: #eee7d9;
-}
-
+/* Recipe cards, ratings, cooking steps, and submission styles. Also used by reviews. */
 .star-rating {
     color: #e6a500;
     letter-spacing: .08em;
-}
-
-.step-image-editors {
-    display: grid;
-    gap: 1rem;
-}
-
-.step-image-editor {
-    padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: .8rem;
-    background: rgba(255,253,248,.8);
-}
-
-.step-image-heading {
-    display: block;
-    color: var(--color-primary-dark);
-    overflow-wrap: anywhere;
-}
-
-.step-image-preview {
-    max-height: 180px;
-}
-
-.recipe-step-image {
-    display: block;
-    width: 100%;
-    max-width: 280px;
-    max-height: 180px;
-    object-fit: cover;
-    border-radius: .75rem;
-    border: 1px solid var(--color-border);
 }
 
 .recipe-owned-image {
@@ -52,12 +12,6 @@
     max-height: 300px;
     object-fit: cover;
     background: #eee9dc;
-}
-
-.icon-spatula {
-    font-size: 1.15em;
-    display: inline-block;
-    transform: rotate(-35deg);
 }
 
 .cost-icon {
@@ -72,39 +26,10 @@
     stroke-linejoin: round;
 }
 
-.recipe-detail-icon {
-    display: inline-block;
-    font-weight: 700;
-    margin-right: .12rem;
-}
-
-.recipe-detail-icon.icon-time {
-    color: #4383a2;
-}
-
-.recipe-detail-icon.icon-difficulty {
-    color: #d86f45;
-}
-
-.recipe-detail-icon.icon-servings {
-    color: #708b43;
-}
-
-.recipe-detail-icon.icon-ingredients {
-    color: #b88924;
-}
-
-.recipe-detail-icon.icon-steps {
-    color: #8b69a6;
-}
-
-.recipe-detail-cost {
-    stroke: #b88924;
-}
-
 /* Guided recipe submission, scoped so other recipe pages keep their layout. */
 .recipe-submit-page {
-    padding-bottom: 3rem;
+    max-width: 1100px;
+    padding-block: 2.5rem 3rem;
 }
 
 .recipe-form-header {
@@ -226,7 +151,6 @@
 }
 
 .recipe-submit-page .form-control, .recipe-submit-page .form-select {
-    max-width: none;
     min-height: 42px;
     font-size: .9rem;
     background-color: #fffdf8;
@@ -473,7 +397,7 @@
 
 @media (max-width: 767.98px) {
     .recipe-submit-page {
-        padding-bottom: 2rem;
+        padding-block: 1.5rem 2rem;
     }
 
     .recipe-form-section {
@@ -514,4 +438,295 @@
     .recipe-submit-actions > div {
         justify-content: flex-end;
     }
+}
+
+/* Browse Recipes */
+.recipe-card-title {
+    color: var(--color-primary-dark);
+    font-weight: bold;
+}
+
+.recipe-difficulty {
+    background-color: #eee;
+    color: #555;
+}
+
+.recipe-difficulty.easy {
+    background-color: #e5f1e7;
+    color: #28583d;
+}
+
+.recipe-difficulty.medium {
+    background-color: #fff0cd;
+    color: #805d12;
+}
+
+.recipe-difficulty.hard {
+    background-color: #fbe4e4;
+    color: #943c3c;
+}
+
+.filter-options input[type="radio"] {
+    margin-right: 0.4rem;
+    accent-color: var(--color-primary);
+}
+
+.filter-options label {
+    display: inline-block;
+    margin-right: 0.85rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.form-range::-webkit-slider-thumb {
+    background-color: var(--color-primary);
+}
+
+.form-range::-webkit-slider-thumb:active {
+    background-color: var(--color-primary-dark);
+}
+
+.form-range:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 0.25rem rgba(40, 88, 61, 0.2);
+}
+
+.form-range::-webkit-slider-runnable-track {
+    background-color: var(--color-border);
+}
+
+.form-range::-moz-range-track {
+    background-color: var(--color-border);
+}
+
+.recipe-browse-page .form-select {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+    border-radius: 0.6rem;
+}
+
+.recipe-browse-page .form-select:hover {
+    border-color: var(--color-primary);
+}
+
+.recipe-browse-page .form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(40, 88, 61, 0.15);
+}
+
+.recipe-browse-page .category-filters input[type="checkbox"] {
+    accent-color: var(--color-primary);
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.recipe-browse-page .category-filters label {
+    color: var(--color-text);
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.recipe-browse-page .category-filters label:hover {
+    color: var(--color-primary);
+}
+
+.recipe-browse-page .category-filters input:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+/* Recipe Details */
+.recipe-detail-cover {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 0.8rem;
+}
+
+.detail-ingredient {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.ingredient-check input {
+    accent-color: var(--color-primary);
+    margin-right: 0.5rem;
+}
+
+.ingredient-check input:checked + label {
+    color: var(--color-muted);
+    text-decoration: line-through;
+}
+
+.ingredient-check input[type="checkbox"] {
+    accent-color: var(--color-primary);
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.ingredient-check label {
+    color: var(--color-text);
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.ingredient-check label:hover {
+    color: var(--color-primary);
+}
+.ingredient-check input:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+.detail-step {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.detail-ingredient:last-child,
+.detail-step:last-child {
+    border-bottom: 0;
+}
+
+.detail-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: bold;
+}
+
+.detail-step-image {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 0.6rem;
+}
+
+.detail-step-instruction {
+    white-space: pre-line;
+}
+
+.back-to-recipes {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-primary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.back-to-recipes:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.back-to-recipes:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.recipe-summary-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-surface);
+    border-radius: 1rem;
+    box-shadow: 0 4px 16px rgb(38 53 44 / 5%);
+}
+
+.recipe-author-link {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.recipe-author-link:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.recipe-author-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+}
+
+.recipe-author-avatar {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-cream);
+}
+
+.rating-stars {
+    display: inline-flex;
+    gap: 0.35rem;
+    padding: 0;
+    list-style: none;
+}
+
+.rating-stars li {
+    position: relative;
+}
+
+.rating-stars input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.rating-stars label {
+    display: block;
+    color: var(--color-muted);
+    font-size: 0;
+    cursor: pointer;
+}
+
+.rating-stars label::before {
+    content: "★";
+    font-size: 2rem;
+    line-height: 1.2;
+}
+
+.rating-stars:has(input:checked) label {
+    color: var(--color-accent);
+}
+
+.rating-stars li:has(input:checked) ~ li label {
+    color: var(--color-muted);
+}
+
+.rating-stars:has(label:hover) label {
+    color: var(--color-accent);
+}
+
+.rating-stars li:has(label:hover) ~ li label {
+    color: var(--color-muted);
+}
+
+.rating-stars input:focus-visible + label {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: 4px;
 }
