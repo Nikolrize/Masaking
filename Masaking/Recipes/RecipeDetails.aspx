@@ -38,7 +38,7 @@
                             </h1>
 
                             <!-- Buttons -->
-                            <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
+                            <div class="d-flex flex-wrap align-items-center justify-content-start justify-content-sm-end gap-2">
                                 <button id="btnFavourite"
                                     runat="server"
                                     type="submit"
