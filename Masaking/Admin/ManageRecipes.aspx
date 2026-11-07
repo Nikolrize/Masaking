@@ -1,10 +1,10 @@
 ﻿<%@ Page Title="Manage Recipes" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageRecipes.aspx.cs" Inherits="Masaking.Admin.ManageRecipes" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-        <asp:HyperLink ID="lnkDashboard" runat="server" NavigateUrl="~/Admin/Dashboard.aspx" CssClass="btn btn-outline-success mb-3" Text="Back to Dashboard" />
 
-        <h1>Manage Recipes</h1>
-        <p class="text-secondary"> Search submissions and review recipes awaiting approval. </p>
+    <p class="text-brand fw-semibold">ADMINISTRATION</p>
+    <h1 class="page-heading">Manage recipes</h1>
+    <p class="text-secondary">Search submissions and review recipes awaiting approval.</p>
     <asp:Panel ID="pnlDetails" runat="server" CssClass="card p-3 p-md-4 mb-4" Visible="False">
         <asp:Label ID="lblDetailsHeading" runat="server" CssClass="h5 d-block mb-3" Text="Recipe submission"></asp:Label>
         <asp:Button ID="btnCloseDetails" runat="server" CausesValidation="False" CssClass="btn btn-outline-secondary mb-3" Text="Close details" OnClick="btnCloseDetails_Click" />

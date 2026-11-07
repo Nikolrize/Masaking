@@ -1,5 +1,4 @@
 <%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Admin.Master.cs" Inherits="Masaking.Admin.AdminMaster" %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
@@ -15,20 +14,45 @@
     <form id="form1" runat="server">
         <div class="admin-layout">
             <aside class="admin-sidebar">
-                <asp:HyperLink ID="lnkBrand" runat="server" NavigateUrl="~/Default.aspx" CssClass="admin-brand" Text="Masaking" />
-                <p class="small">Administration</p>
-
+                <asp:HyperLink ID="lnkBrand" runat="server" NavigateUrl="~/Default.aspx" CssClass="admin-brand">
+                    <asp:Image ID="imgBrand" runat="server" ImageUrl="~/Content/images/Masaking Logo.png"
+                        AlternateText="Masaking home" CssClass="img-fluid" />
+                </asp:HyperLink>
+                <p class="small sidebar-caption">Administration</p>
                 <nav aria-label="Administrator navigation">
-                    <asp:HyperLink ID="lnkDashboard" runat="server" NavigateUrl="~/Admin/Dashboard.aspx" Text="Dashboard" />
-                    <asp:HyperLink ID="lnkRecipes" runat="server" NavigateUrl="~/Admin/ManageRecipes.aspx" Text="Manage recipes" />
-                    <asp:HyperLink ID="lnkUsers" runat="server" NavigateUrl="~/Admin/ManageUsers.aspx" Text="Manage users" />
-                    <asp:HyperLink ID="lnkCommunity" runat="server" NavigateUrl="~/Admin/ManageCommunity.aspx" Text="Moderate community" />
-                    <asp:HyperLink ID="lnkQuizzes" runat="server" NavigateUrl="~/Admin/ManageChallenges.aspx" Text="Manage quizzes" />
-                    <asp:HyperLink ID="lnkSimulations" runat="server" NavigateUrl="~/Admin/ManageSimulations.aspx" Text="Manage simulations" />
-                    <asp:HyperLink ID="lnkWebsite" runat="server" NavigateUrl="~/Default.aspx" Text="Back to website" />
+                    <asp:HyperLink ID="lnkDashboard" runat="server" NavigateUrl="~/Admin/Dashboard.aspx">
+                        <i class="bi bi-grid me-2" aria-hidden="true"></i>Dashboard
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkRecipes" runat="server" NavigateUrl="~/Admin/ManageRecipes.aspx">
+                        <i class="bi bi-book me-2" aria-hidden="true"></i>Manage recipes
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkUsers" runat="server" NavigateUrl="~/Admin/ManageUsers.aspx">
+                        <i class="bi bi-people me-2" aria-hidden="true"></i>Manage users
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkCommunity" runat="server" NavigateUrl="~/Admin/ManageCommunity.aspx">
+                        <i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Moderate community
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkQuizzes" runat="server" NavigateUrl="~/Admin/ManageChallenges.aspx">
+                        <i class="bi bi-stopwatch me-2" aria-hidden="true"></i>Manage challenges
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkSimulations" runat="server" NavigateUrl="~/Admin/ManageSimulations.aspx">
+                        <i class="bi bi-egg-fried me-2" aria-hidden="true"></i>Manage simulations
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkWebsite" runat="server" NavigateUrl="~/Default.aspx">
+                        <i class="bi bi-box-arrow-up-right me-2" aria-hidden="true"></i>Back to website
+                    </asp:HyperLink>
                 </nav>
+                <asp:HyperLink ID="lnkAdminProfile" runat="server" NavigateUrl="~/Account/Profile.aspx" CssClass="admin-profile" ToolTip="Open your profile">
+                    <span class="profile-picture">
+                        <asp:Image ID="imgAdminAvatar" runat="server" AlternateText="Your profile photo" Visible="False" />
+                        <asp:Label ID="lblAdminInitials" runat="server" aria-hidden="true" />
+                    </span>
+                    <span class="profile-details">
+                        <asp:Label ID="lblAdminName" runat="server" CssClass="d-block fw-bold" />
+                        <span class="small">Administrator</span>
+                    </span>
+                </asp:HyperLink>
             </aside>
-
             <main class="admin-main">
                 <asp:ContentPlaceHolder ID="MainContent" runat="server" />
             </main>

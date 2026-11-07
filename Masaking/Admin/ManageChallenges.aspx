@@ -1,11 +1,10 @@
-﻿<%@ Page Title="Manage Quizzes" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageChallenges.aspx.cs" Inherits="Masaking.Admin.ManageChallenges" %>
+﻿<%@ Page Title="Manage Challenges" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageChallenges.aspx.cs" Inherits="Masaking.Admin.ManageChallenges" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:HyperLink ID="lnkDashboard" runat="server" NavigateUrl="~/Admin/Dashboard.aspx" Text="Back to Dashboard" CssClass="btn btn-outline-success mb-3" />
 
-    <asp:Label ID="lblTitle" runat="server" Text="Manage Quizzes" CssClass="h1 d-block" />
-
-    <asp:Label ID="lblIntroduction" runat="server" Text="Create a draft quiz, then add questions before publishing." CssClass="text-secondary d-block mb-4" />
+    <p class="text-brand fw-semibold">ADMINISTRATION</p>
+    <h1 class="page-heading"><asp:Label ID="lblTitle" runat="server" Text="Manage challenges" /></h1>
+    <p class="text-secondary"><asp:Label ID="lblIntroduction" runat="server" Text="Create a draft challenge, then add questions before publishing." /></p>
 
     <asp:Label ID="lblMessage" runat="server" EnableViewState="False" role="status" />
 

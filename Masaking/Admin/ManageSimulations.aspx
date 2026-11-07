@@ -2,8 +2,9 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h1>Manage Simulations</h1>
-    <p class="text-secondary"> Create a draft, configure its ingredient steps, then publish. Simulations have no time limit. </p>
+    <p class="text-brand fw-semibold">ADMINISTRATION</p>
+    <h1 class="page-heading">Manage simulations</h1>
+    <p class="text-secondary">Create a draft, configure its ingredient steps, then publish. Simulations have no time limit.</p>
 
     <asp:Label ID="lblMessage" runat="server" EnableViewState="False" role="status" />
 

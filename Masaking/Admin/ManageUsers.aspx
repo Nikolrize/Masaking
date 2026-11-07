@@ -1,11 +1,10 @@
 ﻿<%@ Page Title="Manage Users" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="ManageUsers.aspx.cs" Inherits="Masaking.Admin.ManageUsers" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:HyperLink ID="lnkDashboard" runat="server" NavigateUrl="~/Admin/Dashboard.aspx" Text="Back to Dashboard" CssClass="btn btn-outline-success mb-3" />
 
-    <asp:Label ID="lblTitle" runat="server" Text="Manage Users" CssClass="h1 d-block" />
-
-    <asp:Label ID="lblIntroduction" runat="server" Text="Find accounts and manage member access. Administrator accounts are protected on this page." CssClass="text-secondary d-block mb-4" />
+    <p class="text-brand fw-semibold">ADMINISTRATION</p>
+    <h1 class="page-heading"><asp:Label ID="lblTitle" runat="server" Text="Manage users" /></h1>
+    <p class="text-secondary"><asp:Label ID="lblIntroduction" runat="server" Text="Find accounts and manage member access. Administrator accounts are protected on this page." /></p>
 
     <div class="card p-3 p-md-4 mb-4">
         <div class="row g-3 align-items-end">

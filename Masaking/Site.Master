@@ -72,6 +72,9 @@
                             <asp:HyperLink ID="lnkNavProfile" runat="server" NavigateUrl="~/Account/Profile.aspx" class="site-nav-profile" aria-label="Open my profile">
                                 <asp:Label ID="lblNavInitials" runat="server" class="site-nav-initials" aria-hidden="true" />
                                 <asp:Image ID="imgNavAvatar" runat="server" class="site-nav-avatar" AlternateText="Your profile" />
+                                <asp:PlaceHolder ID ="phAdminDashboardIcon"  runat="server" Visible="false"> 
+                                    <i class="bi bi-speedometer2" aria-hidden="true"></i>
+                                </asp:PlaceHolder>
                             </asp:HyperLink>
                         </div>
                     </asp:PlaceHolder>
