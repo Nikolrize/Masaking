@@ -267,3 +267,17 @@
     .challenge-play .status-running::after { animation: none; }
     .challenge-play .timer-panel .progress-bar { transition: none; }
 }
+
+/* Learning history and statistics only. */
+.progress-page .summary-card { border-top: 3px solid var(--color-primary); }
+.progress-page .summary-icon { color: var(--color-primary); font-size: 1.4rem; }
+.progress-page .summary-card h3 { margin-bottom: .25rem; }
+.progress-page .summary-card .fs-2 { overflow-wrap: anywhere; }
+.progress-page .history-title { min-width: 12rem; overflow-wrap: anywhere; }
+.progress-page .badge { white-space: normal; text-align: left; line-height: 1.4; }
+.progress-page .history-completed { color: #245936; background: #e4f0e5; }
+.progress-page .history-expired { color: #8a2932; background: #f8e1e3; }
+.progress-page .history-awaiting { color: #79510d; background: #fff0c8; }
+.progress-page .history-running { color: #245363; background: #e3f0f4; }
+.progress-page .history-paused { color: #654380; background: #eee6f6; }
+.progress-page .history-other { color: #49545b; background: #e9edef; }
