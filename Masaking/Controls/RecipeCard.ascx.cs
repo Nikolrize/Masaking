@@ -6,10 +6,7 @@ namespace Masaking.Controls
 {
     public partial class RecipeCard : System.Web.UI.UserControl
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
+        public bool FromMyRecipes { get; set; }
 
         public void DisplayRecipe(DataRowView recipe)
         {
@@ -19,6 +16,11 @@ namespace Masaking.Controls
             recipeImage.ImageUrl = recipe["image"].ToString();
             recipeImage.AlternateText = recipe["title"].ToString();
             recipeLink.NavigateUrl = ResolveUrl("~/Recipes/RecipeDetails") + "?id=" + recipe["recipeID"].ToString();
+            if (FromMyRecipes)
+            {
+                recipeLink.NavigateUrl += "&from=myrecipes";
+            }
+
             recipePreparationTime.Text = recipe["preparationTime"].ToString() + " mins";
             recipeBudget.Text = "RM" + Convert.ToDecimal(recipe["estimatedCost"]).ToString("0.00");
             recipeServings.Text = recipe["servings"].ToString();

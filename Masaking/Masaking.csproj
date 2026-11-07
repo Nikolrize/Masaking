@@ -44,6 +44,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controls\CookingStepEditor.ascx.cs">
+      <DependentUpon>CookingStepEditor.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\CookingStepEditor.ascx.designer.cs">
+      <DependentUpon>CookingStepEditor.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\IngredientEditor.ascx.cs">
+      <DependentUpon>IngredientEditor.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\IngredientEditor.ascx.designer.cs">
+      <DependentUpon>IngredientEditor.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\RecipeFilters.ascx.cs">
       <DependentUpon>RecipeFilters.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -65,11 +79,15 @@
     <Compile Include="Learning\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Content Include="Controls\CookingStepEditor.ascx" />
+    <Content Include="Controls\IngredientEditor.ascx" />
     <Content Include="Controls\RecipeFilters.ascx" />
     <Content Include="Controls\UserAvatar.ascx" />
     <Content Include="Learning\Default.aspx" />
     <Content Include="Content\css\learning.css" />
     <Compile Include="Infrastructure\SimulationImages.cs" />
+    <Content Include="Scripts\cooking-step-editor.js" />
+    <Content Include="Scripts\ingredient-editor.js" />
     <Content Include="Scripts\simulation-upload.js" />
     <Compile Include="Admin\ManageSimulations.aspx.cs">
       <DependentUpon>ManageSimulations.aspx</DependentUpon>
@@ -263,7 +281,6 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\form-helpers.js" />
-    <Content Include="Scripts\recipe-form.js" />
     <Content Include="Scripts\community.js" />
     <Content Include="Scripts\community-composer.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -315,6 +332,7 @@
     <Content Include="Scripts\WebForms\MSAjax\MicrosoftAjaxTimer.js" />
     <Content Include="Scripts\WebForms\MSAjax\MicrosoftAjaxWebForms.js" />
     <Content Include="Scripts\WebForms\MSAjax\MicrosoftAjaxWebServices.js" />
+    <Content Include="Scripts\recipe-cover.js" />
     <Content Include="Scripts\WebForms\SmartNav.js" />
     <Content Include="Scripts\WebForms\TreeView.js" />
     <Content Include="Scripts\WebForms\WebForms.js" />

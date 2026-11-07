@@ -75,15 +75,6 @@ namespace Masaking.Recipes
             tab.CssClass = selected
                 ? "recipe-collection-tab active"
                 : "recipe-collection-tab";
-
-            if (selected)
-            {
-                tab.Attributes["aria-current"] = "true";
-            }
-            else
-            {
-                tab.Attributes.Remove("aria-current");
-            }
         }
 
         protected void RecipeTab_Command(object sender, CommandEventArgs e)
@@ -109,6 +100,7 @@ namespace Masaking.Recipes
             {
                 RecipeCard card = (RecipeCard)e.Item.FindControl("recipeCard");
 
+                card.FromMyRecipes = true;
                 card.DisplayRecipe((DataRowView)e.Item.DataItem);
             }
         }

@@ -37,15 +37,4 @@
         pointer-events: none;
     }
     body .profile-edit-screen .profile-edit-topline { min-height: 64px; padding-right: 104px; }
-
-    .recipe-submit-page .recipe-form-header::after {
-        content: "";
-        display: block;
-        width: 144px;
-        height: 80px;
-        margin: 1rem auto 0;
-        background: url("../images/profile/nasilemak_satay_roti.png") center / contain no-repeat;
-        opacity: .85;
-        pointer-events: none;
-    }
 }

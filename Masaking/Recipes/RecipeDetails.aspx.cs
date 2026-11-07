@@ -20,6 +20,16 @@ namespace Masaking.Recipes
                 return;
             }
 
+            bool fromMyRecipes = Request.QueryString["from"] == "myrecipes";
+
+            lnkBack.NavigateUrl = fromMyRecipes
+                ? "~/Recipes/MyRecipes"
+                : "~/Recipes/BrowseRecipes";
+
+            backLinkText.Text = fromMyRecipes
+                ? "Back to My Recipes"
+                : "Back to Browse Recipes";
+
             if (!IsPostBack)
             {
                 LoadRecipe(recipeId);
@@ -30,7 +40,6 @@ namespace Masaking.Recipes
                 }
             }
         }
-
 
         private void LoadRecipe(int recipeId)
         {
@@ -81,6 +90,8 @@ namespace Masaking.Recipes
                 Database.UserId.Value == Convert.ToInt32(recipe["userID"]);
             bool isApproved = recipe["status"].ToString() == "Approved";
 
+            phOwnerActions.Visible = isAuthor;
+            lnkEditRecipe.NavigateUrl = ResolveUrl("~/Recipes/SubmitRecipe") + "?id=" + recipeId;
             btnFavourite.Visible = isApproved && !isAuthor;
             lnkStartLearning.Visible = isApproved;
             pnlReviewForm.Visible = signedIn && !isAuthor;
@@ -157,15 +168,6 @@ namespace Masaking.Recipes
 
             favouriteIcon.Attributes["class"] =
                 isFavourite ? "bi bi-heart-fill" : "bi bi-heart";
-
-            btnFavourite.Attributes["aria-pressed"] =
-                isFavourite ? "true" : "false";
-
-            btnFavourite.Attributes["aria-label"] =
-                isFavourite ? "Remove from favourites" : "Add to favourites";
-
-            btnFavourite.Attributes["title"] =
-                btnFavourite.Attributes["aria-label"];
         }
 
         private void LoadReviews(int recipeId)
@@ -479,6 +481,50 @@ namespace Masaking.Recipes
             ddlReviewRating.ClearSelection();
 
             ShowReviewMessage("Your review has been saved.", true);
+        }
+
+        protected void btnDeleteRecipe_Click(object sender, EventArgs e)
+        {
+            if (!Database.RequireUser(Response))
+            {
+                return;
+            }
+
+            int recipeId;
+
+            if (!int.TryParse(Request.QueryString["id"], out recipeId) ||
+                recipeId <= 0)
+            {
+                ShowRecipeNotFound();
+                return;
+            }
+
+            int result;
+
+            try
+            {
+                result = RecipeRepository.DeleteOwnedRecipe(recipeId);
+            }
+            catch (SqlException ex)
+            {
+                Trace.Warn("RecipeDetails", "Recipe deletion failed.", ex);
+
+                lblMessage.Text = "The recipe could not be deleted. Please try again.";
+
+                lblMessage.CssClass = "alert alert-danger d-block";
+                lblMessage.Visible = true;
+                return;
+            }
+
+            if (result == 0)
+            {
+                ShowRecipeNotFound();
+                return;
+            }
+
+            Response.Redirect(ResolveUrl("~/Recipes/MyRecipes"), false);
+
+            Context.ApplicationInstance.CompleteRequest();
         }
     }
 }

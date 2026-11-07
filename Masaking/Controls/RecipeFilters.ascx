@@ -67,35 +67,40 @@
         OnClick="btnApplyFilters_Click" />
 </div>
 
- <script>
+<script>
     (function () {
+        const budgetSlider =
+            document.getElementById("<%= rngBudget.ClientID %>");
 
-        const budgetSlider = document.getElementById("<%= rngBudget.ClientID %>");
-             const timeSlider = document.getElementById("<%= rngTime.ClientID %>");
+        const timeSlider =
+            document.getElementById("<%= rngTime.ClientID %>");
 
-             const budgetDisplay = document.getElementById("budgetValue");
-             const timeDisplay = document.getElementById("timeValue");
+        const budgetDisplay = document.getElementById("budgetValue");
+        const timeDisplay = document.getElementById("timeValue");
 
-             function updateBudget() {
-                 const text = budgetSlider.value === "0"
-                     ? "Any budget"
-                     : "Up to RM" + budgetSlider.value;
+        if (!(budgetSlider instanceof HTMLInputElement) ||
+            !(timeSlider instanceof HTMLInputElement) ||
+            !budgetDisplay ||
+            !timeDisplay) {
+            return;
+        }
 
-                 budgetDisplay.textContent = text;
-             }
+        const updateBudget = () => {
+            budgetDisplay.textContent = budgetSlider.value === "0"
+                ? "Any budget"
+                : "Up to RM" + budgetSlider.value;
+        };
 
-             function updateTime() {
-                 const text = timeSlider.value === "0"
-                     ? "Any duration"
-                     : "Up to " + timeSlider.value + " minutes";
+        const updateTime = () => {
+            timeDisplay.textContent = timeSlider.value === "0"
+                ? "Any duration"
+                : "Up to " + timeSlider.value + " minutes";
+        };
 
-                 timeDisplay.textContent = text;
-             }
+        budgetSlider.addEventListener("input", updateBudget);
+        timeSlider.addEventListener("input", updateTime);
 
-             budgetSlider.addEventListener("input", updateBudget);
-             timeSlider.addEventListener("input", updateTime);
-
-             updateBudget();
-             updateTime();
-         })();
- </script>
+        updateBudget();
+        updateTime();
+    })();
+</script>

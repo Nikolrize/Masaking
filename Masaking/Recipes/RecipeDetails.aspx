@@ -7,12 +7,14 @@
 
     <main class="container py-4">
         <!-- Back to Recipes -->
-        <asp:HyperLink runat="server"
-            NavigateUrl="~/Recipes/BrowseRecipes.aspx"
+        <asp:HyperLink ID="lnkBack" runat="server"
+            NavigateUrl="~/Recipes/BrowseRecipes"
             CssClass="back-to-recipes mb-4">
 
-            <i class="bi bi-arrow-left" aria-hidden="true"></i>
-            Back to recipes
+            <i class="bi bi-arrow-left"></i>
+
+            <asp:Literal ID="backLinkText" runat="server"
+                Mode="Encode" Text="Back to Browse Recipes" />
         </asp:HyperLink>
 
         <asp:Label ID="lblMessage" runat="server"
@@ -54,6 +56,25 @@
                                 <i class="bi bi-play-circle me-1"></i>
                                 Start Learning
                                 </asp:HyperLink>
+
+                                <asp:PlaceHolder ID="phOwnerActions" runat="server"
+                                    Visible="false">
+
+                                    <asp:HyperLink ID="lnkEditRecipe" runat="server"
+                                        CssClass="btn recipe-submit-btn">
+                                        <i class="bi bi-pencil me-1"></i>
+                                        Edit
+                                    </asp:HyperLink>
+
+                                    <asp:LinkButton ID="btnDeleteRecipe" runat="server"
+                                        CssClass="btn btn-danger"
+                                        CausesValidation="false"
+                                        OnClick="btnDeleteRecipe_Click"
+                                        OnClientClick="return confirm('Delete this recipe? It will no longer be visible on the site.');">
+                                        <i class="bi bi-trash me-1"></i>
+                                        Delete
+                                    </asp:LinkButton>
+                                </asp:PlaceHolder>
                             </div>
                         </div>
 
@@ -207,15 +228,14 @@
 
                     <asp:RadioButtonList ID="ddlReviewRating" runat="server"
                         RepeatLayout="UnorderedList"
-                        CssClass="rating-stars mb-3"
-                        aria-label="Your rating">
+                        CssClass="rating-stars mb-3">
                         <asp:ListItem Value="1">1 star</asp:ListItem>
                         <asp:ListItem Value="2">2 stars</asp:ListItem>
                         <asp:ListItem Value="3">3 stars</asp:ListItem>
                         <asp:ListItem Value="4">4 stars</asp:ListItem>
                         <asp:ListItem Value="5">5 stars</asp:ListItem>
                     </asp:RadioButtonList>
-                    
+
                     <asp:Label runat="server" AssociatedControlID="txtReviewComment"
                         Text="Your comment (optional)" CssClass="form-label d-block" />
 

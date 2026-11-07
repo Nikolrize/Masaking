@@ -9,12 +9,23 @@
     <link href="/Content/css/recipes.css" rel="stylesheet" />
 
     <main class="container py-4 recipe-browse-page">
-        <h1>My Recipes</h1>
-        <p class="lead">
-            Your creations and favourite recipes, all in one place.
-       
-        </p>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <h1 class="mb-1">My Recipes</h1>
+                <p class="lead mb-0">
+                    Your creations and favourite recipes, all in one place.
+                </p>
+            </div>
 
+            <asp:HyperLink runat="server"
+                NavigateUrl="~/Recipes/SubmitRecipe"
+                CssClass="btn recipe-submit-btn">
+                <i class="bi bi-plus-lg me-1"></i>
+                Submit Recipe
+            </asp:HyperLink>
+        </div>
+
+        <!-- Tabs -->
         <nav class="my-recipe-tabs d-flex flex-wrap gap-2 mb-4">
             <asp:LinkButton ID="tabAll" runat="server"
                 Text="All" CommandArgument="All"
@@ -38,6 +49,7 @@
                 CausesValidation="false" OnCommand="RecipeTab_Command" />
         </nav>
 
+        <!-- Search -->
         <asp:Panel runat="server" DefaultButton="btnSearch" CssClass="input-group mb-4">
             <asp:TextBox ID="txtSearch" runat="server"
                 CssClass="form-control"
@@ -50,6 +62,7 @@
         </asp:Panel>
 
         <div class="row g-4">
+            <!-- Filter -->
             <aside class="col-lg-3">
                 <uc:RecipeFilters ID="recipeFilters" runat="server"
                     IncludeOwnRecipes="true"
@@ -58,7 +71,6 @@
 
             <section class="col-lg-9">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-
                     <div>
                         <h4 class="mb-1">
                             <asp:Label ID="collectionTitle" runat="server" />
@@ -67,6 +79,7 @@
                             CssClass="small text-muted" />
                     </div>
 
+                    <!-- Sorting -->
                     <div class="d-flex align-items-center gap-2">
                         <asp:Label runat="server"
                             AssociatedControlID="ddlSort"
@@ -89,18 +102,16 @@
                     </div>
                 </div>
 
-
-
                 <asp:Panel ID="pnlEmpty" runat="server" Visible="false"
                     CssClass="card p-4 text-center text-muted">
                     No recipes found in this collection.
        
                 </asp:Panel>
 
+                <!-- Results -->
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-3">
                     <asp:Repeater ID="rptRecipes" runat="server"
                         OnItemDataBound="rptRecipes_ItemDataBound">
-
                         <ItemTemplate>
                             <div class="col">
                                 <uc:RecipeCard ID="recipeCard" runat="server" />

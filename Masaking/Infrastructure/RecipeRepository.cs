@@ -262,6 +262,37 @@ namespace Masaking.Infrastructure
             return recipes;
         }
 
+        public static int DeleteOwnedRecipe(int recipeId)
+        {
+            if (!Database.UserId.HasValue)
+            {
+                throw new InvalidOperationException("Sign in before deleting a recipe.");
+            }
+
+            SqlConnection con = Database.Open();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(@"
+                    UPDATE dbo.recipes
+                    SET status = 'Deleted',
+                        updatedAt = SYSUTCDATETIME()
+                    WHERE recipeID = @recipeID
+                      AND userID = @userID
+                      AND status IN ('Approved', 'Pending', 'Rejected');", con);
+
+                cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+
+                cmd.Parameters.Add("@userID", SqlDbType.Int).Value = Database.UserId.Value;
+
+                return cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
         private static string GetSortOrder(string sort)
         {
             switch (sort)
