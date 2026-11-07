@@ -1,5 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RecipeCard.ascx.cs" Inherits="Masaking.Controls.RecipeCard" %>
 
+<%@ Register Src="~/Controls/UserAvatar.ascx" TagPrefix="uc" TagName="UserAvatar" %>
+
 <asp:HyperLink ID="recipeLink" runat="server"
     CssClass="card h-100 border text-decoration-none text-dark hover-lift">
     <!-- Image -->
@@ -32,9 +34,7 @@
 
         <!-- Author -->
         <div class="d-flex align-items-center gap-2">
-            <asp:Image ID="authorAvatar" runat="server"
-                CssClass="recipe-author-avatar"
-                AlternateText="" />
+            <uc:UserAvatar ID="authorAvatar" runat="server" />
 
             <asp:Label ID="recipeAuthor" runat="server"
                 CssClass="small text-muted" />

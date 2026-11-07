@@ -1,4 +1,5 @@
-﻿using Masaking.Infrastructure;
+﻿using Masaking.Controls;
+using Masaking.Infrastructure;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -54,7 +55,7 @@ namespace Masaking.Recipes
             recipeImage.ImageUrl = recipe["image"].ToString();
             recipeImage.AlternateText = recipe["title"].ToString();
             recipeAuthor.Text = Server.HtmlEncode(recipe["displayName"].ToString());
-            authorAvatar.ImageUrl = Database.AvatarUrl(recipe["authorImage"]);
+            authorAvatar.DisplayAvatar(recipe["displayName"], recipe["authorImage"]);
 
             lnkAuthor.NavigateUrl = ResolveUrl("~/Account/Profile") + "?id=" + recipe["userID"].ToString();
 
@@ -258,15 +259,14 @@ namespace Masaking.Recipes
             {
                 DataRowView review = (DataRowView)e.Item.DataItem;
 
-                Image avatar = (Image)e.Item.FindControl("reviewAvatar");
+                UserAvatar avatar = (UserAvatar)e.Item.FindControl("reviewAvatar");
                 Label name = (Label)e.Item.FindControl("reviewName");
                 Label date = (Label)e.Item.FindControl("reviewDate");
                 Label stars = (Label)e.Item.FindControl("reviewStars");
                 Label comment = (Label)e.Item.FindControl("reviewComment");
 
-                avatar.ImageUrl = Database.AvatarUrl(review["image"]);
+                avatar.DisplayAvatar(review["displayName"], review["image"]);
                 name.Text = Server.HtmlEncode(review["displayName"].ToString());
-
 
                 bool wasUpdated = review["updatedAt"] != DBNull.Value;
                 DateTime timestamp = Convert.ToDateTime(wasUpdated ? review["updatedAt"] : review["createdAt"]);

@@ -51,6 +51,13 @@
     <Compile Include="Controls\RecipeFilters.ascx.designer.cs">
       <DependentUpon>RecipeFilters.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UserAvatar.ascx.cs">
+      <DependentUpon>UserAvatar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\UserAvatar.ascx.designer.cs">
+      <DependentUpon>UserAvatar.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Learning\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -59,6 +66,7 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Content Include="Controls\RecipeFilters.ascx" />
+    <Content Include="Controls\UserAvatar.ascx" />
     <Content Include="Learning\Default.aspx" />
     <Content Include="Content\css\learning.css" />
     <Compile Include="Infrastructure\SimulationImages.cs" />

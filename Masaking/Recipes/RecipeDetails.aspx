@@ -1,5 +1,7 @@
 <%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="RecipeDetails.aspx.cs" Inherits="Masaking.Recipes.RecipeDetails" %>
 
+<%@ Register Src="~/Controls/UserAvatar.ascx" TagPrefix="uc" TagName="UserAvatar" %>
+
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="/Content/css/recipes.css" rel="stylesheet" />
 
@@ -67,9 +69,7 @@
                         <p>
                             <asp:HyperLink ID="lnkAuthor" runat="server"
                                 CssClass="recipe-author-link d-inline-flex align-items-center gap-2">
-                                <asp:Image ID="authorAvatar" runat="server"
-                                    CssClass="recipe-author-avatar"
-                                    AlternateText="" />
+                                <uc:UserAvatar ID="authorAvatar" runat="server" />
                                 <asp:Label ID="recipeAuthor" runat="server" />
                             </asp:HyperLink>
                         </p>
@@ -246,8 +246,7 @@
                     <ItemTemplate>
                         <article class="py-3 border-top">
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <asp:Image ID="reviewAvatar" runat="server"
-                                    CssClass="recipe-author-avatar" AlternateText="" />
+                                <uc:UserAvatar ID="reviewAvatar" runat="server" />
 
                                 <asp:Label ID="reviewName" runat="server"
                                     CssClass="fw-semibold" />

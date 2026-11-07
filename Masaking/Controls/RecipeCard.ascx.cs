@@ -23,7 +23,7 @@ namespace Masaking.Controls
             recipeBudget.Text = "RM" + Convert.ToDecimal(recipe["estimatedCost"]).ToString("0.00");
             recipeServings.Text = recipe["servings"].ToString();
             recipeAuthor.Text = Server.HtmlEncode(recipe["displayName"].ToString());
-            authorAvatar.ImageUrl = Database.AvatarUrl(recipe["authorImage"]);
+            authorAvatar.DisplayAvatar(recipe["displayName"], recipe["authorImage"]);
 
             string difficulty = recipe["difficulty"].ToString();
             recipeDifficulty.Text = Server.HtmlEncode(difficulty);
