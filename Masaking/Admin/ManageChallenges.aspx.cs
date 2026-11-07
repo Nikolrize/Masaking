@@ -27,21 +27,51 @@ namespace Masaking.Admin
         private void BindQuizzes()
         {
             const string sql = @"
-                SELECT c.challengeID, c.title, c.difficulty, c.timeLimit, c.isActive,
+                SELECT c.challengeID, c.title, c.difficulty, c.timeLimit, c.isActive, c.createdAt,
                 (SELECT COUNT(*) FROM dbo.challengeQuestions q WHERE q.challengeID = c.challengeID) AS questionCount,
                 (SELECT COUNT(*) FROM dbo.challengeAttempts a WHERE a.challengeID = c.challengeID) AS attemptCount
                 FROM dbo.challenges c
+                WHERE (@search='' OR CHARINDEX(@search,c.title)>0) AND (@publication='' OR c.isActive=CONVERT(bit,@publication))
                 ORDER BY c.createdAt DESC, c.challengeID DESC;";
 
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))
             using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
             {
-                DataTable quizzes = new DataTable();
-                adapter.Fill(quizzes);
-                gvQuizzes.DataSource = quizzes;
-                gvQuizzes.DataBind();
+                cmd.Parameters.Add("@search", SqlDbType.NVarChar, 150).Value = txtSearch.Text.Trim();
+                cmd.Parameters.Add("@publication", SqlDbType.NVarChar, 1).Value = ddlPublication.SelectedValue;
+                DataTable challenges = new DataTable();
+                adapter.Fill(challenges);
+                challenges.Columns.Add("minutes", typeof(decimal));
+                challenges.Columns.Add("difficultyOrder", typeof(int));
+                foreach (DataRow row in challenges.Rows)
+                {
+                    row["minutes"] = Convert.ToInt32(row["timeLimit"]) / 60m;
+                    row["difficultyOrder"] = AdminTable.DifficultyOrder(row["difficulty"]);
+                }
+                AdminTable.Bind(gvQuizzes, challenges, ViewState, "Challenges", "createdAt", "DESC");
+                lblCount.Text = challenges.Rows.Count + " challenges match the filters.";
             }
+        }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            if (!Database.RequireAdmin(Response)) return;
+            gvQuizzes.PageIndex = 0;
+            BindQuizzes();
+        }
+
+        protected void Filters_Changed(object sender, EventArgs e)
+        {
+            btnSearch_Click(sender, e);
+        }
+
+        protected void gvQuizzes_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            if (!Database.RequireAdmin(Response)) { e.Cancel = true; return; }
+            AdminTable.ToggleSort(e, ViewState, "Challenges", "createdAt", "DESC", "challengeID", "title", "difficultyOrder", "timeLimit", "isActive", "questionCount", "attemptCount");
+            gvQuizzes.PageIndex = 0;
+            BindQuizzes();
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -105,12 +135,12 @@ namespace Masaking.Admin
             if (changed == 1)
             {
                 ResetEditor();
-                ShowMessage("Quiz draft saved.", true);
+                ShowMessage("Challenge draft saved.", true);
             }
             else
             {
                 ResetEditor();
-                ShowMessage("The quiz no longer exists, is published, " + "or has attempts. Its settings were not changed.", false);
+                ShowMessage("The challenge no longer exists, is published, " + "or has attempts. Its settings were not changed.", false);
             }
 
             gvQuizzes.PageIndex = 0;
@@ -128,7 +158,7 @@ namespace Masaking.Admin
             if (!Int32.TryParse(
                 Convert.ToString(e.CommandArgument), out id) || id <= 0)
             {
-                ShowMessage("Invalid quiz selection.", false);
+                ShowMessage("Invalid challenge selection.", false);
                 return;
             }
 
@@ -154,7 +184,7 @@ namespace Masaking.Admin
                 {
                     if (!reader.Read())
                     {
-                        ShowMessage("Only unpublished quizzes without attempts " + "can be edited.", false);
+                        ShowMessage("Only unpublished challenges without attempts " + "can be edited.", false);
                         return;
                     }
 
@@ -162,7 +192,7 @@ namespace Masaking.Admin
 
                     if (seconds < 60 || seconds > 3600 || seconds % 60 != 0)
                     {
-                        ShowMessage("This quiz has a time limit outside this editor's " + "whole-minute format. Check its stored units first.", false);
+                        ShowMessage("This challenge has a time limit outside this editor's " + "whole-minute format. Check its stored units first.", false);
                         return;
                     }
 
@@ -171,7 +201,7 @@ namespace Masaking.Admin
 
                     if (ddlDifficulty.Items.FindByValue(difficulty) == null)
                     {
-                        ShowMessage("This quiz uses an unsupported difficulty value.", false);
+                        ShowMessage("This challenge uses an unsupported difficulty value.", false);
                         return;
                     }
 
@@ -182,7 +212,9 @@ namespace Masaking.Admin
                     ddlDifficulty.SelectedValue = difficulty;
                     txtMinutes.Text = (seconds / 60).ToString();
                     EditingId = id;
-                    lblEditorHeading.Text = "Edit quiz #" + id;
+                    lblEditorHeading.Text = "Edit challenge #" + id;
+                    btnSave.Text = "Save changes";
+                    btnNew.Text = "New challenge";
                 }
             }
         }
@@ -200,7 +232,9 @@ namespace Masaking.Admin
             txtDescription.Text = "";
             ddlDifficulty.SelectedIndex = 0;
             txtMinutes.Text = "5";
-            lblEditorHeading.Text = "New quiz";
+            lblEditorHeading.Text = "New challenge";
+            btnSave.Text = "Save draft";
+            btnNew.Text = "Reset form";
         }
 
         protected void gvQuizzes_PageIndexChanging(
@@ -219,53 +253,21 @@ namespace Masaking.Admin
 
         private void ChangePublication(int quizId, bool publish)
         {
-            const string sql = @"
-                DECLARE @found INT;
-
-                SELECT @found=challengeID
-                FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK)
-                WHERE challengeID=@id;
-
-                IF @found IS NULL
-                    SELECT 0;
-                ELSE IF @publish=1 AND
-                (
-                    EXISTS (
-                        SELECT 1 FROM dbo.challenges
-                        WHERE challengeID=@id
-                          AND (LEN(LTRIM(RTRIM(title)))=0 OR difficulty NOT IN ('Easy','Medium','Hard') OR timeLimit < 60 OR timeLimit > 3600 OR timeLimit % 60 <> 0)
-                    )
-                    OR NOT EXISTS (
-                        SELECT 1 FROM dbo.challengeQuestions
-                        WHERE challengeID=@id
-                    )
-                    OR EXISTS (
-                        SELECT 1 FROM dbo.challengeQuestions
-                        WHERE challengeID=@id
-                          AND (LEN(LTRIM(RTRIM(questionText)))=0 OR LEN(LTRIM(RTRIM(optionA)))=0 OR LEN(LTRIM(RTRIM(optionB)))=0 OR LEN(LTRIM(RTRIM(optionC)))=0 OR LEN(LTRIM(RTRIM(optionD)))=0 OR correctOption NOT IN ('A','B','C','D') OR questionNumber < 1 OR questionNumber > 100)
-                    )
-                    OR (
-                        SELECT MIN(questionNumber)
-                        FROM dbo.challengeQuestions
-                        WHERE challengeID=@id
+            const string sql = @"DECLARE @found INT;
+                SELECT @found=challengeID FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK) WHERE challengeID=@id;
+                IF @found IS NULL SELECT 0; ELSE IF @publish=1 AND (EXISTS (SELECT 1 FROM dbo.challenges WHERE challengeID=@id AND (LEN(LTRIM(RTRIM(title)))=0 OR difficulty NOT IN ('Easy','Medium','Hard') OR timeLimit < 60 OR timeLimit > 3600 OR timeLimit % 60 <> 0) )
+                    OR NOT EXISTS ( SELECT 1 FROM dbo.challengeQuestions WHERE challengeID=@id)
+                    OR EXISTS (SELECT 1 FROM dbo.challengeQuestions WHERE challengeID=@id AND (LEN(LTRIM(RTRIM(questionText)))=0 OR LEN(LTRIM(RTRIM(optionA)))=0 OR LEN(LTRIM(RTRIM(optionB)))=0 OR LEN(LTRIM(RTRIM(optionC)))=0 OR LEN(LTRIM(RTRIM(optionD)))=0 OR correctOption NOT IN ('A','B','C','D') OR questionNumber < 1 OR questionNumber > 100))
+                    OR (SELECT MIN(questionNumber) FROM dbo.challengeQuestions WHERE challengeID=@id
                     ) <> 1
-                    OR (
-                        SELECT MAX(questionNumber)
-                        FROM dbo.challengeQuestions
-                        WHERE challengeID=@id
-                    ) <> (
-                        SELECT COUNT(*)
-                        FROM dbo.challengeQuestions
-                        WHERE challengeID=@id
-                    )
-                )
+                    OR (SELECT MAX(questionNumber) FROM dbo.challengeQuestions WHERE challengeID=@id
+                    ) <> (SELECT COUNT(*) FROM dbo.challengeQuestions WHERE challengeID=@id))
                     SELECT -1;
                 ELSE
                 BEGIN
                     UPDATE dbo.challenges
                     SET isActive=@publish
                     WHERE challengeID=@id;
-
                     SELECT 1;
                 END;";
 
@@ -287,15 +289,15 @@ namespace Masaking.Admin
                     if (result == 1)
                     {
                         ResetEditor();
-                        ShowMessage(publish ? "Quiz published." : "Quiz unpublished.", true);
+                        ShowMessage(publish ? "Challenge published." : "Challenge unpublished.", true);
                     }
                     else if (result == -1)
                     {
-                        ShowMessage("Publishing requires a valid title, difficulty and whole-minute " + "time limit of 1-60 minutes, plus complete questions numbered " + "consecutively from 1. Check the quiz settings and questions.", false);
+                        ShowMessage("Publishing requires a valid title, difficulty and whole-minute " + "time limit of 1-60 minutes, plus complete questions numbered " + "consecutively from 1. Check the challenge settings and questions.", false);
                     }
                     else
                     {
-                        ShowMessage("The quiz no longer exists.", false);
+                        ShowMessage("The challenge no longer exists.", false);
                     }
 
                     BindQuizzes();

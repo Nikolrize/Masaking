@@ -157,5 +157,12 @@ namespace Masaking.Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvQuizzes;
+        protected global::System.Web.UI.WebControls.Panel pnlFilters;
+        protected global::System.Web.UI.WebControls.Label lblSearch;
+        protected global::System.Web.UI.WebControls.TextBox txtSearch;
+        protected global::System.Web.UI.WebControls.Label lblPublication;
+        protected global::System.Web.UI.WebControls.DropDownList ddlPublication;
+        protected global::System.Web.UI.WebControls.Button btnSearch;
+        protected global::System.Web.UI.WebControls.Label lblCount;
     }
 }
