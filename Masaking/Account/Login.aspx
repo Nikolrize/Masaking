@@ -48,6 +48,6 @@
         </main>
     </form>
     <script src="../Scripts/bootstrap.bundle.min.js"></script>
-    <script src="../Scripts/form-helpers.js?v=20261024-39"></script>
+    <script src="../Scripts/form-helpers.js"></script>
 </body>
 </html>

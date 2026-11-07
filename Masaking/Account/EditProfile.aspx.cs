@@ -207,16 +207,18 @@ namespace Masaking.Account
                         return;
                     }
 
-                    using (SqlCommand update = new SqlCommand("UPDATE users SET password=@password WHERE userID=@id AND password=@previous AND isActive=1", cn))
+                    using (SqlCommand update = new SqlCommand("UPDATE users SET password=@password,authVersion=authVersion+1 OUTPUT inserted.authVersion WHERE userID=@id AND password=@previous AND isActive=1", cn))
                     {
                         update.Parameters.AddWithValue("@password", Database.HashPassword(txtNewPassword.Text));
                         update.Parameters.Add("@id", SqlDbType.Int).Value = Database.UserId.Value;
                         update.Parameters.AddWithValue("@previous", stored);
-                        if (update.ExecuteNonQuery() != 1)
+                        object nextVersion = update.ExecuteScalar();
+                        if (nextVersion == null)
                         {
                             Show("Your password changed during this request. Please try again.", false);
                             return;
                         }
+                        Session["AuthVersion"] = (int)nextVersion;
                     }
                 }
             }

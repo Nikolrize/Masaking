@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Masaking.Infrastructure;
@@ -35,12 +36,19 @@ namespace Masaking.Community
             currentUserIsActive = false;
             currentUserIsAdministrator = false;
             CurrentUserAvatarUrl = ResolveUrl(Database.DefaultAvatar);
+
             if (!Database.UserId.HasValue)
+            {
                 return;
+            }
+
+            const string sql = "SELECT image, role, displayName, username FROM users WHERE userID = @user AND isActive = 1";
+
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand("SELECT image, role, displayName, username FROM users WHERE userID=@user AND isActive=1", cn))
+            using (SqlCommand cmd = new SqlCommand(sql, cn))
             {
                 cmd.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (!reader.Read())
@@ -53,8 +61,10 @@ namespace Masaking.Community
                     CurrentDisplayName = Convert.ToString(reader["displayName"]);
                     CurrentUsername = Convert.ToString(reader["username"]);
                     CurrentUserAvatarUrl = GetAvatarUrl(reader["image"]);
+
                     string role = Convert.ToString(reader["role"]);
-                    currentUserIsAdministrator = String.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase) || String.Equals(role, "Administrator", StringComparison.OrdinalIgnoreCase);
+                    currentUserIsAdministrator = string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase) ||
+                                                 string.Equals(role, "Administrator", StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
@@ -68,10 +78,18 @@ namespace Masaking.Community
         {
             string name = Convert.ToString(displayName);
             string[] words = name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            string initials = words.Length == 0 ? "M" : words[0].Substring(0, 1) + (words.Length > 1 ? words[words.Length - 1].Substring(0, 1) : "");
+            string firstInitial = words.Length > 0 ? words[0].Substring(0, 1) : "M";
+            string lastInitial = words.Length > 1 ? words[words.Length - 1].Substring(0, 1) : "";
+            string initials = (firstInitial + lastInitial).ToUpperInvariant();
+
             string url = Database.AvatarUrl(image);
             bool hasPhoto = url != Database.DefaultAvatar;
-            string markup = "<span class='community-avatar rounded-circle' role='img' aria-label='" + System.Web.HttpUtility.HtmlAttributeEncode(label + ": " + name) + "' data-avatar-photo='" + (hasPhoto ? "true" : "false") + "'><span class='community-avatar-initials' aria-hidden='true'>" + Server.HtmlEncode(initials.ToUpperInvariant()) + "</span>";
+
+            string ariaLabel = HttpUtility.HtmlAttributeEncode($"{label}: {name}");
+            string encodedInitials = Server.HtmlEncode(initials);
+
+            string markup = $"<span class='community-avatar rounded-circle' role='img' aria-label='{ariaLabel}' data-avatar-photo='{hasPhoto.ToString().ToLowerInvariant()}'><span class='community-avatar-initials' aria-hidden='true'>{encodedInitials}</span>";
+
             if (hasPhoto)
             {
                 var photo = new Image
@@ -81,6 +99,7 @@ namespace Masaking.Community
                     GenerateEmptyAlternateText = true
                 };
                 photo.Attributes["data-community-avatar-photo"] = "true";
+
                 using (var writer = new StringWriter())
                 using (var html = new HtmlTextWriter(writer))
                 {
@@ -114,6 +133,7 @@ namespace Masaking.Community
             DateTime createdUtc = AsUtc(Convert.ToDateTime(createdAt));
             bool wasEdited = updatedAt != null && updatedAt != DBNull.Value;
             DateTime displayedUtc = wasEdited ? AsUtc(Convert.ToDateTime(updatedAt)) : createdUtc;
+
             string timestamp = CanEdit(createdUtc) ? RelativeAge(displayedUtc) : displayedUtc.ToLocalTime().ToString("dd MMM yyyy");
             return (wasEdited ? "Edited · " : "") + timestamp;
         }
@@ -122,7 +142,10 @@ namespace Masaking.Community
         {
             TimeSpan age = DateTime.UtcNow - utcDate;
             if (age.TotalSeconds < 60)
+            {
                 return "Just now";
+            }
+
             if (age.TotalMinutes < 60)
             {
                 int minutes = Math.Max(1, (int)age.TotalMinutes);
@@ -141,8 +164,11 @@ namespace Masaking.Community
 
         protected bool IsPostOwner(object ownerUserId)
         {
-            int ownerId;
-            return Database.UserId.HasValue && ownerUserId != null && ownerUserId != DBNull.Value && Int32.TryParse(Convert.ToString(ownerUserId), out ownerId) && ownerId == Database.UserId.Value;
+            return Database.UserId.HasValue
+                && ownerUserId != null
+                && ownerUserId != DBNull.Value
+                && int.TryParse(Convert.ToString(ownerUserId), out int ownerId)
+                && ownerId == Database.UserId.Value;
         }
 
         protected bool CanDeletePost(object ownerUserId)
@@ -153,7 +179,9 @@ namespace Masaking.Community
         protected string GetLikeButtonText(object likeCount)
         {
             // Keep the button content in Text so it survives postbacks without nested controls.
-            return "<span class=\"community-like-heart\"><i class=\"bi bi-heart community-icon community-heart-outline\" aria-hidden=\"true\"></i><i class=\"bi bi-heart-fill community-icon community-heart-filled\" aria-hidden=\"true\"></i></span>" + "<span class=\"small\">" + System.Web.HttpUtility.HtmlEncode(Convert.ToString(likeCount)) + "</span><span class=\"visually-hidden\">likes</span>";
+            string encodedCount = HttpUtility.HtmlEncode(Convert.ToString(likeCount));
+            return "<span class=\"community-like-heart\"><i class=\"bi bi-heart community-icon community-heart-outline\" aria-hidden=\"true\"></i><i class=\"bi bi-heart-fill community-icon community-heart-filled\" aria-hidden=\"true\"></i></span>" +
+                   $"<span class=\"small\">{encodedCount}</span><span class=\"visually-hidden\">likes</span>";
         }
 
         protected string PostHeading(object value)
@@ -173,9 +201,13 @@ namespace Masaking.Community
         protected void rptPosts_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName != "like" && e.CommandName != "unlike")
+            {
                 return;
+            }
+
             LinkButton button = e.CommandSource as LinkButton;
             Label error = e.Item.FindControl("lblLikeError") as Label;
+
             if (button == null || error == null)
             {
                 Trace.Warn("Community", "Unable to find the like button or its error label.");
@@ -189,43 +221,55 @@ namespace Masaking.Community
             }
 
             if (!RequireCurrentUser())
+            {
                 return;
-            if (!Int32.TryParse(Convert.ToString(e.CommandArgument), out int postId) || postId <= 0)
+            }
+
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out int postId) || postId <= 0)
+            {
                 return;
+            }
+
             try
             {
                 // Save and read the real count in one transaction; repeated requests are idempotent.
-                using (SqlConnection cn = Database.Open())
-                using (SqlCommand cmd = new SqlCommand(@"
+                const string sql = @"
                     SET XACT_ABORT ON;
                     BEGIN TRANSACTION;
                     IF EXISTS (
                         SELECT 1 FROM posts p WITH (UPDLOCK, HOLDLOCK)
-                        JOIN users u ON u.userID=p.userID
-                        WHERE p.postID=@post AND p.status='Approved' AND u.isActive=1)
+                        JOIN users u ON u.userID = p.userID
+                        WHERE p.postID = @post AND p.status = 'Approved' AND u.isActive = 1)
                     BEGIN
-                        IF @like=1
+                        IF @like = 1
                         BEGIN
-                            IF NOT EXISTS (SELECT 1 FROM postLikes WHERE postID=@post AND userID=@user)
-                                INSERT INTO postLikes(postID, userID, likedAt)
-                                VALUES(@post, @user, SYSUTCDATETIME());
+                            IF NOT EXISTS (SELECT 1 FROM postLikes WHERE postID = @post AND userID = @user)
+                                INSERT INTO postLikes (postID, userID, likedAt)
+                                VALUES (@post, @user, SYSUTCDATETIME());
                         END
                         ELSE
-                            DELETE FROM postLikes WHERE postID=@post AND userID=@user;
+                            DELETE FROM postLikes WHERE postID = @post AND userID = @user;
 
-                        SELECT (SELECT COUNT(*) FROM postLikes WHERE postID=@post) AS likeCount,
-                            CASE WHEN EXISTS (SELECT 1 FROM postLikes WHERE postID=@post AND userID=@user)
+                        SELECT (SELECT COUNT(*) FROM postLikes WHERE postID = @post) AS likeCount,
+                            CASE WHEN EXISTS (SELECT 1 FROM postLikes WHERE postID = @post AND userID = @user)
                                 THEN 1 ELSE 0 END AS userLiked;
                     END;
-                    COMMIT TRANSACTION;", cn))
+                    COMMIT TRANSACTION;";
+
+                using (SqlConnection cn = Database.Open())
+                using (SqlCommand cmd = new SqlCommand(sql, cn))
                 {
                     cmd.Parameters.Add("@post", SqlDbType.Int).Value = postId;
                     cmd.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
                     cmd.Parameters.Add("@like", SqlDbType.Bit).Value = e.CommandName == "like";
+
                     // Fill drains the complete batch, including COMMIT, before updating the UI.
                     DataTable result = new DataTable();
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
                         adapter.Fill(result);
+                    }
+
                     if (result.Rows.Count == 0)
                     {
                         error.Text = "This post is no longer available.";
@@ -240,7 +284,7 @@ namespace Masaking.Community
                     button.Attributes["aria-pressed"] = liked ? "true" : "false";
                     button.Text = GetLikeButtonText(row["likeCount"]);
                 }
-            // Keep the existing repeater intact so only this item's UpdatePanel is replaced.
+                // Keep the existing repeater intact so only this item's UpdatePanel is replaced.
             }
             catch (SqlException ex)
             {
@@ -251,41 +295,65 @@ namespace Masaking.Community
 
         protected string CommunityImageUrl(object value)
         {
-            string path = Convert.ToString(value ?? String.Empty).Trim().Replace('\\', '/');
+            string path = Convert.ToString(value ?? string.Empty).Trim().Replace('\\', '/');
             if (path.Length == 0)
-                return String.Empty;
+            {
+                return string.Empty;
+            }
+
             if (path.StartsWith("~/", StringComparison.Ordinal))
+            {
                 path = path.Substring(1);
+            }
             else if (!path.StartsWith("/", StringComparison.Ordinal))
+            {
                 path = "/" + path;
+            }
+
             const string legacyPrefix = "/Content/Uploads/Community/";
             const string prefix = "/Content/images/Uploads/Community/";
+
             if (path.StartsWith(legacyPrefix, StringComparison.OrdinalIgnoreCase))
+            {
                 path = prefix + path.Substring(legacyPrefix.Length);
+            }
+
             if (!path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-                return String.Empty;
+            {
+                return string.Empty;
+            }
+
             string fileName = path.Substring(path.LastIndexOf('/') + 1);
             string extension = Path.GetExtension(fileName);
-            if (!String.Equals(extension, ".jpg", StringComparison.OrdinalIgnoreCase) || !Guid.TryParseExact(Path.GetFileNameWithoutExtension(fileName), "N", out _))
+
+            bool isValidGuid = Guid.TryParseExact(Path.GetFileNameWithoutExtension(fileName), "N", out _);
+            if (!string.Equals(extension, ".jpg", StringComparison.OrdinalIgnoreCase) || !isValidGuid)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             if (path.Substring(prefix.Length) != fileName)
-                return String.Empty;
+            {
+                return string.Empty;
+            }
+
             return ResolveUrl("~" + prefix + fileName);
         }
 
         protected void SafeDeleteUploadedImage(string imagePath)
         {
-            if (String.IsNullOrWhiteSpace(imagePath))
+            if (string.IsNullOrWhiteSpace(imagePath))
+            {
                 return;
+            }
+
             try
             {
                 ImageUpload.DeleteUploaded(imagePath, "Community");
             }
             catch (Exception)
-            { /* Do not replace the original database/upload error with a cleanup error. */
+            {
+                /* Do not replace the original database/upload error with a cleanup error. */
             }
         }
 
@@ -298,7 +366,10 @@ namespace Masaking.Community
         protected bool RequireCurrentUser()
         {
             if (currentUserIsActive && Database.UserId.HasValue)
+            {
                 return true;
+            }
+
             RedirectToLogin();
             return false;
         }
@@ -312,7 +383,10 @@ namespace Masaking.Community
         protected void RunDatabaseAction(Action action)
         {
             if (!databaseAvailable)
+            {
                 return;
+            }
+
             try
             {
                 action();
@@ -334,40 +408,64 @@ namespace Masaking.Community
         protected string RecipeImageUrl(object value)
         {
             string path = Convert.ToString(value).Replace('\\', '/');
-            Uri uri;
-            if (Uri.TryCreate(path, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+
+            if (Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            {
                 return path;
+            }
+
             if (path.StartsWith("~/"))
+            {
                 path = path.Substring(1);
+            }
+
             path = path.Replace("/Content/Uploads/Recipes/", "/Content/images/Uploads/Recipes/");
             const string prefix = "/Content/images/Uploads/Recipes/";
-            Guid id;
             string file = Path.GetFileName(path);
-            return path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && path.Substring(prefix.Length) == file && file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) && Guid.TryParseExact(Path.GetFileNameWithoutExtension(file), "N", out id) ? ResolveUrl("~" + path) : "";
+
+            bool isValid = path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) &&
+                           path.Substring(prefix.Length) == file &&
+                           file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) &&
+                           Guid.TryParseExact(Path.GetFileNameWithoutExtension(file), "N", out _);
+
+            return isValid ? ResolveUrl("~" + path) : "";
         }
 
         protected DataTable ReadPosts(int? postId, string sort)
         {
-            string order = sort == "oldest" ? "p.createdAt ASC, p.postID ASC" : sort == "popular" ? "likeCount DESC, commentCount DESC, p.postID DESC" : "p.createdAt DESC, p.postID DESC";
-            string sql = @"SELECT p.postID, p.content, p.image, p.createdAt, p.updatedAt, p.userID,
-                r.recipeID, r.title, r.image AS recipeImage, r.cuisine AS recipeSummary,
-                u.displayName, u.username, u.image AS authorImage,
-                (SELECT COUNT(*) FROM postComments c JOIN users cu ON cu.userID=c.userID
-                    WHERE c.postID=p.postID AND c.status='Approved' AND cu.isActive=1) AS commentCount,
-                (SELECT COUNT(*) FROM postLikes pl WHERE pl.postID=p.postID) AS likeCount,
-                (SELECT COUNT(*) FROM postLikes pl WHERE pl.postID=p.postID AND pl.userID=@user) AS userLiked
-                FROM posts p JOIN users u ON u.userID=p.userID
-                LEFT JOIN recipes r ON r.recipeID=p.recipeID AND r.status='Approved'
-                WHERE p.status='Approved' AND u.isActive=1 AND (@post IS NULL OR p.postID=@post)
-                ORDER BY " + order;
+            string order = sort == "oldest"
+                ? "p.createdAt ASC, p.postID ASC"
+                : sort == "popular"
+                    ? "likeCount DESC, commentCount DESC, p.postID DESC"
+                    : "p.createdAt DESC, p.postID DESC";
+
+            string sql = $@"
+                SELECT p.postID, p.content, p.image, p.createdAt, p.updatedAt, p.userID,
+                    r.recipeID, r.status AS recipeStatus,
+                    r.title, r.image AS recipeImage, r.cuisine AS recipeSummary,
+                    u.displayName, u.username, u.image AS authorImage,
+                    (SELECT COUNT(*) FROM postComments c JOIN users cu ON cu.userID = c.userID
+                        WHERE c.postID = p.postID AND c.status = 'Approved' AND cu.isActive = 1) AS commentCount,
+                    (SELECT COUNT(*) FROM postLikes pl WHERE pl.postID = p.postID) AS likeCount,
+                    (SELECT COUNT(*) FROM postLikes pl WHERE pl.postID = p.postID AND pl.userID = @user) AS userLiked
+                FROM posts p 
+                JOIN users u ON u.userID = p.userID
+                LEFT JOIN recipes r ON r.recipeID = p.recipeID AND r.status IN ('Approved', 'Pending')
+                WHERE p.status = 'Approved' AND u.isActive = 1 AND (@post IS NULL OR p.postID = @post)
+                ORDER BY {order}";
+
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))
             {
                 cmd.Parameters.Add("@user", SqlDbType.Int).Value = (object)Database.UserId ?? DBNull.Value;
                 cmd.Parameters.Add("@post", SqlDbType.Int).Value = (object)postId ?? DBNull.Value;
+
                 DataTable data = new DataTable();
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
                     adapter.Fill(data);
+                }
+
                 return data;
             }
         }
@@ -377,17 +475,23 @@ namespace Masaking.Community
             RunDatabaseAction(() =>
             {
                 Button button = sender as Button;
-                int postId;
-                if (!RequireCurrentUser() || button == null || !Int32.TryParse(button.CommandArgument, out postId))
+                if (!RequireCurrentUser() || button == null || !int.TryParse(button.CommandArgument, out int postId))
+                {
                     return;
+                }
+
+                const string sql = @"
+                    UPDATE posts
+                    SET status = CASE WHEN userID = @user THEN 'Deleted' ELSE 'Removed' END
+                    WHERE postID = @post AND status = 'Approved' AND (userID = @user OR @admin = 1)";
+
                 using (SqlConnection cn = Database.Open())
-                using (SqlCommand cmd = new SqlCommand(@"UPDATE posts
-                    SET status=CASE WHEN userID=@user THEN 'Deleted' ELSE 'Removed' END
-                    WHERE postID=@post AND status='Approved' AND (userID=@user OR @admin=1)", cn))
+                using (SqlCommand cmd = new SqlCommand(sql, cn))
                 {
                     cmd.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
                     cmd.Parameters.Add("@post", SqlDbType.Int).Value = postId;
                     cmd.Parameters.Add("@admin", SqlDbType.Bit).Value = currentUserIsAdministrator;
+
                     if (cmd.ExecuteNonQuery() != 1)
                     {
                         Show("This post could not be deleted.", false);

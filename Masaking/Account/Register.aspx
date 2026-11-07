@@ -87,6 +87,6 @@
         </form>
 
         <script src="../Scripts/bootstrap.bundle.min.js"></script>
-        <script src="../Scripts/form-helpers.js?v=20261104-1"></script>
+        <script src="../Scripts/form-helpers.js"></script>
     </body>
     </html>

@@ -6,10 +6,14 @@
 //     the code is regenerated. 
 // </auto-generated>
 //------------------------------------------------------------------------------
+
 namespace Masaking.Account
 {
+
+
     public partial class Profile
     {
+
         /// <summary>
         /// profilePage control.
         /// </summary>
@@ -18,9 +22,16 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl profilePage;
+
+        /// <summary>
+        /// profileHero control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileHero;
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileEmailContact;
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileActions;
+
         /// <summary>
         /// lblInitials control.
         /// </summary>
@@ -29,6 +40,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblInitials;
+
         /// <summary>
         /// imgDecoration control.
         /// </summary>
@@ -37,6 +49,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Image imgDecoration;
+
         /// <summary>
         /// lblProfileName control.
         /// </summary>
@@ -45,6 +58,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblProfileName;
+
         /// <summary>
         /// lblProfileUsername control.
         /// </summary>
@@ -53,6 +67,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblProfileUsername;
+
         /// <summary>
         /// phAdminSection control.
         /// </summary>
@@ -61,6 +76,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phAdminSection;
+
         /// <summary>
         /// lblProfileCountry control.
         /// </summary>
@@ -69,6 +85,16 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblProfileCountry;
+
+        /// <summary>
+        /// profileEmailContact control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileEmailContact;
+
         /// <summary>
         /// lblProfileEmail control.
         /// </summary>
@@ -77,6 +103,16 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblProfileEmail;
+
+        /// <summary>
+        /// profileActions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl profileActions;
+
         /// <summary>
         /// lnkEditProfile control.
         /// </summary>
@@ -85,6 +121,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkEditProfile;
+
         /// <summary>
         /// lnkChangePassword control.
         /// </summary>
@@ -93,6 +130,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkChangePassword;
+
         /// <summary>
         /// phAdminSection2 control.
         /// </summary>
@@ -101,6 +139,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phAdminSection2;
+
         /// <summary>
         /// lnkRecipesToReview control.
         /// </summary>
@@ -109,6 +148,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkRecipesToReview;
+
         /// <summary>
         /// lblPendingRecipes control.
         /// </summary>
@@ -117,6 +157,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPendingRecipes;
+
         /// <summary>
         /// lnkCommunityQueue control.
         /// </summary>
@@ -125,6 +166,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkCommunityQueue;
+
         /// <summary>
         /// lblPendingCommunity control.
         /// </summary>
@@ -133,6 +175,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPendingCommunity;
+
         /// <summary>
         /// phMemberSection control.
         /// </summary>
@@ -141,6 +184,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phMemberSection;
+
         /// <summary>
         /// lnkRecipesUploaded control.
         /// </summary>
@@ -149,6 +193,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkRecipesUploaded;
+
         /// <summary>
         /// lblRecipeCount control.
         /// </summary>
@@ -157,6 +202,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRecipeCount;
+
         /// <summary>
         /// lnkCommunityPosts control.
         /// </summary>
@@ -165,6 +211,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkCommunityPosts;
+
         /// <summary>
         /// lblPostCount control.
         /// </summary>
@@ -173,6 +220,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPostCount;
+
         /// <summary>
         /// phAdminSection3 control.
         /// </summary>
@@ -181,6 +229,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phAdminSection3;
+
         /// <summary>
         /// lnkManageRecipesReviewAndOrganiseRecipeSubmissions control.
         /// </summary>
@@ -189,6 +238,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkManageRecipesReviewAndOrganiseRecipeSubmissions;
+
         /// <summary>
         /// lnkManageCommunity control.
         /// </summary>
@@ -197,6 +247,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkManageCommunity;
+
         /// <summary>
         /// lnkManageUsersViewAndManageMemberAccounts control.
         /// </summary>
@@ -205,6 +256,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkManageUsersViewAndManageMemberAccounts;
+
         /// <summary>
         /// lnkManageChallenges control.
         /// </summary>
@@ -213,6 +265,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkManageChallenges;
+
         /// <summary>
         /// phMemberSection2 control.
         /// </summary>
@@ -221,6 +274,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phMemberSection2;
+
         /// <summary>
         /// btnOverview control.
         /// </summary>
@@ -229,6 +283,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlButton btnOverview;
+
         /// <summary>
         /// btnRecipes control.
         /// </summary>
@@ -237,6 +292,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlButton btnRecipes;
+
         /// <summary>
         /// btnPosts control.
         /// </summary>
@@ -245,6 +301,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlButton btnPosts;
+
         /// <summary>
         /// btnComments control.
         /// </summary>
@@ -253,6 +310,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlButton btnComments;
+
         /// <summary>
         /// lnkViewAll control.
         /// </summary>
@@ -261,6 +319,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkViewAll;
+
         /// <summary>
         /// lnkShareYourFirstRecipe control.
         /// </summary>
@@ -269,6 +328,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkShareYourFirstRecipe;
+
         /// <summary>
         /// lnkViewAll2 control.
         /// </summary>
@@ -277,6 +337,7 @@ namespace Masaking.Account
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkViewAll2;
+
         /// <summary>
         /// lnkJoinTheConversation control.
         /// </summary>

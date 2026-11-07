@@ -103,6 +103,7 @@ namespace Masaking.Account
                     cmd.Parameters.AddWithValue("@createdAt", DateTime.UtcNow);
                     int userId = Convert.ToInt32(cmd.ExecuteScalar());
                     Session["UserId"] = userId;
+                    Session["AuthVersion"] = 0;
                     Session["UserRole"] = "Member";
                     Session["DisplayName"] = name;
                     Session["UserImage"] = Database.DefaultAvatar;
