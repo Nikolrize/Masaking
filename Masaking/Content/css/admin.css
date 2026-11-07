@@ -297,3 +297,11 @@
     color: var(--color-primary); 
 
 }
+
+/*community part*/
+.admin-main .community-content {
+    min-width: 16rem;
+    max-width: 32rem;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
