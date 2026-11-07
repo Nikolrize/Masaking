@@ -1,5 +1,6 @@
 ﻿using Masaking.Controls;
 using Masaking.Infrastructure;
+using QRCoder;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -90,6 +91,12 @@ namespace Masaking.Recipes
             bool isAuthor = signedIn &&
                 Database.UserId.Value == Convert.ToInt32(recipe["userID"]);
             bool isApproved = recipe["status"].ToString() == "Approved";
+
+            btnShare.Visible = isApproved;
+            if (isApproved)
+            {
+                LoadShareCode(recipeId);
+            }
 
             phOwnerActions.Visible = isAuthor;
             lnkEditRecipe.NavigateUrl = ResolveUrl("~/Recipes/SubmitRecipe") + "?id=" + recipeId;
@@ -526,6 +533,30 @@ namespace Masaking.Recipes
             Response.Redirect(ResolveUrl("~/Recipes/MyRecipes"), false);
 
             Context.ApplicationInstance.CompleteRequest();
+        }
+
+        private void LoadShareCode(int recipeId)
+        {
+            string recipePath = ResolveUrl("~/Recipes/RecipeDetails.aspx") + "?id=" + recipeId;
+
+            string shareUrl = new Uri(Request.Url, recipePath).AbsoluteUri;
+
+            using (QRCodeGenerator generator = new QRCodeGenerator())
+            using (QRCodeData data = generator.CreateQrCode(shareUrl, QRCodeGenerator.ECCLevel.Q))
+            using (PngByteQRCode qr = new PngByteQRCode(data))
+            {
+                byte[] imageBytes = qr.GetGraphic(10);
+
+                string imageUrl =
+                    "data:image/png;base64," +
+                    Convert.ToBase64String(imageBytes);
+
+                imgRecipeQr.ImageUrl = imageUrl;
+                txtShareUrl.Text = shareUrl;
+
+                lnkDownloadQr.NavigateUrl = imageUrl;
+                lnkDownloadQr.Attributes["download"] = "Masaking-Recipe-" + recipeId + "-QR.png";
+            }
         }
     }
 }

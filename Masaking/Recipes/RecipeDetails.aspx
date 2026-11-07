@@ -64,6 +64,15 @@
                                     Download PDF
                                 </asp:HyperLink>
 
+                                <button id="btnShare" runat="server"
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#recipeShareModal">
+                                    <i class="bi bi-share me-1"></i>
+                                    Share
+                                </button>
+
                                 <asp:PlaceHolder ID="phOwnerActions" runat="server"
                                     Visible="false">
 
@@ -293,4 +302,44 @@
             </section>
         </asp:Panel>
     </main>
+
+    <div class="modal fade" id="recipeShareModal"
+        tabindex="-1"
+        aria-labelledby="recipeShareTitle"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="recipeShareTitle">Share this recipe
+                </h2>
+
+                    <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                    </button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <p>Scan this QR code to open the recipe.</p>
+
+                    <asp:Image ID="imgRecipeQr" runat="server"
+                        AlternateText="QR code linking to this recipe"
+                        Width="240" Height="240"
+                        CssClass="img-fluid mb-3" />
+
+                    <asp:TextBox ID="txtShareUrl" runat="server"
+                        ReadOnly="true"
+                        aria-label="Recipe sharing link"
+                        CssClass="form-control mb-3" />
+
+                    <asp:HyperLink ID="lnkDownloadQr" runat="server"
+                        CssClass="btn btn-primary">
+                        <i class="bi bi-download me-1"></i>
+                        Download QR
+                    </asp:HyperLink>
+                </div>
+            </div>
+        </div>
+    </div>
 </asp:Content>
