@@ -17,20 +17,14 @@ namespace Masaking.Community
         protected Image imgExisting;
         protected Button btnPublish;
         protected HyperLink lnkCancel;
-        private bool IsEditing
-        {
-            get
-            {
-                return Request.QueryString["id"] != null;
-            }
-        }
+
+        private bool IsEditing => Request.QueryString["id"] != null;
 
         private int PostId
         {
             get
             {
-                int id;
-                return Int32.TryParse(Request.QueryString["id"], out id) && id > 0 ? id : 0;
+                return int.TryParse(Request.QueryString["id"], out int id) && id > 0 ? id : 0;
             }
         }
 
@@ -38,18 +32,32 @@ namespace Masaking.Community
         {
             Form.Enctype = "multipart/form-data";
             pnlComposer.Visible = false;
+
             if (!databaseAvailable || !RequireCurrentUser())
+            {
                 return;
+            }
+
             RunDatabaseAction(() =>
             {
                 pnlComposer.Visible = true;
                 btnPublish.Text = IsEditing ? "Update Post" : "Publish Post";
-                lnkCancel.NavigateUrl = IsEditing && PostId > 0 ? "Community.aspx?post=" + PostId + "#post-" + PostId : "Community.aspx";
+                lnkCancel.NavigateUrl = IsEditing && PostId > 0
+                    ? $"Community.aspx?post={PostId}#post-{PostId}"
+                    : "Community.aspx";
+
                 if (IsPostBack)
+                {
                     return;
+                }
+
                 LoadRecipes();
+
                 if (!IsEditing)
+                {
                     return;
+                }
+
                 DataRow post = ReadEditablePost();
                 if (post == null)
                 {
@@ -59,12 +67,17 @@ namespace Masaking.Community
 
                 txtContent.Text = Convert.ToString(post["content"]);
                 imgExisting.ImageUrl = CommunityImageUrl(post["image"]);
-                imgExisting.Visible = !String.IsNullOrEmpty(imgExisting.ImageUrl);
+                imgExisting.Visible = !string.IsNullOrEmpty(imgExisting.ImageUrl);
+
                 ListItem recipe = ddlRecipe.Items.FindByValue(Convert.ToString(post["recipeID"]));
                 if (recipe != null)
+                {
                     ddlRecipe.SelectedValue = recipe.Value;
+                }
                 else if (post["recipeID"] != DBNull.Value)
+                {
                     Show("The previous attachment is unavailable. Choose one of your approved recipes or publish without an attachment.", false);
+                }
             });
         }
 
@@ -72,10 +85,18 @@ namespace Masaking.Community
         {
             ddlRecipe.Items.Clear();
             ddlRecipe.Items.Add(new ListItem("No recipe attached", ""));
+
+            const string sql = @"
+                SELECT recipeID, title, image, cuisine 
+                FROM recipes 
+                WHERE status = 'Approved' AND userID = @user 
+                ORDER BY title";
+
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand("SELECT recipeID, title, image, cuisine FROM recipes WHERE status='Approved' AND userID=@user ORDER BY title", cn))
+            using (SqlCommand cmd = new SqlCommand(sql, cn))
             {
                 cmd.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -91,18 +112,31 @@ namespace Masaking.Community
 
         private DataRow ReadEditablePost()
         {
+            const string sql = @"
+                SELECT content, image, recipeID 
+                FROM posts
+                WHERE postID = @post 
+                  AND userID = @user 
+                  AND status = 'Approved'
+                  AND createdAt >= DATEADD(day, -7, SYSUTCDATETIME()) 
+                  AND createdAt <= SYSUTCDATETIME()";
+
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@"SELECT content, image, recipeID FROM posts
-                WHERE postID=@post AND userID=@user AND status='Approved'
-                AND createdAt>=DATEADD(day,-7,SYSUTCDATETIME()) AND createdAt<=SYSUTCDATETIME()", cn))
+            using (SqlCommand cmd = new SqlCommand(sql, cn))
             {
                 cmd.Parameters.Add("@post", SqlDbType.Int).Value = PostId;
                 cmd.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
+
                 DataTable data = new DataTable();
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
                     adapter.Fill(data);
+                }
+
                 if (data.Rows.Count == 1)
+                {
                     return data.Rows[0];
+                }
             }
 
             Show("This post is unavailable or cannot be edited. You may edit your own posts for seven days after publishing.", false);
@@ -112,7 +146,10 @@ namespace Masaking.Community
         protected void btnPublish_Click(object sender, EventArgs e)
         {
             if (!databaseAvailable || !RequireCurrentUser())
+            {
                 return;
+            }
+
             RunDatabaseAction(() =>
             {
                 string content = (txtContent.Text ?? "").Trim();
@@ -123,10 +160,9 @@ namespace Masaking.Community
                 }
 
                 int? recipeId = null;
-                int parsedRecipe;
-                if (!String.IsNullOrEmpty(ddlRecipe.SelectedValue))
+                if (!string.IsNullOrEmpty(ddlRecipe.SelectedValue))
                 {
-                    if (!Int32.TryParse(ddlRecipe.SelectedValue, out parsedRecipe) || parsedRecipe <= 0 || ddlRecipe.Items.FindByValue(ddlRecipe.SelectedValue) == null)
+                    if (!int.TryParse(ddlRecipe.SelectedValue, out int parsedRecipe) || parsedRecipe <= 0 || ddlRecipe.Items.FindByValue(ddlRecipe.SelectedValue) == null)
                     {
                         Show("Choose one of your approved recipes or leave it empty.", false);
                         return;
@@ -137,21 +173,33 @@ namespace Masaking.Community
 
                 DataRow oldPost = IsEditing ? ReadEditablePost() : null;
                 if (IsEditing && oldPost == null)
+                {
                     return;
+                }
+
                 string image = oldPost == null || chkRemoveImage.Checked ? null : Convert.ToString(oldPost["image"]);
                 string uploaded = null;
                 bool saved = false;
+
                 try
                 {
                     if (uploadImage.HasFile)
+                    {
                         image = uploaded = ImageUpload.Save(uploadImage.PostedFile, false);
-                    string sql = IsEditing ? @"UPDATE posts SET content=@content, image=@image, recipeID=@recipe, updatedAt=SYSUTCDATETIME()
-                        OUTPUT INSERTED.postID WHERE postID=@post AND userID=@user AND status='Approved'
-                        AND createdAt>=DATEADD(day,-7,SYSUTCDATETIME()) AND createdAt<=SYSUTCDATETIME()
-                        AND (@recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID=@recipe AND status='Approved' AND userID=@user))" : @"INSERT INTO posts(content,image,likes,status,createdAt,updatedAt,userID,recipeID)
-                        OUTPUT INSERTED.postID
-                        SELECT @content,@image,0,'Approved',SYSUTCDATETIME(),NULL,@user,@recipe
-                        WHERE @recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID=@recipe AND status='Approved' AND userID=@user)";
+                    }
+
+                    string sql = IsEditing
+                        ? @"UPDATE posts 
+                            SET content = @content, image = @image, recipeID = @recipe, updatedAt = SYSUTCDATETIME()
+                            OUTPUT INSERTED.postID 
+                            WHERE postID = @post AND userID = @user AND status = 'Approved'
+                              AND createdAt >= DATEADD(day, -7, SYSUTCDATETIME()) AND createdAt <= SYSUTCDATETIME()
+                              AND (@recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID = @recipe AND status = 'Approved' AND userID = @user))"
+                        : @"INSERT INTO posts (content, image, likes, status, createdAt, updatedAt, userID, recipeID)
+                            OUTPUT INSERTED.postID
+                            SELECT @content, @image, 0, 'Approved', SYSUTCDATETIME(), NULL, @user, @recipe
+                            WHERE @recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID = @recipe AND status = 'Approved' AND userID = @user)";
+
                     using (SqlConnection cn = Database.Open())
                     using (SqlCommand cmd = new SqlCommand(sql, cn))
                     {
@@ -160,6 +208,7 @@ namespace Masaking.Community
                         cmd.Parameters.Add("@content", SqlDbType.NVarChar, -1).Value = content;
                         cmd.Parameters.Add("@image", SqlDbType.NVarChar, 255).Value = (object)image ?? DBNull.Value;
                         cmd.Parameters.Add("@recipe", SqlDbType.Int).Value = (object)recipeId ?? DBNull.Value;
+
                         object result = cmd.ExecuteScalar();
                         if (result == null || result == DBNull.Value)
                         {
@@ -168,7 +217,8 @@ namespace Masaking.Community
                         }
 
                         saved = true;
-                        Navigate("Community.aspx?post=" + Convert.ToInt32(result) + "#post-" + Convert.ToInt32(result));
+                        int createdPostId = Convert.ToInt32(result);
+                        Navigate($"Community.aspx?post={createdPostId}#post-{createdPostId}");
                     }
                 }
                 catch (InvalidDataException ex)
@@ -188,7 +238,9 @@ namespace Masaking.Community
                 finally
                 {
                     if (!saved)
+                    {
                         SafeDeleteUploadedImage(uploaded);
+                    }
                 }
             });
         }

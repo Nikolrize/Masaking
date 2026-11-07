@@ -18,7 +18,7 @@ namespace Masaking.Account
         protected void btnLogin_Click(object sender, EventArgs e)
         {
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand("SELECT userID,password,displayName,role,isActive,image FROM users WHERE email=@email", cn))
+            using (SqlCommand cmd = new SqlCommand("SELECT userID,password,displayName,role,isActive,image,authVersion FROM users WHERE email=@email", cn))
             {
                 cmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
                 using (SqlDataReader rd = cmd.ExecuteReader())
@@ -31,6 +31,7 @@ namespace Masaking.Account
 
                     Session.Clear();
                     Session["UserId"] = rd.GetInt32(rd.GetOrdinal("userID"));
+                    Session["AuthVersion"] = rd.GetInt32(rd.GetOrdinal("authVersion"));
                     Session["UserRole"] = rd.GetString(rd.GetOrdinal("role"));
                     Session["DisplayName"] = rd.GetString(rd.GetOrdinal("displayName"));
                     Session["UserImage"] = Database.AvatarUrl(rd["image"]);

@@ -141,6 +141,6 @@
         </div>
     </main>
 
-    <script src="../Scripts/form-helpers.js?v=20261024-39"></script>
+    <script src="../Scripts/form-helpers.js"></script>
     <script src="../Scripts/profile.js"></script>
 </asp:Content>
