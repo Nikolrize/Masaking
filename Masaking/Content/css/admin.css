@@ -233,3 +233,67 @@
         padding: 20px 15px;
     }
 }
+
+/* recipe/user tables */
+.admin-main .recipe-thumb,
+.admin-main .recipe-placeholder {
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    object-fit: cover;
+}
+.admin-main .recipe-placeholder {
+    display: inline-grid;
+    place-items: center;
+    color: var(--color-muted);
+    background: var(--color-cream);
+    font-size: 1.3rem;
+}
+.admin-main .recipe-detail-photo {
+    display: block;
+    width: 100%;
+    max-height: 280px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: var(--color-cream);
+}
+.admin-main .recipe-detail-placeholder {
+    padding: 14px;
+    border: 1px dashed var(--color-border);
+    border-radius: 8px;
+}
+.admin-main .difficulty-easy { 
+    background: #e4f0e4; 
+    color: #28583d; 
+}
+.admin-main .difficulty-medium { 
+    background: #fff0d6; 
+    color: #805319; 
+
+}
+.admin-main .difficulty-hard { 
+    background: #f9e4e1; 
+    color: #8a3b32; 
+
+}
+.admin-main .difficulty-other { 
+    background: #ecece8; 
+    color: #4d554c; 
+
+}
+.admin-main .role-admin { 
+    background: #eee6f6; 
+    color: #654380; 
+
+}
+.admin-main .role-member { 
+    background: #eaf0e8; 
+    color: #3c5740; 
+
+}
+.admin-main th[aria-sort="ascending"],
+.admin-main th[aria-sort="descending"] { 
+    color: var(--color-primary); 
+
+}

@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 using Masaking.Infrastructure;
 
 namespace Masaking.Admin
@@ -58,8 +59,7 @@ namespace Masaking.Admin
                 recipes.Columns.Add("submittedLocal", typeof(DateTime));
                 foreach (DataRow row in recipes.Rows)
                     row["submittedLocal"] = MalaysiaTime(row["createdAt"]);
-                gvRecentRecipes.DataSource = recipes;
-                gvRecentRecipes.DataBind();
+                AdminTable.Bind(gvRecentRecipes, recipes, ViewState, "DashboardRecipes", "createdAt", "DESC");
             }
         }
 
@@ -86,11 +86,13 @@ namespace Masaking.Admin
                 DataTable activity = new DataTable();
                 adapter.Fill(activity);
                 activity.Columns.Add("resultText", typeof(string));
+                activity.Columns.Add("resultPercent", typeof(decimal));
                 activity.Columns.Add("completedLocal", typeof(DateTime));
                 foreach (DataRow row in activity.Rows)
                 {
                     int score = Convert.ToInt32(row["score"]);
                     int total = Convert.ToInt32(row["total"]);
+                    row["resultPercent"] = total > 0 ? 100m * score / total : 0m;
                     if (Convert.ToString(row["activityType"]) == "Simulation")
                         row["resultText"] = score + "% accuracy";
                     else
@@ -99,9 +101,22 @@ namespace Masaking.Admin
                             : "Result unavailable";
                     row["completedLocal"] = MalaysiaTime(row["completedAt"]);
                 }
-                gvRecentActivity.DataSource = activity;
-                gvRecentActivity.DataBind();
+                AdminTable.Bind(gvRecentActivity, activity, ViewState, "DashboardActivity", "completedAt", "DESC");
             }
+        }
+
+        protected void gvRecentRecipes_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            if (!Database.RequireAdmin(Response)) { e.Cancel = true; return; }
+            AdminTable.ToggleSort(e, ViewState, "DashboardRecipes", "createdAt", "DESC", "recipeID", "title", "displayName", "status", "createdAt");
+            LoadRecentRecipes();
+        }
+
+        protected void gvRecentActivity_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            if (!Database.RequireAdmin(Response)) { e.Cancel = true; return; }
+            AdminTable.ToggleSort(e, ViewState, "DashboardActivity", "completedAt", "DESC", "activityType", "title", "displayName", "resultPercent", "completedAt");
+            LoadRecentActivity();
         }
 
         private DateTime MalaysiaTime(object value)
