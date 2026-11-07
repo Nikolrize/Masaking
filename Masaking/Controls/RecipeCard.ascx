@@ -40,26 +40,28 @@
                 CssClass="small text-muted" />
         </div>
 
-        <!-- Prep Time, Budget, and Servings -->
-        <span class="pt-3 small text-muted">
-            <i class="bi bi-clock me-1"></i>
-            <asp:Label ID="recipePreparationTime" runat="server" />
-            &middot;
+        <div class="mt-auto pt-3 d-flex flex-column gap-2">
+            <!-- Prep Time, Budget, and Servings -->
+            <span class="small text-muted">
+                <i class="bi bi-clock me-1"></i>
+                <asp:Label ID="recipePreparationTime" runat="server" />
+                &middot;
             <i class="bi bi-cash me-1"></i>
-            <asp:Label ID="recipeBudget" runat="server" />
-            &middot;
+                <asp:Label ID="recipeBudget" runat="server" />
+                &middot;
             <i class="bi bi-person me-1"></i>
-            <asp:Label ID="recipeServings" runat="server" />
-        </span>
+                <asp:Label ID="recipeServings" runat="server" />
+            </span>
 
-        <!-- Rating -->
-        <div class="mt-auto small">
-            <asp:PlaceHolder ID="phRatingStar"
-                runat="server" Visible="false">
-                <i class="bi bi-star-fill text-warning me-1"></i>
-            </asp:PlaceHolder>
-            <asp:Label ID="recipeRating" runat="server"
-                CssClass="text-muted" />
+            <!-- Rating -->
+            <div class="small">
+                <asp:PlaceHolder ID="phRatingStar"
+                    runat="server" Visible="false">
+                    <i class="bi bi-star-fill text-warning me-1"></i>
+                </asp:PlaceHolder>
+                <asp:Label ID="recipeRating" runat="server"
+                    CssClass="text-muted" />
+            </div>
         </div>
     </div>
 </asp:HyperLink>
