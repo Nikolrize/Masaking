@@ -15,15 +15,6 @@ namespace Masaking.Learning
     {
 
         /// <summary>
-        /// lnkHome control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkHome;
-
-        /// <summary>
         /// lnkProgress control.
         /// </summary>
         /// <remarks>
@@ -42,22 +33,13 @@ namespace Masaking.Learning
         protected global::System.Web.UI.WebControls.HyperLink lnkSimulations;
 
         /// <summary>
-        /// lblTitle control.
+        /// pnlFilters control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTitle;
-
-        /// <summary>
-        /// lblIntroduction control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblIntroduction;
+        protected global::System.Web.UI.WebControls.Panel pnlFilters;
 
         /// <summary>
         /// lblSearch control.
@@ -105,12 +87,30 @@ namespace Masaking.Learning
         protected global::System.Web.UI.WebControls.Button btnSearch;
 
         /// <summary>
-        /// gvQuizzes control.
+        /// lblCount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvQuizzes;
+        protected global::System.Web.UI.WebControls.Label lblCount;
+
+        /// <summary>
+        /// lvChallenges control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ListView lvChallenges;
+
+        /// <summary>
+        /// pagerChallenges control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DataPager pagerChallenges;
     }
 }

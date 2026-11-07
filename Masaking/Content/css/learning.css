@@ -159,3 +159,24 @@
     .learning-page h1 { font-size: 1.85rem; }
     .learning-page .section-icon { display: none; }
 }
+
+/* Styles used only by the challenge browsing page. */
+.challenge-list .card { min-width: 0; }
+.challenge-list h2,
+.challenge-list .challenge-description { overflow-wrap: anywhere; }
+.challenge-list .challenge-description { white-space: pre-line; }
+.challenge-list .challenge-symbol {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: .75rem;
+    color: #825a28;
+    background: #fff0dd;
+    font-size: 1.5rem;
+}
+.challenge-list .level-easy { color: #245936; background: #e4f0e5; }
+.challenge-list .level-medium { color: #79510d; background: #fff0c8; }
+.challenge-list .level-hard { color: #8a2932; background: #f8e1e3; }
+.challenge-list .level-other { color: #49545b; background: #e9edef; }
+.challenge-list .challenge-pages .aspNetDisabled { opacity: .55; }
