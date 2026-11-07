@@ -38,7 +38,7 @@
                             </h1>
 
                             <!-- Buttons -->
-                            <div class="d-flex flex-wrap align-items-center gap-2">
+                            <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
                                 <button id="btnFavourite"
                                     runat="server"
                                     type="submit"
@@ -55,6 +55,13 @@
                                     CssClass="btn btn-primary">
                                 <i class="bi bi-play-circle me-1"></i>
                                 Start Learning
+                                </asp:HyperLink>
+
+                                <asp:HyperLink ID="lnkDownloadPdf"
+                                    runat="server"
+                                    CssClass="btn btn-outline-primary">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>
+                                    Download PDF
                                 </asp:HyperLink>
 
                                 <asp:PlaceHolder ID="phOwnerActions" runat="server"

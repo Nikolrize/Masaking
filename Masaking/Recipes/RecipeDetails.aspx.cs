@@ -67,6 +67,7 @@ namespace Masaking.Recipes
             authorAvatar.DisplayAvatar(recipe["displayName"], recipe["authorImage"]);
 
             lnkAuthor.NavigateUrl = ResolveUrl("~/Account/Profile") + "?id=" + recipe["userID"].ToString();
+            lnkDownloadPdf.NavigateUrl = ResolveUrl("~/Recipes/DownloadRecipe.ashx") + "?id=" + recipeId;
 
             int reviewCount = Convert.ToInt32(recipe["reviewCount"]);
             phRatingStar.Visible = reviewCount > 0;

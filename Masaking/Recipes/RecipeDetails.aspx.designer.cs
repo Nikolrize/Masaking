@@ -96,6 +96,15 @@ namespace Masaking.Recipes
         protected global::System.Web.UI.WebControls.HyperLink lnkStartLearning;
 
         /// <summary>
+        /// lnkDownloadPdf control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkDownloadPdf;
+
+        /// <summary>
         /// phOwnerActions control.
         /// </summary>
         /// <remarks>
