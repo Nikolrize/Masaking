@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
@@ -6,7 +6,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
-    public partial class ManageCommunity : ResponsivePage
+    public partial class ManageCommunity : System.Web.UI.Page
     {
         protected Repeater rptQueue;
         protected Panel pnlEmpty;
@@ -33,21 +33,6 @@ namespace Masaking.Admin
                 rptQueue.DataBind();
                 pnlEmpty.Visible = dt.Rows.Count == 0;
             }
-        }
-
-        protected void rptQueue_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            if (e.Item.ItemType != ListItemType.Item && e.Item.ItemType != ListItemType.AlternatingItem)
-                return;
-            var row = (DataRowView)e.Item.DataItem;
-            ((Label)e.Item.FindControl("lblKind")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["kind"]));
-            ((Label)e.Item.FindControl("lblRelatedTitle")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["relatedTitle"]));
-            ((Label)e.Item.FindControl("lblContent")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["content"]));
-            ((Label)e.Item.FindControl("lblDisplayName")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["displayName"]));
-            ((Label)e.Item.FindControl("lblCreatedAt")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToDateTime(row["createdAt"]).ToString("dd MMM yyyy"));
-            string argument = Convert.ToString(row["kind"]) + ":" + Convert.ToInt32(row["itemID"]);
-            ((LinkButton)e.Item.FindControl("btnApprove")).CommandArgument = argument;
-            ((LinkButton)e.Item.FindControl("btnReject")).CommandArgument = argument;
         }
 
         protected void rptQueue_ItemCommand(object source, RepeaterCommandEventArgs e)

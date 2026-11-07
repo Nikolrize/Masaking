@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -8,7 +8,7 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9F2B26C9-4C1F-453E-FB43-9C8457B51CC5}</ProjectGuid>
+    <ProjectGuid>{8181D560-7071-4F20-AF3C-54878F7BD376}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -44,6 +44,66 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Learning\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Learning\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Content Include="Learning\Default.aspx" />
+    <Content Include="Content\css\learning.css" />
+    <Compile Include="Infrastructure\SimulationImages.cs" />
+    <Content Include="Scripts\simulation-upload.js" />
+    <Compile Include="Admin\ManageSimulations.aspx.cs">
+      <DependentUpon>ManageSimulations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageSimulations.aspx.designer.cs">
+      <DependentUpon>ManageSimulations.aspx</DependentUpon>
+    </Compile>
+    <Content Include="Admin\ManageSimulations.aspx" />
+    <Compile Include="Admin\Admin.Master.cs">
+      <DependentUpon>Admin.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Admin.Master.designer.cs">
+      <DependentUpon>Admin.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\SimulationSteps.aspx.cs">
+      <DependentUpon>SimulationSteps.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\SimulationSteps.aspx.designer.cs">
+      <DependentUpon>SimulationSteps.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Learning\Simulations.aspx.cs">
+      <DependentUpon>Simulations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Learning\Simulations.aspx.designer.cs">
+      <DependentUpon>Simulations.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Learning\TakeQuiz.aspx.cs">
+      <DependentUpon>TakeQuiz.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Learning\TakeQuiz.aspx.designer.cs">
+      <DependentUpon>TakeQuiz.aspx</DependentUpon>
+    </Compile>
+    <Content Include="Admin\Admin.Master" />
+    <Content Include="Admin\SimulationSteps.aspx" />
+    <Content Include="Content\css\simulation.css" />
+    <Content Include="Learning\Simulations.aspx" />
+    <Content Include="Learning\TakeQuiz.aspx" />
+    <Content Include="Content\css\admin.css" />
+    <Compile Include="Admin\QuizQuestions.aspx.cs">
+      <DependentUpon>QuizQuestions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\QuizQuestions.aspx.designer.cs">
+      <DependentUpon>QuizQuestions.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\RecipeCard.ascx.cs">
       <DependentUpon>RecipeCard.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -118,6 +178,7 @@
     <Content Include="Account\ResetPassword.aspx" />
     <Content Include="Account\Profile.aspx" />
     <Content Include="Account\EditProfile.aspx" />
+    <Content Include="Admin\QuizQuestions.aspx" />
     <Content Include="Content\images\profile\nasilemak_satay_roti.png" />
     <Content Include="Controls\RecipeCard.ascx" />
     <Content Include="Scripts\profile.js" />
@@ -168,7 +229,6 @@
     <Content Include="Content\css\mobile-artwork.css" />
     <Content Include="Content\css\profile.css" />
     <Content Include="Content\css\recipes.css" />
-    <Content Include="Controls\RecipeCard.ascx" />
     <Content Include="Content\css\community.css" />
     <Content Include="Content\css\community-responsive.css" />
     <Content Include="Default.aspx" />
@@ -222,6 +282,7 @@
     <Content Include="Scripts\jquery-3.7.0.slim.js" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\simulation.js" />
     <Content Include="Scripts\WebForms\DetailsView.js" />
     <Content Include="Scripts\WebForms\Focus.js" />
     <Content Include="Scripts\WebForms\GridView.js" />
@@ -453,7 +514,6 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
@@ -472,7 +532,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
