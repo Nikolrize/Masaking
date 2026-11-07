@@ -6,9 +6,9 @@ using Masaking.Infrastructure;
 
 namespace Masaking
 {
-    public partial class Search : System.Web.UI.Page
+    public partial class Search : ResponsivePage
     {
-        protected Literal litSearchSummary;
+        protected Label lblSearchSummary;
         protected Label lblSearchMessage;
         protected Panel pnlRecipeResults, pnlPostResults;
         protected Repeater rptRecipeResults, rptPostResults;
@@ -19,10 +19,10 @@ namespace Masaking
             string query = (Request.QueryString["q"] ?? "").Trim();
             if (query.Length == 0 || query.Length > 100)
             {
-                litSearchSummary.Text = "Use the search icon above to search recipes and community posts (up to 100 characters).";
+                lblSearchSummary.Text = "Use the search icon above to search recipes and community posts (up to 100 characters).";
                 return;
             }
-            litSearchSummary.Text = "Results for “" + Server.HtmlEncode(query) + "”";
+            lblSearchSummary.Text = "Results for “" + Server.HtmlEncode(query) + "”";
             string pattern = "%" + query.Replace("~", "~~").Replace("%", "~%").Replace("_", "~_").Replace("[", "~[") + "%";
             try
             {
@@ -60,6 +60,29 @@ namespace Masaking
                 return result;
             }
         }
+        protected void rptRecipeResults_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType != ListItemType.Item && e.Item.ItemType != ListItemType.AlternatingItem)
+                return;
+            var row = (DataRowView)e.Item.DataItem;
+            ((HyperLink)e.Item.FindControl("lnkRecipeResult")).NavigateUrl = "~/Recipes/RecipeDetails.aspx?id=" + Convert.ToInt32(row["recipeID"]);
+            ((Label)e.Item.FindControl("lblRecipeTitle")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["title"]));
+            ((Label)e.Item.FindControl("lblCuisine")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["cuisine"]));
+            ((Label)e.Item.FindControl("lblRecipeAuthor")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["displayName"]));
+        }
+
+        protected void rptPostResults_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType != ListItemType.Item && e.Item.ItemType != ListItemType.AlternatingItem)
+                return;
+            var row = (DataRowView)e.Item.DataItem;
+            int postId = Convert.ToInt32(row["postID"]);
+            ((HyperLink)e.Item.FindControl("lnkPostResult")).NavigateUrl = $"~/Community/Community.aspx?post={postId}#post-{postId}";
+            ((Label)e.Item.FindControl("lblPostAuthor")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["displayName"]));
+            ((Label)e.Item.FindControl("lblUsername")).Text = System.Web.HttpUtility.HtmlEncode(Convert.ToString(row["username"]));
+            ((Label)e.Item.FindControl("lblSnippet")).Text = System.Web.HttpUtility.HtmlEncode(Snippet(row["content"]));
+        }
+
         protected string Snippet(object value) { string text = Convert.ToString(value); return text.Length > 220 ? text.Substring(0, 217) + "…" : text; }
     }
 }

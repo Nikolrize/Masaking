@@ -1,47 +1,7 @@
-/* Recipe cards, ratings, cooking steps, upload editors and recipe icons. Also used by reviews. */
-.recipe-image {
-    width: 100%;
-    max-height: 340px;
-    object-fit: cover;
-    border-radius: .8rem;
-    background: #eee7d9;
-}
-
+/* Recipe cards, ratings, cooking steps, and submission styles. Also used by reviews. */
 .star-rating {
     color: #e6a500;
     letter-spacing: .08em;
-}
-
-.step-image-editors {
-    display: grid;
-    gap: 1rem;
-}
-
-.step-image-editor {
-    padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: .8rem;
-    background: rgba(255,253,248,.8);
-}
-
-.step-image-heading {
-    display: block;
-    color: var(--color-primary-dark);
-    overflow-wrap: anywhere;
-}
-
-.step-image-preview {
-    max-height: 180px;
-}
-
-.recipe-step-image {
-    display: block;
-    width: 100%;
-    max-width: 280px;
-    max-height: 180px;
-    object-fit: cover;
-    border-radius: .75rem;
-    border: 1px solid var(--color-border);
 }
 
 .recipe-owned-image {
@@ -54,12 +14,6 @@
     background: #eee9dc;
 }
 
-.icon-spatula {
-    font-size: 1.15em;
-    display: inline-block;
-    transform: rotate(-35deg);
-}
-
 .cost-icon {
     display: inline-block;
     width: 1em;
@@ -70,36 +24,6 @@
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
-}
-
-.recipe-detail-icon {
-    display: inline-block;
-    font-weight: 700;
-    margin-right: .12rem;
-}
-
-.recipe-detail-icon.icon-time {
-    color: #4383a2;
-}
-
-.recipe-detail-icon.icon-difficulty {
-    color: #d86f45;
-}
-
-.recipe-detail-icon.icon-servings {
-    color: #708b43;
-}
-
-.recipe-detail-icon.icon-ingredients {
-    color: #b88924;
-}
-
-.recipe-detail-icon.icon-steps {
-    color: #8b69a6;
-}
-
-.recipe-detail-cost {
-stroke: #b88924;
 }
 
 /* Guided recipe submission, scoped so other recipe pages keep their layout. */

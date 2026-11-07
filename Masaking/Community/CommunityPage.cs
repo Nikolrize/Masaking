@@ -8,7 +8,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Community
 {
-    public abstract class CommunityPage : Page
+    public abstract class CommunityPage : ResponsivePage
     {
         protected Label lblMessage;
         protected const int EditWindowDays = 7;
@@ -35,8 +35,8 @@ namespace Masaking.Community
             currentUserIsActive = false;
             currentUserIsAdministrator = false;
             CurrentUserAvatarUrl = ResolveUrl(Database.DefaultAvatar);
-            if (!Database.UserId.HasValue) return;
-
+            if (!Database.UserId.HasValue)
+                return;
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand("SELECT image, role, displayName, username FROM users WHERE userID=@user AND isActive=1", cn))
             {
@@ -54,8 +54,7 @@ namespace Masaking.Community
                     CurrentUsername = Convert.ToString(reader["username"]);
                     CurrentUserAvatarUrl = GetAvatarUrl(reader["image"]);
                     string role = Convert.ToString(reader["role"]);
-                    currentUserIsAdministrator = String.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase)
-                        || String.Equals(role, "Administrator", StringComparison.OrdinalIgnoreCase);
+                    currentUserIsAdministrator = String.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase) || String.Equals(role, "Administrator", StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
@@ -73,7 +72,23 @@ namespace Masaking.Community
             string url = Database.AvatarUrl(image);
             bool hasPhoto = url != Database.DefaultAvatar;
             string markup = "<span class='community-avatar rounded-circle' role='img' aria-label='" + System.Web.HttpUtility.HtmlAttributeEncode(label + ": " + name) + "' data-avatar-photo='" + (hasPhoto ? "true" : "false") + "'><span class='community-avatar-initials' aria-hidden='true'>" + Server.HtmlEncode(initials.ToUpperInvariant()) + "</span>";
-            if (hasPhoto) markup += "<img src='" + System.Web.HttpUtility.HtmlAttributeEncode(ResolveUrl(url)) + "' alt='' data-community-avatar-photo='true' />";
+            if (hasPhoto)
+            {
+                var photo = new Image
+                {
+                    ImageUrl = ResolveUrl(url),
+                    AlternateText = "",
+                    GenerateEmptyAlternateText = true
+                };
+                photo.Attributes["data-community-avatar-photo"] = "true";
+                using (var writer = new StringWriter())
+                using (var html = new HtmlTextWriter(writer))
+                {
+                    photo.RenderControl(html);
+                    markup += writer.ToString();
+                }
+            }
+
             return markup + "</span>";
         }
 
@@ -83,6 +98,7 @@ namespace Masaking.Community
             {
                 return DateTime.SpecifyKind(value, DateTimeKind.Utc);
             }
+
             return value.ToUniversalTime();
         }
 
@@ -98,20 +114,15 @@ namespace Masaking.Community
             DateTime createdUtc = AsUtc(Convert.ToDateTime(createdAt));
             bool wasEdited = updatedAt != null && updatedAt != DBNull.Value;
             DateTime displayedUtc = wasEdited ? AsUtc(Convert.ToDateTime(updatedAt)) : createdUtc;
-
-            string timestamp = CanEdit(createdUtc)
-                ? RelativeAge(displayedUtc)
-                : displayedUtc.ToLocalTime().ToString("dd MMM yyyy");
-
+            string timestamp = CanEdit(createdUtc) ? RelativeAge(displayedUtc) : displayedUtc.ToLocalTime().ToString("dd MMM yyyy");
             return (wasEdited ? "Edited · " : "") + timestamp;
         }
 
         private static string RelativeAge(DateTime utcDate)
         {
             TimeSpan age = DateTime.UtcNow - utcDate;
-
-            if (age.TotalSeconds < 60) return "Just now";
-
+            if (age.TotalSeconds < 60)
+                return "Just now";
             if (age.TotalMinutes < 60)
             {
                 int minutes = Math.Max(1, (int)age.TotalMinutes);
@@ -131,11 +142,7 @@ namespace Masaking.Community
         protected bool IsPostOwner(object ownerUserId)
         {
             int ownerId;
-            return Database.UserId.HasValue
-                && ownerUserId != null
-                && ownerUserId != DBNull.Value
-                && Int32.TryParse(Convert.ToString(ownerUserId), out ownerId)
-                && ownerId == Database.UserId.Value;
+            return Database.UserId.HasValue && ownerUserId != null && ownerUserId != DBNull.Value && Int32.TryParse(Convert.ToString(ownerUserId), out ownerId) && ownerId == Database.UserId.Value;
         }
 
         protected bool CanDeletePost(object ownerUserId)
@@ -146,9 +153,7 @@ namespace Masaking.Community
         protected string GetLikeButtonText(object likeCount)
         {
             // Keep the button content in Text so it survives postbacks without nested controls.
-            return "<span class=\"community-like-heart\"><i class=\"bi bi-heart community-icon community-heart-outline\" aria-hidden=\"true\"></i><i class=\"bi bi-heart-fill community-icon community-heart-filled\" aria-hidden=\"true\"></i></span>"
-                + "<span class=\"small\">" + System.Web.HttpUtility.HtmlEncode(Convert.ToString(likeCount))
-                + "</span><span class=\"visually-hidden\">likes</span>";
+            return "<span class=\"community-like-heart\"><i class=\"bi bi-heart community-icon community-heart-outline\" aria-hidden=\"true\"></i><i class=\"bi bi-heart-fill community-icon community-heart-filled\" aria-hidden=\"true\"></i></span>" + "<span class=\"small\">" + System.Web.HttpUtility.HtmlEncode(Convert.ToString(likeCount)) + "</span><span class=\"visually-hidden\">likes</span>";
         }
 
         protected string PostHeading(object value)
@@ -167,7 +172,8 @@ namespace Masaking.Community
 
         protected void rptPosts_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (e.CommandName != "like" && e.CommandName != "unlike") return;
+            if (e.CommandName != "like" && e.CommandName != "unlike")
+                return;
             LinkButton button = e.CommandSource as LinkButton;
             Label error = e.Item.FindControl("lblLikeError") as Label;
             if (button == null || error == null)
@@ -175,14 +181,17 @@ namespace Masaking.Community
                 Trace.Warn("Community", "Unable to find the like button or its error label.");
                 return;
             }
+
             if (!databaseAvailable)
             {
                 error.Text = "Likes are temporarily unavailable. Please try again later.";
                 return;
             }
-            if (!RequireCurrentUser()) return;
-            if (!Int32.TryParse(Convert.ToString(e.CommandArgument), out int postId) || postId <= 0) return;
 
+            if (!RequireCurrentUser())
+                return;
+            if (!Int32.TryParse(Convert.ToString(e.CommandArgument), out int postId) || postId <= 0)
+                return;
             try
             {
                 // Save and read the real count in one transaction; repeated requests are idempotent.
@@ -215,7 +224,8 @@ namespace Masaking.Community
                     cmd.Parameters.Add("@like", SqlDbType.Bit).Value = e.CommandName == "like";
                     // Fill drains the complete batch, including COMMIT, before updating the UI.
                     DataTable result = new DataTable();
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd)) adapter.Fill(result);
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                        adapter.Fill(result);
                     if (result.Rows.Count == 0)
                     {
                         error.Text = "This post is no longer available.";
@@ -230,7 +240,7 @@ namespace Masaking.Community
                     button.Attributes["aria-pressed"] = liked ? "true" : "false";
                     button.Text = GetLikeButtonText(row["likeCount"]);
                 }
-                // Keep the existing repeater intact so only this item's UpdatePanel is replaced.
+            // Keep the existing repeater intact so only this item's UpdatePanel is replaced.
             }
             catch (SqlException ex)
             {
@@ -242,33 +252,41 @@ namespace Masaking.Community
         protected string CommunityImageUrl(object value)
         {
             string path = Convert.ToString(value ?? String.Empty).Trim().Replace('\\', '/');
-            if (path.Length == 0) return String.Empty;
-
-            if (path.StartsWith("~/", StringComparison.Ordinal)) path = path.Substring(1);
-            else if (!path.StartsWith("/", StringComparison.Ordinal)) path = "/" + path;
-
+            if (path.Length == 0)
+                return String.Empty;
+            if (path.StartsWith("~/", StringComparison.Ordinal))
+                path = path.Substring(1);
+            else if (!path.StartsWith("/", StringComparison.Ordinal))
+                path = "/" + path;
             const string legacyPrefix = "/Content/Uploads/Community/";
             const string prefix = "/Content/images/Uploads/Community/";
-
-            if (path.StartsWith(legacyPrefix, StringComparison.OrdinalIgnoreCase)) path = prefix + path.Substring(legacyPrefix.Length);
-            if (!path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return String.Empty;
-
+            if (path.StartsWith(legacyPrefix, StringComparison.OrdinalIgnoreCase))
+                path = prefix + path.Substring(legacyPrefix.Length);
+            if (!path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                return String.Empty;
             string fileName = path.Substring(path.LastIndexOf('/') + 1);
             string extension = Path.GetExtension(fileName);
-
             if (!String.Equals(extension, ".jpg", StringComparison.OrdinalIgnoreCase) || !Guid.TryParseExact(Path.GetFileNameWithoutExtension(fileName), "N", out _))
             {
                 return String.Empty;
             }
-            if (path.Substring(prefix.Length) != fileName) return String.Empty;
+
+            if (path.Substring(prefix.Length) != fileName)
+                return String.Empty;
             return ResolveUrl("~" + prefix + fileName);
         }
 
         protected void SafeDeleteUploadedImage(string imagePath)
         {
-            if (String.IsNullOrWhiteSpace(imagePath)) return;
-            try { ImageUpload.DeleteUploaded(imagePath, "Community"); }
-            catch (Exception) { /* Do not replace the original database/upload error with a cleanup error. */ }
+            if (String.IsNullOrWhiteSpace(imagePath))
+                return;
+            try
+            {
+                ImageUpload.DeleteUploaded(imagePath, "Community");
+            }
+            catch (Exception)
+            { /* Do not replace the original database/upload error with a cleanup error. */
+            }
         }
 
         private void RedirectToLogin()
@@ -279,7 +297,8 @@ namespace Masaking.Community
 
         protected bool RequireCurrentUser()
         {
-            if (currentUserIsActive && Database.UserId.HasValue) return true;
+            if (currentUserIsActive && Database.UserId.HasValue)
+                return true;
             RedirectToLogin();
             return false;
         }
@@ -292,8 +311,12 @@ namespace Masaking.Community
 
         protected void RunDatabaseAction(Action action)
         {
-            if (!databaseAvailable) return;
-            try { action(); }
+            if (!databaseAvailable)
+                return;
+            try
+            {
+                action();
+            }
             catch (SqlException ex)
             {
                 databaseAvailable = false;
@@ -312,22 +335,20 @@ namespace Masaking.Community
         {
             string path = Convert.ToString(value).Replace('\\', '/');
             Uri uri;
-            if (Uri.TryCreate(path, UriKind.Absolute, out uri)
-                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)) return path;
-            if (path.StartsWith("~/")) path = path.Substring(1);
+            if (Uri.TryCreate(path, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+                return path;
+            if (path.StartsWith("~/"))
+                path = path.Substring(1);
             path = path.Replace("/Content/Uploads/Recipes/", "/Content/images/Uploads/Recipes/");
             const string prefix = "/Content/images/Uploads/Recipes/";
             Guid id;
             string file = Path.GetFileName(path);
-            return path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && path.Substring(prefix.Length) == file
-                && file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                && Guid.TryParseExact(Path.GetFileNameWithoutExtension(file), "N", out id) ? ResolveUrl("~" + path) : "";
+            return path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && path.Substring(prefix.Length) == file && file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) && Guid.TryParseExact(Path.GetFileNameWithoutExtension(file), "N", out id) ? ResolveUrl("~" + path) : "";
         }
 
         protected DataTable ReadPosts(int? postId, string sort)
         {
-            string order = sort == "oldest" ? "p.createdAt ASC, p.postID ASC"
-                : sort == "popular" ? "likeCount DESC, commentCount DESC, p.postID DESC" : "p.createdAt DESC, p.postID DESC";
+            string order = sort == "oldest" ? "p.createdAt ASC, p.postID ASC" : sort == "popular" ? "likeCount DESC, commentCount DESC, p.postID DESC" : "p.createdAt DESC, p.postID DESC";
             string sql = @"SELECT p.postID, p.content, p.image, p.createdAt, p.updatedAt, p.userID,
                 r.recipeID, r.title, r.image AS recipeImage, r.cuisine AS recipeSummary,
                 u.displayName, u.username, u.image AS authorImage,
@@ -345,7 +366,8 @@ namespace Masaking.Community
                 cmd.Parameters.Add("@user", SqlDbType.Int).Value = (object)Database.UserId ?? DBNull.Value;
                 cmd.Parameters.Add("@post", SqlDbType.Int).Value = (object)postId ?? DBNull.Value;
                 DataTable data = new DataTable();
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd)) adapter.Fill(data);
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    adapter.Fill(data);
                 return data;
             }
         }
@@ -356,7 +378,8 @@ namespace Masaking.Community
             {
                 Button button = sender as Button;
                 int postId;
-                if (!RequireCurrentUser() || button == null || !Int32.TryParse(button.CommandArgument, out postId)) return;
+                if (!RequireCurrentUser() || button == null || !Int32.TryParse(button.CommandArgument, out postId))
+                    return;
                 using (SqlConnection cn = Database.Open())
                 using (SqlCommand cmd = new SqlCommand(@"UPDATE posts
                     SET status=CASE WHEN userID=@user THEN 'Deleted' ELSE 'Removed' END
@@ -365,12 +388,20 @@ namespace Masaking.Community
                     cmd.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
                     cmd.Parameters.Add("@post", SqlDbType.Int).Value = postId;
                     cmd.Parameters.Add("@admin", SqlDbType.Bit).Value = currentUserIsAdministrator;
-                    if (cmd.ExecuteNonQuery() != 1) { Show("This post could not be deleted.", false); return; }
+                    if (cmd.ExecuteNonQuery() != 1)
+                    {
+                        Show("This post could not be deleted.", false);
+                        return;
+                    }
                 }
+
                 AfterPostDeleted();
             });
         }
 
-        protected virtual void AfterPostDeleted() { Navigate("Community.aspx"); }
+        protected virtual void AfterPostDeleted()
+        {
+            Navigate("Community.aspx");
+        }
     }
 }

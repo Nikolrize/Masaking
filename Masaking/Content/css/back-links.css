@@ -1,5 +1,4 @@
 /* Return navigation uses underlined text instead of a button surface. */
-.community-secondary-view a.community-back-link,
 .profile-screen a.profile-back,
 .recipe-submit-page a.recipe-form-back {
     display: inline-flex;
@@ -22,12 +21,9 @@
     transition: color .18s ease;
 }
 
-.community-secondary-view a.community-back-link:visited,
 .profile-screen a.profile-back:visited,
 .recipe-submit-page a.recipe-form-back:visited { color: var(--color-primary); }
 
-.community-secondary-view a.community-back-link:hover,
-.community-secondary-view a.community-back-link:focus-visible,
 .profile-screen a.profile-back:hover,
 .profile-screen a.profile-back:focus-visible,
 .recipe-submit-page a.recipe-form-back:hover,
@@ -37,7 +33,6 @@
     text-decoration-line: none;
 }
 
-.community-secondary-view a.community-back-link > span,
 .profile-screen a.profile-back > span,
 .recipe-submit-page a.recipe-form-back > span {
     text-decoration-line: underline;
@@ -45,14 +40,12 @@
     text-underline-offset: .2em;
 }
 
-.community-secondary-view a.community-back-link:focus-visible,
 .profile-screen a.profile-back:focus-visible,
 .recipe-submit-page a.recipe-form-back:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 4px;
 }
 
-.community-secondary-view a.community-back-link > i,
 .profile-screen a.profile-back > i,
 .recipe-submit-page a.recipe-form-back > i {
     flex-shrink: 0;
@@ -60,8 +53,6 @@
     transition: transform .2s ease;
 }
 
-.community-secondary-view a.community-back-link:hover > i,
-.community-secondary-view a.community-back-link:focus-visible > i,
 .profile-screen a.profile-back:hover > i,
 .profile-screen a.profile-back:focus-visible > i,
 .recipe-submit-page a.recipe-form-back:hover > i,
@@ -70,12 +61,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .community-secondary-view a.community-back-link > i,
     .profile-screen a.profile-back > i,
     .recipe-submit-page a.recipe-form-back > i { transition: none; }
 
-    .community-secondary-view a.community-back-link:hover > i,
-    .community-secondary-view a.community-back-link:focus-visible > i,
     .profile-screen a.profile-back:hover > i,
     .profile-screen a.profile-back:focus-visible > i,
     .recipe-submit-page a.recipe-form-back:hover > i,

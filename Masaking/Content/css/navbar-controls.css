@@ -1,49 +1,27 @@
 /* Add member controls while keeping the original Bootstrap navbar typography. */
 .site-header .navbar-collapse { min-width: 0; }
 .site-header .site-nav-member-actions {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
     min-width: 0;
-    margin-left: auto;
 }
 
 .site-header .site-nav-search {
-    display: flex;
-    align-items: center;
     width: clamp(180px, 24vw, 340px);
     min-width: 0;
-    border: 1px solid var(--color-border);
-    border-radius: 50rem;
+    --bs-border-color: var(--color-border);
     background: var(--color-surface);
 }
 .site-header .site-nav-search:focus-within {
-    border-color: var(--color-primary);
+    --bs-border-color: var(--color-primary);
     box-shadow: 0 0 0 .15rem rgba(40, 88, 61, .12);
 }
 .site-header .site-nav-search-submit {
-    display: inline-grid;
-    place-items: center;
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
     color: var(--color-primary);
 }
 .site-header .site-nav-search input {
-    width: 100%;
     max-width: none;
     min-width: 0;
-    padding: .375rem .875rem .375rem 0;
-    border: 0;
-    border-radius: 0 50rem 50rem 0;
-    outline: 0;
-    background: transparent;
     color: inherit;
-    font: inherit;
 }
 .site-header .site-nav-search input::placeholder { color: var(--color-muted); }
 
