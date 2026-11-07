@@ -303,11 +303,7 @@
         </asp:Panel>
     </main>
 
-    <div class="modal fade" id="recipeShareModal"
-        tabindex="-1"
-        aria-labelledby="recipeShareTitle"
-        aria-hidden="true">
-
+    <div class="modal fade" id="recipeShareModal" tabindex="-1"">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -315,8 +311,7 @@
                 </h2>
 
                     <button type="button" class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
+                        data-bs-dismiss="modal">
                     </button>
                 </div>
 
@@ -330,7 +325,6 @@
 
                     <asp:TextBox ID="txtShareUrl" runat="server"
                         ReadOnly="true"
-                        aria-label="Recipe sharing link"
                         CssClass="form-control mb-3" />
 
                     <asp:HyperLink ID="lnkDownloadQr" runat="server"

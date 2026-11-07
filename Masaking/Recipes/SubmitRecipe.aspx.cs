@@ -106,8 +106,6 @@ namespace Masaking.Recipes
                 : "Your recipe will appear publicly after approval.";
         }
 
-        // The same data is read again when saving: ownership is never trusted
-        // just because the user was allowed to open the form earlier
         private DataSet ReadOwnedRecipe(
             SqlConnection con, SqlTransaction transaction, int recipeId)
         {
