@@ -180,3 +180,90 @@
 .challenge-list .level-hard { color: #8a2932; background: #f8e1e3; }
 .challenge-list .level-other { color: #49545b; background: #e9edef; }
 .challenge-list .challenge-pages .aspNetDisabled { opacity: .55; }
+
+/* Challenge attempt page only. */
+.challenge-play h1,
+.challenge-play h2,
+.challenge-play .challenge-description { overflow-wrap: anywhere; }
+.challenge-play .challenge-description { white-space: pre-line; }
+.challenge-play .attempt-status {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: .35rem .7rem;
+    border-radius: 1rem;
+    background: #edf2e7;
+    color: var(--color-primary-dark);
+    font-size: .85rem;
+}
+.challenge-play .status-running::after {
+    content: "...";
+    display: inline-block;
+    width: 1em;
+    animation: status-pulse 1.4s ease-in-out infinite;
+}
+.challenge-play .timer-panel {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: .65rem;
+    background: #faf8f0;
+    font-variant-numeric: tabular-nums;
+}
+.challenge-play .timer-panel .progress { height: .65rem; }
+.challenge-play .timer-panel .progress-bar { transition: width .25s linear; }
+.challenge-play .timer-panel.time-low { border-color: #ad3341; }
+.challenge-play .time-low .progress-bar { background: #ad3341; }
+.challenge-play .timer-warning { color: #9b2635; }
+.challenge-play .pause-message {
+    padding: 1.5rem;
+    border-radius: .65rem;
+    background: #f0f3e9;
+}
+.challenge-play .answer-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .85rem;
+    padding: 0;
+    list-style: none;
+}
+.challenge-play .answer-options li { position: relative; min-width: 0; }
+.challenge-play .answer-options input[type="radio"] {
+    position: absolute;
+    left: 1rem;
+    top: 1.25rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--color-primary);
+}
+.challenge-play .answer-options label {
+    display: block;
+    height: 100%;
+    min-height: 4rem;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid var(--color-border);
+    border-radius: .65rem;
+    background: #fffdf7;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+.challenge-play .answer-options input:checked + label {
+    border-color: var(--color-primary);
+    background: #edf4e9;
+    font-weight: 600;
+}
+.challenge-play .answer-options input:focus-visible + label {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+}
+.challenge-play .save-note { font-size: .78rem; }
+.challenge-play .result-icon { color: var(--color-primary); font-size: 2.5rem; }
+@keyframes status-pulse { 50% { opacity: .25; } }
+@media (max-width: 575px) {
+    .challenge-play .answer-options { grid-template-columns: minmax(0, 1fr); }
+    .challenge-play .challenge-actions > .btn { flex: 1 1 calc(50% - .5rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .challenge-play .status-running::after { animation: none; }
+    .challenge-play .timer-panel .progress-bar { transition: none; }
+}

@@ -75,6 +75,6 @@
                 <asp:NextPreviousPagerField ShowFirstPageButton="False" ShowLastPageButton="False" ShowPreviousPageButton="False" NextPageText="Next" ButtonCssClass="btn btn-outline-success" />
             </Fields>
         </asp:DataPager>
-        <p class="small text-secondary mt-4 mb-0">Opening a challenge does not start its timer. Select Resume quiz on the attempt page when you are ready. Save and pause stops the timer.</p>
+        <p class="small text-secondary mt-4 mb-0">Opening a challenge does not start its timer. Select Resume challenge on the attempt page when you are ready. Save and pause stops the timer.</p>
     </main>
 </asp:Content>
