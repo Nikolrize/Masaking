@@ -6,10 +6,7 @@ namespace Masaking.Controls
 {
     public partial class RecipeCard : System.Web.UI.UserControl
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
+        public bool FromMyRecipes { get; set; }
 
         public void DisplayRecipe(DataRowView recipe)
         {
@@ -19,11 +16,16 @@ namespace Masaking.Controls
             recipeImage.ImageUrl = recipe["image"].ToString();
             recipeImage.AlternateText = recipe["title"].ToString();
             recipeLink.NavigateUrl = ResolveUrl("~/Recipes/RecipeDetails") + "?id=" + recipe["recipeID"].ToString();
+            if (FromMyRecipes)
+            {
+                recipeLink.NavigateUrl += "&from=myrecipes";
+            }
+
             recipePreparationTime.Text = recipe["preparationTime"].ToString() + " mins";
             recipeBudget.Text = "RM" + Convert.ToDecimal(recipe["estimatedCost"]).ToString("0.00");
             recipeServings.Text = recipe["servings"].ToString();
             recipeAuthor.Text = Server.HtmlEncode(recipe["displayName"].ToString());
-            authorAvatar.ImageUrl = Database.AvatarUrl(recipe["authorImage"]);
+            authorAvatar.DisplayAvatar(recipe["displayName"], recipe["authorImage"]);
 
             string difficulty = recipe["difficulty"].ToString();
             recipeDifficulty.Text = Server.HtmlEncode(difficulty);
@@ -46,6 +48,42 @@ namespace Masaking.Controls
             else
             {
                 recipeRating.Text = "No reviews yet";
+            }
+
+            recipeStatus.Visible = false;
+            recipeStatus.Text = "";
+            recipeStatus.CssClass = "recipe-card-status";
+
+            bool isOwner = Database.UserId.HasValue &&
+                Database.UserId.Value == Convert.ToInt32(recipe["userID"]);
+
+            if (isOwner)
+            {
+                string status = recipe["status"].ToString();
+
+                recipeStatus.Visible = true;
+                recipeStatus.Text = Server.HtmlEncode(status);
+
+                switch (status)
+                {
+                    case "Approved":
+                        recipeStatus.CssClass += " status-approved";
+                        break;
+
+                    case "Pending":
+                        recipeStatus.CssClass += " status-pending";
+                        break;
+
+                    case "Rejected":
+                        recipeStatus.CssClass += " status-rejected";
+                        break;
+                }
+            }
+            else if (Convert.ToBoolean(recipe["isFavourited"]))
+            {
+                recipeStatus.Visible = true;
+                recipeStatus.Text = "Favourited";
+                recipeStatus.CssClass += " status-favourited";
             }
         }
     }

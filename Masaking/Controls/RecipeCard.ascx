@@ -1,11 +1,19 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RecipeCard.ascx.cs" Inherits="Masaking.Controls.RecipeCard" %>
 
+<%@ Register Src="~/Controls/UserAvatar.ascx" TagPrefix="uc" TagName="UserAvatar" %>
+
 <asp:HyperLink ID="recipeLink" runat="server"
     CssClass="card h-100 border text-decoration-none text-dark hover-lift">
     <!-- Image -->
-    <div class="ratio ratio-4x3 bg-dark bg-opacity-25">
-        <asp:Image ID="recipeImage" runat="server"
-            CssClass="card-img-top object-fit-cover" />
+    <div class="position-relative">
+        <div class="ratio ratio-4x3 bg-dark bg-opacity-25">
+            <asp:Image ID="recipeImage" runat="server"
+                CssClass="card-img-top object-fit-cover" />
+        </div>
+
+        <asp:Label ID="recipeStatus" runat="server"
+            Visible="false"
+            CssClass="recipe-card-status" />
     </div>
 
     <!-- Title and Difficulty -->
@@ -26,9 +34,7 @@
 
         <!-- Author -->
         <div class="d-flex align-items-center gap-2">
-            <asp:Image ID="authorAvatar" runat="server"
-                CssClass="recipe-author-avatar"
-                AlternateText="" />
+            <uc:UserAvatar ID="authorAvatar" runat="server" />
 
             <asp:Label ID="recipeAuthor" runat="server"
                 CssClass="small text-muted" />

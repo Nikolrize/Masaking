@@ -13,10 +13,32 @@ namespace Masaking
 
     public partial class SiteMaster
     {
-        protected global::System.Web.UI.ScriptManager SiteScriptManager;
-        protected global::System.Web.UI.WebControls.Label lblCopyrightYear;
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navSearch;
+
+        /// <summary>
+        /// HeadContent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder HeadContent;
+
+        /// <summary>
+        /// SiteScriptManager control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager SiteScriptManager;
+
+        /// <summary>
+        /// phMyRecipesNav control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phMyRecipesNav;
 
         /// <summary>
@@ -36,6 +58,15 @@ namespace Masaking
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder phAuthenticatedNav;
+
+        /// <summary>
+        /// navSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navSearch;
 
         /// <summary>
         /// lnkNavProfile control.
@@ -72,5 +103,14 @@ namespace Masaking
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContent;
+
+        /// <summary>
+        /// lblCopyrightYear control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCopyrightYear;
     }
 }
