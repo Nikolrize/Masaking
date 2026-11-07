@@ -758,7 +758,11 @@ namespace Masaking.Recipes
         private bool ShowError(string message)
         {
             lblMessage.Text = Server.HtmlEncode(message);
-            lblMessage.CssClass = "alert alert-danger d-block";
+            lblMessage.CssClass = "alert alert-danger d-block mb-4";
+            lblMessage.Visible = true;
+
+            Page.SetFocus(lblMessage);
+
             return false;
         }
 
