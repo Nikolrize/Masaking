@@ -1,81 +1,114 @@
 <%@ Page Title="My recipes | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="MyRecipes.aspx.cs" Inherits="Masaking.Recipes.MyRecipes" %>
 
-<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <link href="../Content/css/recipes.css" rel="stylesheet" />
+<%@ Register Src="~/Controls/RecipeCard.ascx" TagPrefix="uc" TagName="RecipeCard" %>
+<%@ Register Src="~/Controls/RecipeFilters.ascx" TagPrefix="uc" TagName="RecipeFilters" %>
 
-    <main class="pb-5">
-        <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
-            <div>
-                <p class="text-success fw-semibold mb-1">YOUR KITCHEN</p>
-                <h1 class="fw-bold mb-0">My recipes</h1>
-                <p class="text-secondary mb-0">Edit a recipe or check whether it has been approved for the community.</p>
-            </div>
-            <asp:HyperLink runat="server" ID="lnkShareARecipe" class="btn btn-primary" NavigateUrl="SubmitRecipe.aspx">+ Share a recipe</asp:HyperLink>
+<asp:Content ID="BodyContent"
+    ContentPlaceHolderID="MainContent" runat="server">
+
+    <link href="/Content/css/recipes.css" rel="stylesheet" />
+
+    <main class="container py-4 recipe-browse-page">
+        <h1>My Recipes</h1>
+        <p class="lead">
+            Your creations and favourite recipes, all in one place.
+       
+        </p>
+
+        <nav class="my-recipe-tabs d-flex flex-wrap gap-2 mb-4">
+            <asp:LinkButton ID="tabAll" runat="server"
+                Text="All" CommandArgument="All"
+                CausesValidation="false"
+                OnCommand="RecipeTab_Command" />
+
+            <asp:LinkButton ID="tabApproved" runat="server"
+                Text="Approved" CommandArgument="Approved"
+                CausesValidation="false" OnCommand="RecipeTab_Command" />
+
+            <asp:LinkButton ID="tabPending" runat="server"
+                Text="Pending" CommandArgument="Pending"
+                CausesValidation="false" OnCommand="RecipeTab_Command" />
+
+            <asp:LinkButton ID="tabRejected" runat="server"
+                Text="Rejected" CommandArgument="Rejected"
+                CausesValidation="false" OnCommand="RecipeTab_Command" />
+
+            <asp:LinkButton ID="tabFavourites" runat="server"
+                Text="Favourites" CommandArgument="Favourites"
+                CausesValidation="false" OnCommand="RecipeTab_Command" />
+        </nav>
+
+        <asp:Panel runat="server" DefaultButton="btnSearch" CssClass="input-group mb-4">
+            <asp:TextBox ID="txtSearch" runat="server"
+                CssClass="form-control"
+                placeholder="Search this collection..." />
+
+            <asp:Button ID="btnSearch" runat="server"
+                Text="Search" CssClass="btn btn-primary"
+                CausesValidation="false"
+                OnClick="ReloadRecipes" />
+        </asp:Panel>
+
+        <div class="row g-4">
+            <aside class="col-lg-3">
+                <uc:RecipeFilters ID="recipeFilters" runat="server"
+                    IncludeOwnRecipes="true"
+                    OnApplyFilters="Filters_ApplyFilters" />
+            </aside>
+
+            <section class="col-lg-9">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+
+                    <div>
+                        <h4 class="mb-1">
+                            <asp:Label ID="collectionTitle" runat="server" />
+                        </h4>
+                        <asp:Label ID="recipeCount" runat="server"
+                            CssClass="small text-muted" />
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <asp:Label runat="server"
+                            AssociatedControlID="ddlSort"
+                            Text="Sort by"
+                            CssClass="small text-muted text-nowrap" />
+
+                        <asp:DropDownList ID="ddlSort" runat="server"
+                            CssClass="form-select w-auto"
+                            AutoPostBack="true"
+                            OnSelectedIndexChanged="ReloadRecipes">
+
+                            <asp:ListItem Value="nameAsc">Name: A-Z</asp:ListItem>
+                            <asp:ListItem Value="nameDesc">Name: Z-A</asp:ListItem>
+                            <asp:ListItem Value="newest">Newest</asp:ListItem>
+                            <asp:ListItem Value="rating">Highest rated</asp:ListItem>
+                            <asp:ListItem Value="reviews">Most reviewed</asp:ListItem>
+                            <asp:ListItem Value="cost">Lowest cost</asp:ListItem>
+                            <asp:ListItem Value="time">Quickest</asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                </div>
+
+
+
+                <asp:Panel ID="pnlEmpty" runat="server" Visible="false"
+                    CssClass="card p-4 text-center text-muted">
+                    No recipes found in this collection.
+       
+                </asp:Panel>
+
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-3">
+                    <asp:Repeater ID="rptRecipes" runat="server"
+                        OnItemDataBound="rptRecipes_ItemDataBound">
+
+                        <ItemTemplate>
+                            <div class="col">
+                                <uc:RecipeCard ID="recipeCard" runat="server" />
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+            </section>
         </div>
-
-        <asp:Label ID="lblMessage" runat="server" EnableViewState="false" />
-
-        <section class="p-0">
-            <asp:Repeater ID="rptRecipes" runat="server" OnItemCommand="rptRecipes_ItemCommand" OnItemDataBound="rptRecipes_ItemDataBound">
-                <ItemTemplate>
-                    <article class="card border rounded-3 shadow-sm overflow-hidden mb-4">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                <asp:HyperLink ID="lnkRecipeDetails" runat="server" ClientIDMode="Static">
-                                    <asp:Image runat="server" ID="imgDecoration" class="recipe-owned-image" />
-                                </asp:HyperLink>
-                            </div>
-                            <div class="col-md-8 p-3 p-sm-4 d-flex flex-column">
-                                <div class="d-flex justify-content-between align-items-start gap-3">
-                                    <div>
-                                        <span class="small text-success">
-                                            <asp:Label ID="lblCuisine" runat="server" /> · <asp:Label ID="lblRegion" runat="server" />
-                                        </span>
-                                        <h2 class="h4 fw-bold mt-1 mb-2">
-                                            <asp:HyperLink ID="lnkRecipeDetails2" runat="server" ClientIDMode="Static" class="text-reset text-decoration-none">
-                                                <asp:Label ID="lblTitle" runat="server" />
-                                            </asp:HyperLink>
-                                        </h2>
-                                        <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
-                                            <asp:Label ID="lblStatus" runat="server" />
-                                        </span>
-                                    </div>
-                                    <span class="small text-secondary text-nowrap">
-                                        <asp:Label ID="lblCreatedAt" runat="server" />
-                                    </span>
-                                </div>
-
-                                <div class="d-flex flex-wrap gap-3 small text-secondary my-3">
-                                    <span>★ <strong><asp:Label ID="lblAverageRating" runat="server" /></strong> (<asp:Label ID="lblReviewCount" runat="server" /> reviews)</span>
-                                    <span>◷ Prep: <asp:Label ID="lblPreparationTime" runat="server" /> min</span>
-                                    <span>♨ <asp:Label ID="lblDifficulty" runat="server" /></span>
-                                    <span>♧ Serves <asp:Label ID="lblServings" runat="server" /></span>
-                                    <span><i class="bi bi-currency-dollar cost-icon" aria-hidden="true"></i>RM <asp:Label ID="lblEstimatedCost" runat="server" /></span>
-                                </div>
-
-                                <div class="d-flex flex-wrap gap-2 mt-auto">
-                                    <asp:HyperLink ID="lnkEditRecipe" runat="server" ClientIDMode="Static" class="btn btn-sm btn-outline-success">
-                                        <span aria-hidden="true">✎</span> Edit
-                                    </asp:HyperLink>
-                                    <asp:LinkButton ID="btnDelete" runat="server" class="btn btn-sm btn-outline-danger" CommandName="deleteRecipe" OnClientClick="return confirm('Delete this recipe and its community activity?');">
-                                        <span aria-hidden="true">⌫</span> Delete
-                                    </asp:LinkButton>
-                                    <asp:HyperLink ID="lnkRecipeDetails3" runat="server" ClientIDMode="Static" class="btn btn-sm btn-primary ms-auto">
-                                        View recipe
-                                    </asp:HyperLink>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                </ItemTemplate>
-            </asp:Repeater>
-
-            <asp:Panel ID="pnlEmpty" runat="server" Visible="false" class="card border rounded-3 shadow-sm text-center p-4 py-5">
-                <div class="text-success fs-1 mb-2"><i class="bi bi-journal-plus" aria-hidden="true"></i></div>
-                <h2 class="h5 fw-bold">Your recipe book is ready</h2>
-                <p class="text-secondary">Share the first recipe with the Masaking community.</p>
-                <asp:HyperLink runat="server" ID="lnkAddARecipe" class="btn btn-primary" NavigateUrl="SubmitRecipe.aspx">Add a recipe</asp:HyperLink>
-            </asp:Panel>
-        </section>
     </main>
 </asp:Content>

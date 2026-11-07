@@ -446,6 +446,39 @@
     font-weight: bold;
 }
 
+.recipe-card-status {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 1;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid rgb(255 255 255 / 70%);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+}
+
+.status-approved {
+    background-color: #e8f3ea;
+    color: #28583d;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #755500;
+}
+
+.status-rejected {
+    background-color: #fce8e8;
+    color: #a12835;
+}
+
+.status-favourited {
+    background-color: #fff0f3;
+    color: #a12850;
+}
+
 .recipe-difficulty {
     background-color: #eee;
     color: #555;
@@ -729,4 +762,33 @@
     outline: 2px solid var(--color-primary);
     outline-offset: 3px;
     border-radius: 4px;
+}
+
+/* My Recipes */
+.recipe-collection-tab {
+    display: inline-block;
+    padding: 0.65rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.6rem;
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.recipe-collection-tab:hover {
+    background-color: var(--color-border);
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+}
+
+.recipe-collection-tab.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.recipe-collection-tab:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
 }

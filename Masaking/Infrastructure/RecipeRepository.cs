@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -6,7 +7,7 @@ namespace Masaking.Infrastructure
 {
     public class RecipeRepository
     {
-        private const string RecipeSelectSql = @"
+        private const string RecipeBaseSql = @"
             SELECT
                 r.recipeID,
                 r.userID,
@@ -22,6 +23,16 @@ namespace Masaking.Infrastructure
                 c.categoryName,
                 u.displayName,
                 u.image AS authorImage,
+                r.status,
+                CAST(
+                    CASE WHEN EXISTS (
+                        SELECT 1
+                        FROM dbo.favourites AS saved
+                        WHERE saved.recipeID = r.recipeID
+                          AND saved.userID = @currentUserID
+                    )
+                    THEN 1 ELSE 0 END
+                AS bit) AS isFavourited,
                 COALESCE(ratings.reviewCount, 0) AS reviewCount,
                 ratings.averageRating
             FROM dbo.recipes AS r
@@ -41,8 +52,9 @@ namespace Masaking.Infrastructure
                 GROUP BY recipeID
             ) AS ratings
                 ON ratings.recipeID = r.recipeID
-            WHERE r.status = 'Approved'
         ";
+
+        private const string RecipeSelectSql = RecipeBaseSql + " WHERE r.status = 'Approved' ";
 
         public static DataTable GetPopularRecipes()
         {
@@ -58,6 +70,11 @@ namespace Masaking.Infrastructure
                         r.createdAt DESC,
                         r.recipeID DESC
                     OFFSET 0 ROWS FETCH NEXT 4 ROWS ONLY;", con);
+
+                cmd.Parameters.Add("@currentUserID", SqlDbType.Int).Value =
+                    Database.UserId.HasValue
+                        ? (object)Database.UserId.Value
+                        : DBNull.Value;
 
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 adapter.Fill(recipes);
@@ -77,9 +94,25 @@ namespace Masaking.Infrastructure
 
             try
             {
-                SqlCommand cmd = new SqlCommand(RecipeSelectSql + "AND r.recipeID = @recipeID;", con);
+                SqlCommand cmd = new SqlCommand(RecipeBaseSql + @"
+                    WHERE r.recipeID = @recipeID
+                      AND (
+                          r.status = 'Approved'
+                          OR (
+                              r.userID = @viewerID
+                              AND r.status IN ('Pending', 'Rejected')
+                          )
+                      );", con);
 
                 cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+                cmd.Parameters.Add("@viewerID", SqlDbType.Int).Value =
+                    Database.UserId.HasValue
+                        ? (object)Database.UserId.Value
+                        : DBNull.Value;
+                cmd.Parameters.Add("@currentUserID", SqlDbType.Int).Value =
+                    Database.UserId.HasValue
+                        ? (object)Database.UserId.Value
+                        : DBNull.Value;
 
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 adapter.Fill(recipes);
@@ -101,14 +134,72 @@ namespace Masaking.Infrastructure
             string region,
             int minServings,
             List<int> categoryIds,
-            string sort)
+            string sort,
+            string collection = null)
+
+
         {
+            string condition = "r.status = 'Approved'";
+
+            if (collection != null)
+            {
+                if (!Database.UserId.HasValue)
+                {
+                    throw new InvalidOperationException("Sign in to view your recipes.");
+                }
+
+                switch (collection)
+                {
+                    case "Approved":
+                    case "Pending":
+                    case "Rejected":
+                        condition = "r.userID = @userID AND r.status = @status";
+                        break;
+
+                    case "Favourites":
+                        condition = @"
+                            r.status = 'Approved'
+                            AND r.userID <> @userID
+                            AND EXISTS (
+                                SELECT 1
+                                FROM dbo.favourites AS f
+                                WHERE f.recipeID = r.recipeID
+                                  AND f.userID = @userID
+                            )";
+                        break;
+
+                    case "All":
+                        condition = @"
+                            (
+                                (
+                                    r.userID = @userID
+                                    AND r.status IN ('Approved', 'Pending', 'Rejected')
+                                )
+                                OR (
+                                    r.userID <> @userID
+                                    AND r.status = 'Approved'
+                                    AND EXISTS (
+                                        SELECT 1
+                                        FROM dbo.favourites AS f
+                                        WHERE f.recipeID = r.recipeID
+                                          AND f.userID = @userID
+                                    )
+                                )
+                            )";
+                        break;
+
+                    default:
+                        throw new ArgumentException("Invalid recipe collection.");
+                }
+            }
+
             SqlConnection con = Database.Open();
             DataTable recipes = new DataTable();
 
             try
             {
-                SqlCommand cmd = new SqlCommand(RecipeSelectSql + @"
+                SqlCommand cmd = new SqlCommand(
+                    RecipeBaseSql + " WHERE " + condition + @"
                     AND (@search = ''
                         OR r.title LIKE '%' + @search + '%')
                     AND (@difficulty = ''
@@ -124,6 +215,12 @@ namespace Masaking.Infrastructure
                     AND (@minServings = 0
                         OR r.servings >= @minServings)", con);
 
+                if (collection != null)
+                {
+                    cmd.Parameters.Add("@userID", SqlDbType.Int).Value = Database.UserId.Value;
+                    cmd.Parameters.Add("@status", SqlDbType.NVarChar, 30).Value = collection;
+                }
+
                 cmd.Parameters.Add("@search", SqlDbType.NVarChar, -1).Value = search;
                 cmd.Parameters.Add("@difficulty", SqlDbType.NVarChar, 30).Value = difficulty;
                 cmd.Parameters.Add("@maxCost", SqlDbType.Decimal).Value = maxCost;
@@ -131,6 +228,10 @@ namespace Masaking.Infrastructure
                 cmd.Parameters.Add("@cuisine", SqlDbType.NVarChar, -1).Value = cuisine;
                 cmd.Parameters.Add("@region", SqlDbType.NVarChar, -1).Value = region;
                 cmd.Parameters.Add("@minServings", SqlDbType.Int).Value = minServings;
+                cmd.Parameters.Add("@currentUserID", SqlDbType.Int).Value =
+                    Database.UserId.HasValue
+                        ? (object)Database.UserId.Value
+                        : DBNull.Value;
 
                 List<string> categoryParameters = new List<string>();
 

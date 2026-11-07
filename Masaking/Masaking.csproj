@@ -44,6 +44,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controls\RecipeFilters.ascx.cs">
+      <DependentUpon>RecipeFilters.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\RecipeFilters.ascx.designer.cs">
+      <DependentUpon>RecipeFilters.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Learning\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -51,6 +58,7 @@
     <Compile Include="Learning\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Content Include="Controls\RecipeFilters.ascx" />
     <Content Include="Learning\Default.aspx" />
     <Content Include="Content\css\learning.css" />
     <Compile Include="Infrastructure\SimulationImages.cs" />

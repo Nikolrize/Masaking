@@ -47,6 +47,42 @@ namespace Masaking.Controls
             {
                 recipeRating.Text = "No reviews yet";
             }
+
+            recipeStatus.Visible = false;
+            recipeStatus.Text = "";
+            recipeStatus.CssClass = "recipe-card-status";
+
+            bool isOwner = Database.UserId.HasValue &&
+                Database.UserId.Value == Convert.ToInt32(recipe["userID"]);
+
+            if (isOwner)
+            {
+                string status = recipe["status"].ToString();
+
+                recipeStatus.Visible = true;
+                recipeStatus.Text = Server.HtmlEncode(status);
+
+                switch (status)
+                {
+                    case "Approved":
+                        recipeStatus.CssClass += " status-approved";
+                        break;
+
+                    case "Pending":
+                        recipeStatus.CssClass += " status-pending";
+                        break;
+
+                    case "Rejected":
+                        recipeStatus.CssClass += " status-rejected";
+                        break;
+                }
+            }
+            else if (Convert.ToBoolean(recipe["isFavourited"]))
+            {
+                recipeStatus.Visible = true;
+                recipeStatus.Text = "Favourited";
+                recipeStatus.CssClass += " status-favourited";
+            }
         }
     }
 }

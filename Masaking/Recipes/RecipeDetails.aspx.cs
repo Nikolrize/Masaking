@@ -78,7 +78,10 @@ namespace Masaking.Recipes
             bool signedIn = Database.UserId.HasValue;
             bool isAuthor = signedIn &&
                 Database.UserId.Value == Convert.ToInt32(recipe["userID"]);
+            bool isApproved = recipe["status"].ToString() == "Approved";
 
+            btnFavourite.Visible = isApproved && !isAuthor;
+            lnkStartLearning.Visible = isApproved;
             pnlReviewForm.Visible = signedIn && !isAuthor;
             lblReviewHint.Visible = !pnlReviewForm.Visible;
             lblReviewHint.Text = isAuthor
@@ -323,9 +326,10 @@ namespace Masaking.Recipes
                 SqlCommand cmd = new SqlCommand(@"
                     IF EXISTS (
                         SELECT 1
-                        FROM dbo.recipes
-                        WHERE recipeID = @recipeID
-                          AND status = 'Approved'
+                            FROM dbo.recipes
+                            WHERE recipeID = @recipeID
+                              AND status = 'Approved'
+                              AND userID <> @userID
                     )
                     BEGIN
                         IF EXISTS (
