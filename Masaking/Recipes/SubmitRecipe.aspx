@@ -53,7 +53,10 @@
         </header>
 
         <asp:Label ID="lblMessage" runat="server"
-            EnableViewState="false" role="status" />
+            EnableViewState="false"
+            Visible="false"
+            role="alert"
+            TabIndex="-1" />
 
         <!-- 1. Recipe details -->
         <section id="recipeBasics"
@@ -377,7 +380,8 @@
 
                 <asp:Button ID="btnSave" runat="server"
                     Text="Submit for review"
-                    CssClass="btn recipe-submit-btn"
+                    CssClass="btn btn-primary"
+                    formnovalidate="formnovalidate"
                     OnClick="btnSave_Click" />
             </div>
         </div>
