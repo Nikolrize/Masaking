@@ -57,6 +57,61 @@
     object-fit: contain;
 }
 
+.simulation-page .ingredient-placeholder {
+    display: grid;
+    place-items: center;
+    height: 95px;
+    margin-bottom: .5rem;
+    border-radius: .5rem;
+    color: var(--color-primary);
+    background: #edf2e7;
+    font-size: 2rem;
+}
+
+.simulation-page .ingredient-image:not([hidden]) + .ingredient-placeholder { display: none; }
+.simulation-page .time-label { color: var(--color-primary-dark); background: #edf2e7; }
+.simulation-page h1,
+.simulation-page .ingredient-name { overflow-wrap: anywhere; }
+.simulation-page .completion-icon { color: var(--color-primary); font-size: 2.5rem; }
+.simulation-page .ingredient-card { transition: box-shadow .2s, border-color .2s; }
+.simulation-page .ingredient-card:hover,
+.simulation-page .ingredient-card:focus-within { border-color: var(--color-primary); }
+.simulation-page .cooking-correct { box-shadow: 0 0 0 4px #c9dfc8; }
+.simulation-page .ingredient-flight {
+    position: fixed;
+    z-index: 1050;
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    display: grid;
+    place-items: center;
+    padding: .3rem;
+    border-radius: .75rem;
+    background: var(--color-surface);
+    box-shadow: 0 5px 20px #26352c30;
+    color: var(--color-primary-dark);
+    font-size: .75rem;
+    text-align: center;
+    overflow-wrap: anywhere;
+    pointer-events: none;
+}
+.simulation-page #pnlResult { position: relative; overflow: hidden; }
+.simulation-page .completion-confetti {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    width: 9px;
+    height: 14px;
+    background: var(--color-accent);
+    pointer-events: none;
+    animation: completion-burst .9s ease-out both;
+}
+.simulation-page .completion-confetti:nth-of-type(2n) { background: var(--color-primary); }
+@keyframes completion-burst {
+    from { opacity: 1; transform: translate(0, 0) rotate(0); }
+    to { opacity: 0; transform: translate(var(--offset), 140px) rotate(var(--turn)); }
+}
+
 .simulation-page .completed-image {
     width: 100%;
     max-width: 440px;
@@ -157,11 +212,13 @@
 @media (prefers-reduced-motion: reduce) {
     .simulation-page .ingredient-wrong,
     .simulation-page .dish-complete,
+    .simulation-page .completion-confetti,
     .simulation-page .steam span {
         animation: none;
     }
 
-    .simulation-page .cooking-area {
+    .simulation-page .cooking-area,
+    .simulation-page .ingredient-card {
         transition: none;
     }
 }
