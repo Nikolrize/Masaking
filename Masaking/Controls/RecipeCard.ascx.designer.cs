@@ -33,6 +33,15 @@ namespace Masaking.Controls
         protected global::System.Web.UI.WebControls.Image recipeImage;
 
         /// <summary>
+        /// recipeStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label recipeStatus;
+
+        /// <summary>
         /// recipeTitle control.
         /// </summary>
         /// <remarks>
@@ -75,7 +84,7 @@ namespace Masaking.Controls
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image authorAvatar;
+        protected global::Masaking.Controls.UserAvatar authorAvatar;
 
         /// <summary>
         /// recipeAuthor control.
