@@ -76,7 +76,7 @@ namespace Masaking.Community
                 }
                 else if (post["recipeID"] != DBNull.Value)
                 {
-                    Show("The previous attachment is unavailable. Choose one of your approved recipes or publish without an attachment.", false);
+                    Show("The previous attachment is unavailable. Choose an approved recipe you created or saved to favourites, or publish without an attachment.", false);
                 }
             });
         }
@@ -87,10 +87,16 @@ namespace Masaking.Community
             ddlRecipe.Items.Add(new ListItem("No recipe attached", ""));
 
             const string sql = @"
-                SELECT recipeID, title, image, cuisine 
-                FROM recipes 
-                WHERE status = 'Approved' AND userID = @user 
-                ORDER BY title";
+                SELECT r.recipeID, r.title, r.image, r.cuisine,
+                    CAST(CASE WHEN EXISTS (
+                        SELECT 1 FROM favourites f WHERE f.recipeID = r.recipeID AND f.userID = @user
+                    ) THEN 1 ELSE 0 END AS bit) AS isFavourite
+                FROM recipes r
+                WHERE r.status = 'Approved'
+                  AND (r.userID = @user OR EXISTS (
+                      SELECT 1 FROM favourites f WHERE f.recipeID = r.recipeID AND f.userID = @user
+                  ))
+                ORDER BY r.title";
 
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))
@@ -101,7 +107,13 @@ namespace Masaking.Community
                 {
                     while (reader.Read())
                     {
-                        ListItem item = new ListItem(Convert.ToString(reader["title"]), Convert.ToString(reader["recipeID"]));
+                        string title = Convert.ToString(reader["title"]);
+                        if (Convert.ToBoolean(reader["isFavourite"]))
+                        {
+                            title += " (favourite)";
+                        }
+
+                        ListItem item = new ListItem(title, Convert.ToString(reader["recipeID"]));
                         item.Attributes["data-image"] = RecipeImageUrl(reader["image"]);
                         item.Attributes["data-summary"] = Convert.ToString(reader["cuisine"]);
                         ddlRecipe.Items.Add(item);
@@ -164,7 +176,7 @@ namespace Masaking.Community
                 {
                     if (!int.TryParse(ddlRecipe.SelectedValue, out int parsedRecipe) || parsedRecipe <= 0 || ddlRecipe.Items.FindByValue(ddlRecipe.SelectedValue) == null)
                     {
-                        Show("Choose one of your approved recipes or leave it empty.", false);
+                        Show("Choose an approved recipe you created or saved to favourites, or leave it empty.", false);
                         return;
                     }
 
@@ -194,11 +206,19 @@ namespace Masaking.Community
                             OUTPUT INSERTED.postID 
                             WHERE postID = @post AND userID = @user AND status = 'Approved'
                               AND createdAt >= DATEADD(day, -7, SYSUTCDATETIME()) AND createdAt <= SYSUTCDATETIME()
-                              AND (@recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID = @recipe AND status = 'Approved' AND userID = @user))"
+                              AND (@recipe IS NULL OR EXISTS (
+                                  SELECT 1 FROM recipes r WHERE r.recipeID = @recipe AND r.status = 'Approved'
+                                    AND (r.userID = @user OR EXISTS (
+                                        SELECT 1 FROM favourites f WHERE f.recipeID = r.recipeID AND f.userID = @user
+                                    ))))"
                         : @"INSERT INTO posts (content, image, likes, status, createdAt, updatedAt, userID, recipeID)
                             OUTPUT INSERTED.postID
                             SELECT @content, @image, 0, 'Approved', SYSUTCDATETIME(), NULL, @user, @recipe
-                            WHERE @recipe IS NULL OR EXISTS (SELECT 1 FROM recipes WHERE recipeID = @recipe AND status = 'Approved' AND userID = @user)";
+                            WHERE @recipe IS NULL OR EXISTS (
+                                SELECT 1 FROM recipes r WHERE r.recipeID = @recipe AND r.status = 'Approved'
+                                  AND (r.userID = @user OR EXISTS (
+                                      SELECT 1 FROM favourites f WHERE f.recipeID = r.recipeID AND f.userID = @user
+                                  )))";
 
                     using (SqlConnection cn = Database.Open())
                     using (SqlCommand cmd = new SqlCommand(sql, cn))
@@ -212,7 +232,7 @@ namespace Masaking.Community
                         object result = cmd.ExecuteScalar();
                         if (result == null || result == DBNull.Value)
                         {
-                            Show("The post could not be saved. Its editing window may have expired, or the recipe is no longer one of your approved recipes.", false);
+                            Show("The post could not be saved. Its editing window may have expired, or the recipe is no longer approved and available in your recipes or favourites.", false);
                             return;
                         }
 
