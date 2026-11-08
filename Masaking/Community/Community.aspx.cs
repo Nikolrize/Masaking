@@ -382,8 +382,11 @@ namespace Masaking.Community
                     SET status = 'Approved' 
                     WHERE postID = @post AND userID = @user AND status = 'Deleted' 
                       AND (recipeID IS NULL OR EXISTS (
-                          SELECT 1 FROM recipes 
-                          WHERE recipes.recipeID = posts.recipeID AND recipes.status = 'Approved' AND recipes.userID = @user
+                          SELECT 1 FROM recipes r
+                          WHERE r.recipeID = posts.recipeID AND r.status = 'Approved'
+                            AND (r.userID = @user OR EXISTS (
+                                SELECT 1 FROM favourites f WHERE f.recipeID = r.recipeID AND f.userID = @user
+                            ))
                       ))";
 
                 using (SqlConnection cn = Database.Open())
@@ -394,7 +397,7 @@ namespace Masaking.Community
 
                     if (cmd.ExecuteNonQuery() != 1)
                     {
-                        Show("This post could not be restored. Its attached recipe must be one of your approved recipes.", false);
+                        Show("This post could not be restored. Its attached recipe must be approved and either created by you or saved to your favourites.", false);
                     }
                     else
                     {
