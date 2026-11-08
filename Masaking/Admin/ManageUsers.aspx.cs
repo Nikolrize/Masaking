@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
@@ -21,7 +21,7 @@ namespace Masaking.Admin
         private void BindUsers()
         {
             const string sql = @"
-                SELECT userID, username, displayName, email, role, isActive
+                SELECT userID, username, displayName, email, role, isActive, createdAt
                 FROM dbo.users
                 WHERE (@search = '' OR CHARINDEX(@search, username) > 0 OR CHARINDEX(@search, displayName) > 0 OR CHARINDEX(@search, email) > 0) AND (@role = '' OR role = @role) AND (@active IS NULL OR isActive = @active)
                 ORDER BY createdAt DESC, userID DESC;";
@@ -50,8 +50,9 @@ namespace Masaking.Admin
                 DataTable users = new DataTable();
                 adapter.Fill(users);
 
-                gvUsers.DataSource = users;
-                gvUsers.DataBind();
+                AdminTable.Bind(gvUsers, users, ViewState, "Users", "createdAt", "DESC");
+                lblUserCount.Text = users.Rows.Count
+                    + (users.Rows.Count == 1 ? " account matches" : " accounts match") + " the filters.";
             }
         }
 
@@ -62,6 +63,20 @@ namespace Masaking.Admin
                 return;
             }
 
+            gvUsers.PageIndex = 0;
+            BindUsers();
+        }
+
+        protected void Filters_Changed(object sender, EventArgs e)
+        {
+            btnSearch_Click(sender, e);
+        }
+
+        protected void gvUsers_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            if (!Database.RequireAdmin(Response)) { e.Cancel = true; return; }
+            AdminTable.ToggleSort(e, ViewState, "Users", "createdAt", "DESC",
+                "userID", "username", "displayName", "email", "role", "isActive");
             gvUsers.PageIndex = 0;
             BindUsers();
         }

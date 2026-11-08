@@ -33,6 +33,15 @@ namespace Masaking.Admin
         protected global::System.Web.UI.WebControls.HyperLink lnkBrand;
 
         /// <summary>
+        /// imgBrand control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgBrand;
+
+        /// <summary>
         /// lnkDashboard control.
         /// </summary>
         /// <remarks>
@@ -94,6 +103,42 @@ namespace Masaking.Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkWebsite;
+
+        /// <summary>
+        /// lnkAdminProfile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkAdminProfile;
+
+        /// <summary>
+        /// imgAdminAvatar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgAdminAvatar;
+
+        /// <summary>
+        /// lblAdminInitials control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAdminInitials;
+
+        /// <summary>
+        /// lblAdminName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAdminName;
 
         /// <summary>
         /// MainContent control.

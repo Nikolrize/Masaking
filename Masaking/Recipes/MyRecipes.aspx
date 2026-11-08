@@ -105,7 +105,7 @@
                 <asp:Panel ID="pnlEmpty" runat="server" Visible="false"
                     CssClass="card p-4 text-center text-muted">
                     No recipes found in this collection.
-       
+
                 </asp:Panel>
 
                 <!-- Results -->
@@ -113,8 +113,14 @@
                     <asp:Repeater ID="rptRecipes" runat="server"
                         OnItemDataBound="rptRecipes_ItemDataBound">
                         <ItemTemplate>
-                            <div class="col">
-                                <uc:RecipeCard ID="recipeCard" runat="server" />
+                            <div class="col d-flex flex-column">
+                                <div class="flex-grow-1">
+                                    <uc:RecipeCard ID="recipeCard" runat="server" />
+                                </div>
+                                <asp:Panel ID="pnlActivities" runat="server" Visible="False" CssClass="d-flex flex-wrap gap-2 mt-2">
+                                    <asp:HyperLink ID="lnkManageSimulations" runat="server" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# "~/Learning/ManageSimulations.aspx?recipeId=" + Eval("recipeID") %>' Text="Manage simulations" />
+                                    <asp:HyperLink ID="lnkManageChallenges" runat="server" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# "~/Learning/ManageChallenges.aspx?recipeId=" + Eval("recipeID") %>' Text="Manage challenges" />
+                                </asp:Panel>
                             </div>
                         </ItemTemplate>
                     </asp:Repeater>

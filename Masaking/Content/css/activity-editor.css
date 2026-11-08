@@ -1,0 +1,10 @@
+/* Styles apply only to member activity editors; shared navigation is unchanged. */
+.activity-editor { min-width: 0; padding-block: 1.5rem; }
+.activity-editor .table th { white-space: nowrap; }
+.activity-editor .table th a { color: inherit; }
+.activity-editor .status-approved,
+.activity-editor .difficulty-easy { background: #e4f0e4; color: #28583d; }
+.activity-editor .status-pending,
+.activity-editor .difficulty-medium { background: #fff0d6; color: #805319; }
+.activity-editor .difficulty-hard { background: #f9e4e1; color: #8a3b32; }
+.activity-editor .difficulty-other { background: #ecece8; color: #4d554c; }

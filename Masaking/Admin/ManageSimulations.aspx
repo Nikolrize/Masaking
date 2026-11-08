@@ -2,8 +2,9 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h1>Manage Simulations</h1>
-    <p class="text-secondary"> Create a draft, configure its ingredient steps, then publish. Simulations have no time limit. </p>
+    <p class="text-brand fw-semibold">ADMINISTRATION</p>
+    <h1 class="page-heading">Manage simulations</h1>
+    <p class="text-secondary">Create a draft, configure its ingredient steps, then publish. Simulations have no time limit.</p>
 
     <asp:Label ID="lblMessage" runat="server" EnableViewState="False" role="status" />
 
@@ -99,6 +100,7 @@
                     <asp:BoundField DataField="simulationID" HeaderText="ID" />
                     <asp:BoundField DataField="title" HeaderText="Simulation" />
                     <asp:BoundField DataField="recipeTitle" HeaderText="Recipe" />
+                    <asp:BoundField DataField="recipeOwner" HeaderText="Recipe owner" HtmlEncode="True" />
                     <asp:BoundField DataField="difficulty" HeaderText="Difficulty" />
                     <asp:CheckBoxField DataField="isActive" HeaderText="Published" />
                     <asp:BoundField DataField="stepCount" HeaderText="Steps" />
@@ -117,7 +119,7 @@
                                     CommandName="EditSimulationImages"
                                     CommandArgument='<%# Eval("simulationID") %>'
                                     Visible='<%# !Convert.ToBoolean(Eval("isActive")) %>' />
-                                <asp:HyperLink ID="lnkSteps" runat="server" Text="Manage steps" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# "~/Admin/SimulationSteps.aspx?id=" + Eval("simulationID") %>' />
+                                <asp:HyperLink ID="lnkSteps" runat="server" Text="Manage steps" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# EditorUrl("SimulationSteps.aspx?id=") + Eval("simulationID") %>' />
 
                                 <asp:LinkButton ID="btnPublishSimulation" runat="server" Text="Publish" CausesValidation="False" CssClass="btn btn-sm btn-success" CommandName="PublishSimulation" CommandArgument='<%# Eval("simulationID") %>' Visible='<%# !Convert.ToBoolean(Eval("isActive")) %>' OnClientClick="return confirm('Publish this simulation?');" />
 
