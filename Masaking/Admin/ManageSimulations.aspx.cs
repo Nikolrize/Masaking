@@ -69,8 +69,13 @@ namespace Masaking.Admin
 
         private void BindSimulations()
         {
-            const string sql = @" SELECT s.simulationID, s.title, s.difficulty, s.isActive, r.title AS recipeTitle,(SELECT COUNT(*) FROM dbo.simulationSteps step WHERE step.simulationID=s.simulationID) AS stepCount, (SELECT COUNT(*) FROM dbo.simulationProgress progress WHERE progress.simulationID=s.simulationID) AS attemptCount
-              FROM dbo.simulations s INNER JOIN dbo.recipes r ON r.recipeID=s.recipeID WHERE (@editorAdmin=1 OR r.userID=@editorUser) ORDER BY s.createdAt DESC, s.simulationID DESC;";
+            const string sql = @" SELECT s.simulationID, s.title, s.difficulty, s.isActive, r.title AS recipeTitle,
+              COALESCE(NULLIF(LTRIM(RTRIM(u.displayName)), ''), u.username, 'Unknown user') AS recipeOwner,
+              (SELECT COUNT(*) FROM dbo.simulationSteps step WHERE step.simulationID=s.simulationID) AS stepCount,
+              (SELECT COUNT(*) FROM dbo.simulationProgress progress WHERE progress.simulationID=s.simulationID) AS attemptCount
+              FROM dbo.simulations s INNER JOIN dbo.recipes r ON r.recipeID=s.recipeID
+              LEFT JOIN dbo.users u ON u.userID=r.userID
+              WHERE (@editorAdmin=1 OR r.userID=@editorUser) ORDER BY s.createdAt DESC, s.simulationID DESC;";
 
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))

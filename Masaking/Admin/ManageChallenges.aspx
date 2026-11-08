@@ -80,6 +80,7 @@
                     <asp:BoundField DataField="challengeID" HeaderText="ID" SortExpression="challengeID" />
                     <asp:BoundField DataField="title" HeaderText="Challenge" SortExpression="title" />
                     <asp:BoundField DataField="recipeTitle" HeaderText="Recipe" />
+                    <asp:BoundField DataField="recipeOwner" HeaderText="Recipe owner" SortExpression="recipeOwner" HtmlEncode="True" />
                     <asp:TemplateField HeaderText="Difficulty" SortExpression="difficultyOrder">
                         <ItemTemplate><span class='<%# AdminTable.DifficultyBadge(Eval("difficulty")) %>'><%#: Eval("difficulty") %></span></ItemTemplate>
                     </asp:TemplateField>

@@ -100,6 +100,7 @@
                     <asp:BoundField DataField="simulationID" HeaderText="ID" />
                     <asp:BoundField DataField="title" HeaderText="Simulation" />
                     <asp:BoundField DataField="recipeTitle" HeaderText="Recipe" />
+                    <asp:BoundField DataField="recipeOwner" HeaderText="Recipe owner" HtmlEncode="True" />
                     <asp:BoundField DataField="difficulty" HeaderText="Difficulty" />
                     <asp:CheckBoxField DataField="isActive" HeaderText="Published" />
                     <asp:BoundField DataField="stepCount" HeaderText="Steps" />

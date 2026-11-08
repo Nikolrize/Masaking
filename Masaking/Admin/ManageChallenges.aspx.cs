@@ -52,10 +52,11 @@ namespace Masaking.Admin
         private void BindQuizzes()
         {
             const string sql = @"
-                SELECT c.challengeID, c.recipeID, r.title AS recipeTitle, c.title, c.difficulty, c.timeLimit, c.isActive, c.createdAt,
+                SELECT c.challengeID, c.recipeID, r.title AS recipeTitle, CASE WHEN r.recipeID IS NULL THEN 'No linked recipe' ELSE COALESCE(NULLIF(LTRIM(RTRIM(u.displayName)), ''), u.username, 'Unknown user') END AS recipeOwner, c.title, c.difficulty, c.timeLimit, c.isActive, c.createdAt,
                 (SELECT COUNT(*) FROM dbo.challengeQuestions q WHERE q.challengeID = c.challengeID) AS questionCount,
                 (SELECT COUNT(*) FROM dbo.challengeAttempts a WHERE a.challengeID = c.challengeID) AS attemptCount
                 FROM dbo.challenges c LEFT JOIN dbo.recipes r ON r.recipeID=c.recipeID
+                LEFT JOIN dbo.users u ON u.userID=r.userID
                 WHERE (@editorAdmin=1 OR r.userID=@editorUser) AND (@search='' OR CHARINDEX(@search,c.title)>0) AND (@publication='' OR c.isActive=CONVERT(bit,@publication))
                 ORDER BY c.createdAt DESC, c.challengeID DESC;";
 
@@ -95,7 +96,7 @@ namespace Masaking.Admin
         protected void gvQuizzes_Sorting(object sender, GridViewSortEventArgs e)
         {
             if (!RequireEditor()) { e.Cancel = true; return; }
-            AdminTable.ToggleSort(e, ViewState, "Challenges", "createdAt", "DESC", "challengeID", "title", "difficultyOrder", "timeLimit", "isActive", "questionCount", "attemptCount");
+            AdminTable.ToggleSort(e, ViewState, "Challenges", "createdAt", "DESC", "challengeID", "title", "recipeOwner", "difficultyOrder", "timeLimit", "isActive", "questionCount", "attemptCount");
             gvQuizzes.PageIndex = 0;
             BindQuizzes();
         }
