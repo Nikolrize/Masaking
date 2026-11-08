@@ -11,7 +11,7 @@ The change adds nullable `challenges.recipeID` with a foreign key to `recipes.re
 - Save a draft, add simulation steps or challenge questions, then publish it.
 - Published activities must be unpublished before editing. Existing restrictions on content with saved attempts still apply.
 - An administrator may link a legacy general challenge to a recipe when editing an eligible draft. Existing attempts are not reassigned.
-- Recipes with linked activities cannot be permanently deleted through recipe management. Unpublishing an activity preserves its history.
+- Member recipe deletion uses the shared soft-delete behaviour: the recipe is hidden while related records remain. Recipe-linked activities require an approved recipe to appear in learning browsing or accept new attempts. Existing general challenges and saved challenge attempts remain available as before. Administrator permanent deletion remains guarded when activities exist.
 
 ## Implementation
 

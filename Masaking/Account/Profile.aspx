@@ -209,5 +209,5 @@
         </asp:PlaceHolder>
     </main>
 
-    <script src="../Scripts/profile.js?v=6"></script>
+    <script src="../Scripts/profile.js"></script>
 </asp:Content>

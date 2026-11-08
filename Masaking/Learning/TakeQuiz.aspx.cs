@@ -49,7 +49,7 @@ namespace Masaking.Learning
                 SELECT c.title, c.description, c.timeLimit,
                        (SELECT COUNT(*) FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID) AS questionCount
                 FROM dbo.challenges c
-                WHERE c.challengeID=@id AND c.isActive=1 AND EXISTS ( SELECT 1 FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID);";
+                WHERE c.challengeID=@id AND c.isActive=1 AND (c.recipeID IS NULL OR EXISTS (SELECT 1 FROM dbo.recipes linkedRecipe WHERE linkedRecipe.recipeID=c.recipeID AND linkedRecipe.status='Approved')) AND EXISTS ( SELECT 1 FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID);";
 
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))
@@ -129,7 +129,7 @@ namespace Masaking.Learning
                         (score, timeTaken, status, startedAt, completedAt, userID, challengeID, remainingSeconds, lastResumedAt, currentQuestionNumber)
                         SELECT 0, 0, 'Paused', @now, NULL, @user, c.challengeID, c.timeLimit, NULL, 1
                         FROM dbo.challenges c
-                        WHERE c.challengeID=@quiz AND c.isActive=1 AND c.timeLimit BETWEEN 60 AND 3600
+                        WHERE c.challengeID=@quiz AND c.isActive=1 AND (c.recipeID IS NULL OR EXISTS (SELECT 1 FROM dbo.recipes linkedRecipe WHERE linkedRecipe.recipeID=c.recipeID AND linkedRecipe.status='Approved')) AND c.timeLimit BETWEEN 60 AND 3600
                           AND EXISTS (SELECT 1 FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID);
                         SELECT CAST(SCOPE_IDENTITY() AS INT);";
 

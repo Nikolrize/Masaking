@@ -1,16 +1,20 @@
 <%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="RecipeDetails.aspx.cs" Inherits="Masaking.Recipes.RecipeDetails" %>
 
+<%@ Register Src="~/Controls/UserAvatar.ascx" TagPrefix="uc" TagName="UserAvatar" %>
+
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="/Content/css/recipes.css" rel="stylesheet" />
 
     <main class="container py-4">
         <!-- Back to Recipes -->
-        <asp:HyperLink runat="server"
-            NavigateUrl="~/Recipes/BrowseRecipes.aspx"
+        <asp:HyperLink ID="lnkBack" runat="server"
+            NavigateUrl="~/Recipes/BrowseRecipes"
             CssClass="back-to-recipes mb-4">
 
-            <i class="bi bi-arrow-left" aria-hidden="true"></i>
-            Back to recipes
+            <i class="bi bi-arrow-left"></i>
+
+            <asp:Literal ID="backLinkText" runat="server"
+                Mode="Encode" Text="Back to Browse Recipes" />
         </asp:HyperLink>
 
         <asp:Label ID="lblMessage" runat="server"
@@ -34,7 +38,7 @@
                             </h1>
 
                             <!-- Buttons -->
-                            <div class="d-flex flex-wrap align-items-center gap-2">
+                            <div class="d-flex flex-wrap align-items-center justify-content-start justify-content-sm-end gap-2">
                                 <button id="btnFavourite"
                                     runat="server"
                                     type="submit"
@@ -52,6 +56,41 @@
                                 <i class="bi bi-play-circle me-1"></i>
                                 Start Learning
                                 </asp:HyperLink>
+
+                                <asp:HyperLink ID="lnkDownloadPdf"
+                                    runat="server"
+                                    CssClass="btn btn-outline-primary">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>
+                                    Download PDF
+                                </asp:HyperLink>
+
+                                <button id="btnShare" runat="server"
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#recipeShareModal">
+                                    <i class="bi bi-share me-1"></i>
+                                    Share
+                                </button>
+
+                                <asp:PlaceHolder ID="phOwnerActions" runat="server"
+                                    Visible="false">
+
+                                    <asp:HyperLink ID="lnkEditRecipe" runat="server"
+                                        CssClass="btn recipe-submit-btn">
+                                        <i class="bi bi-pencil me-1"></i>
+                                        Edit
+                                    </asp:HyperLink>
+
+                                    <asp:LinkButton ID="btnDeleteRecipe" runat="server"
+                                        CssClass="btn btn-danger"
+                                        CausesValidation="false"
+                                        OnClick="btnDeleteRecipe_Click"
+                                        OnClientClick="return confirm('Delete this recipe? It will no longer be visible on the site.');">
+                                        <i class="bi bi-trash me-1"></i>
+                                        Delete
+                                    </asp:LinkButton>
+                                </asp:PlaceHolder>
                             </div>
                         </div>
 
@@ -67,9 +106,7 @@
                         <p>
                             <asp:HyperLink ID="lnkAuthor" runat="server"
                                 CssClass="recipe-author-link d-inline-flex align-items-center gap-2">
-                                <asp:Image ID="authorAvatar" runat="server"
-                                    CssClass="recipe-author-avatar"
-                                    AlternateText="" />
+                                <uc:UserAvatar ID="authorAvatar" runat="server" />
                                 <asp:Label ID="recipeAuthor" runat="server" />
                             </asp:HyperLink>
                         </p>
@@ -207,15 +244,14 @@
 
                     <asp:RadioButtonList ID="ddlReviewRating" runat="server"
                         RepeatLayout="UnorderedList"
-                        CssClass="rating-stars mb-3"
-                        aria-label="Your rating">
+                        CssClass="rating-stars mb-3">
                         <asp:ListItem Value="1">1 star</asp:ListItem>
                         <asp:ListItem Value="2">2 stars</asp:ListItem>
                         <asp:ListItem Value="3">3 stars</asp:ListItem>
                         <asp:ListItem Value="4">4 stars</asp:ListItem>
                         <asp:ListItem Value="5">5 stars</asp:ListItem>
                     </asp:RadioButtonList>
-                    
+
                     <asp:Label runat="server" AssociatedControlID="txtReviewComment"
                         Text="Your comment (optional)" CssClass="form-label d-block" />
 
@@ -246,8 +282,7 @@
                     <ItemTemplate>
                         <article class="py-3 border-top">
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <asp:Image ID="reviewAvatar" runat="server"
-                                    CssClass="recipe-author-avatar" AlternateText="" />
+                                <uc:UserAvatar ID="reviewAvatar" runat="server" />
 
                                 <asp:Label ID="reviewName" runat="server"
                                     CssClass="fw-semibold" />
@@ -267,4 +302,38 @@
             </section>
         </asp:Panel>
     </main>
+
+    <div class="modal fade" id="recipeShareModal" tabindex="-1"">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="recipeShareTitle">Share this recipe
+                </h2>
+
+                    <button type="button" class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <p>Scan this QR code to open the recipe.</p>
+
+                    <asp:Image ID="imgRecipeQr" runat="server"
+                        AlternateText="QR code linking to this recipe"
+                        Width="240" Height="240"
+                        CssClass="img-fluid mb-3" />
+
+                    <asp:TextBox ID="txtShareUrl" runat="server"
+                        ReadOnly="true"
+                        CssClass="form-control mb-3" />
+
+                    <asp:HyperLink ID="lnkDownloadQr" runat="server"
+                        CssClass="btn btn-primary">
+                        <i class="bi bi-download me-1"></i>
+                        Download QR
+                    </asp:HyperLink>
+                </div>
+            </div>
+        </div>
+    </div>
 </asp:Content>

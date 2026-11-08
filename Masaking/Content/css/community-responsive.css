@@ -252,19 +252,6 @@
         background: #fffdf8;
     }
 
-    .community-reviews .community-card.p-4,
-    .community-reviews .community-card.p-5 {
-        padding: 1rem !important;
-    }
-
-    .community-reviews .community-card > .d-flex {
-        flex-wrap: wrap;
-    }
-
-    .community-reviews .community-card .btn {
-        min-height: 44px;
-    }
-
     .community-floating-actions {
         right: max(.75rem, env(safe-area-inset-right));
         bottom: max(1rem, env(safe-area-inset-bottom));

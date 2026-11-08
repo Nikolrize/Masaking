@@ -125,7 +125,7 @@ namespace Masaking.Learning
                     (SELECT COUNT(*) FROM dbo.challengeQuestions q
                      WHERE q.challengeID=c.challengeID) AS questionCount
                 FROM dbo.challenges c
-                WHERE c.isActive=1 AND EXISTS (SELECT 1 FROM dbo.challengeQuestions q
+                WHERE c.isActive=1 AND (c.recipeID IS NULL OR EXISTS (SELECT 1 FROM dbo.recipes linkedRecipe WHERE linkedRecipe.recipeID=c.recipeID AND linkedRecipe.status='Approved')) AND EXISTS (SELECT 1 FROM dbo.challengeQuestions q
                                                WHERE q.challengeID=c.challengeID)
                 ORDER BY c.createdAt DESC,c.challengeID DESC;";
             DataTable challenges = new DataTable();
@@ -163,10 +163,10 @@ namespace Masaking.Learning
                          AND EXISTS (SELECT 1 FROM dbo.simulationProgress p
                                      WHERE p.simulationID=s.simulationID
                                          AND p.userID=@user AND p.status='Completed')) AS simulationCompleted,
-                    (SELECT COUNT(*) FROM dbo.challenges c WHERE c.isActive=1
+                    (SELECT COUNT(*) FROM dbo.challenges c WHERE c.isActive=1 AND (c.recipeID IS NULL OR EXISTS (SELECT 1 FROM dbo.recipes linkedRecipe WHERE linkedRecipe.recipeID=c.recipeID AND linkedRecipe.status='Approved'))
                          AND EXISTS (SELECT 1 FROM dbo.challengeQuestions q
                                      WHERE q.challengeID=c.challengeID)) AS quizTotal,
-                    (SELECT COUNT(*) FROM dbo.challenges c WHERE c.isActive=1
+                    (SELECT COUNT(*) FROM dbo.challenges c WHERE c.isActive=1 AND (c.recipeID IS NULL OR EXISTS (SELECT 1 FROM dbo.recipes linkedRecipe WHERE linkedRecipe.recipeID=c.recipeID AND linkedRecipe.status='Approved'))
                          AND EXISTS (SELECT 1 FROM dbo.challengeQuestions q
                                      WHERE q.challengeID=c.challengeID)
                          AND EXISTS (SELECT 1 FROM dbo.challengeAttempts a

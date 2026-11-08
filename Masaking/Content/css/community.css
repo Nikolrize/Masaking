@@ -476,10 +476,6 @@
     padding-block: 1rem;
 }
 
-.community-reviews .community-card {
-    border: 1px solid #e8ddcf;
-}
-
 /* Compact headers on discussion, editing, and review pages. */
 [data-community-secondary] .community-banner {
     padding-block: 1rem .5rem;

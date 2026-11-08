@@ -1,4 +1,6 @@
-﻿using Masaking.Infrastructure;
+﻿using Masaking.Controls;
+using Masaking.Infrastructure;
+using QRCoder;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -19,6 +21,16 @@ namespace Masaking.Recipes
                 return;
             }
 
+            bool fromMyRecipes = Request.QueryString["from"] == "myrecipes";
+
+            lnkBack.NavigateUrl = fromMyRecipes
+                ? "~/Recipes/MyRecipes"
+                : "~/Recipes/BrowseRecipes";
+
+            backLinkText.Text = fromMyRecipes
+                ? "Back to My Recipes"
+                : "Back to Browse Recipes";
+
             if (!IsPostBack)
             {
                 LoadRecipe(recipeId);
@@ -29,7 +41,6 @@ namespace Masaking.Recipes
                 }
             }
         }
-
 
         private void LoadRecipe(int recipeId)
         {
@@ -54,9 +65,10 @@ namespace Masaking.Recipes
             recipeImage.ImageUrl = recipe["image"].ToString();
             recipeImage.AlternateText = recipe["title"].ToString();
             recipeAuthor.Text = Server.HtmlEncode(recipe["displayName"].ToString());
-            authorAvatar.ImageUrl = Database.AvatarUrl(recipe["authorImage"]);
+            authorAvatar.DisplayAvatar(recipe["displayName"], recipe["authorImage"]);
 
             lnkAuthor.NavigateUrl = ResolveUrl("~/Account/Profile") + "?id=" + recipe["userID"].ToString();
+            lnkDownloadPdf.NavigateUrl = ResolveUrl("~/Recipes/DownloadRecipe.ashx") + "?id=" + recipeId;
 
             int reviewCount = Convert.ToInt32(recipe["reviewCount"]);
             phRatingStar.Visible = reviewCount > 0;
@@ -78,7 +90,18 @@ namespace Masaking.Recipes
             bool signedIn = Database.UserId.HasValue;
             bool isAuthor = signedIn &&
                 Database.UserId.Value == Convert.ToInt32(recipe["userID"]);
+            bool isApproved = recipe["status"].ToString() == "Approved";
 
+            btnShare.Visible = isApproved;
+            if (isApproved)
+            {
+                LoadShareCode(recipeId);
+            }
+
+            phOwnerActions.Visible = isAuthor;
+            lnkEditRecipe.NavigateUrl = ResolveUrl("~/Recipes/SubmitRecipe") + "?id=" + recipeId;
+            btnFavourite.Visible = isApproved && !isAuthor;
+            lnkStartLearning.Visible = isApproved;
             pnlReviewForm.Visible = signedIn && !isAuthor;
             lblReviewHint.Visible = !pnlReviewForm.Visible;
             lblReviewHint.Text = isAuthor
@@ -153,15 +176,6 @@ namespace Masaking.Recipes
 
             favouriteIcon.Attributes["class"] =
                 isFavourite ? "bi bi-heart-fill" : "bi bi-heart";
-
-            btnFavourite.Attributes["aria-pressed"] =
-                isFavourite ? "true" : "false";
-
-            btnFavourite.Attributes["aria-label"] =
-                isFavourite ? "Remove from favourites" : "Add to favourites";
-
-            btnFavourite.Attributes["title"] =
-                btnFavourite.Attributes["aria-label"];
         }
 
         private void LoadReviews(int recipeId)
@@ -255,15 +269,14 @@ namespace Masaking.Recipes
             {
                 DataRowView review = (DataRowView)e.Item.DataItem;
 
-                Image avatar = (Image)e.Item.FindControl("reviewAvatar");
+                UserAvatar avatar = (UserAvatar)e.Item.FindControl("reviewAvatar");
                 Label name = (Label)e.Item.FindControl("reviewName");
                 Label date = (Label)e.Item.FindControl("reviewDate");
                 Label stars = (Label)e.Item.FindControl("reviewStars");
                 Label comment = (Label)e.Item.FindControl("reviewComment");
 
-                avatar.ImageUrl = Database.AvatarUrl(review["image"]);
+                avatar.DisplayAvatar(review["displayName"], review["image"]);
                 name.Text = Server.HtmlEncode(review["displayName"].ToString());
-
 
                 bool wasUpdated = review["updatedAt"] != DBNull.Value;
                 DateTime timestamp = Convert.ToDateTime(wasUpdated ? review["updatedAt"] : review["createdAt"]);
@@ -323,9 +336,10 @@ namespace Masaking.Recipes
                 SqlCommand cmd = new SqlCommand(@"
                     IF EXISTS (
                         SELECT 1
-                        FROM dbo.recipes
-                        WHERE recipeID = @recipeID
-                          AND status = 'Approved'
+                            FROM dbo.recipes
+                            WHERE recipeID = @recipeID
+                              AND status = 'Approved'
+                              AND userID <> @userID
                     )
                     BEGIN
                         IF EXISTS (
@@ -475,6 +489,74 @@ namespace Masaking.Recipes
             ddlReviewRating.ClearSelection();
 
             ShowReviewMessage("Your review has been saved.", true);
+        }
+
+        protected void btnDeleteRecipe_Click(object sender, EventArgs e)
+        {
+            if (!Database.RequireUser(Response))
+            {
+                return;
+            }
+
+            int recipeId;
+
+            if (!int.TryParse(Request.QueryString["id"], out recipeId) ||
+                recipeId <= 0)
+            {
+                ShowRecipeNotFound();
+                return;
+            }
+
+            int result;
+
+            try
+            {
+                result = RecipeRepository.DeleteOwnedRecipe(recipeId);
+            }
+            catch (SqlException ex)
+            {
+                Trace.Warn("RecipeDetails", "Recipe deletion failed.", ex);
+
+                lblMessage.Text = "The recipe could not be deleted. Please try again.";
+
+                lblMessage.CssClass = "alert alert-danger d-block";
+                lblMessage.Visible = true;
+                return;
+            }
+
+            if (result == 0)
+            {
+                ShowRecipeNotFound();
+                return;
+            }
+
+            Response.Redirect(ResolveUrl("~/Recipes/MyRecipes"), false);
+
+            Context.ApplicationInstance.CompleteRequest();
+        }
+
+        private void LoadShareCode(int recipeId)
+        {
+            string recipePath = ResolveUrl("~/Recipes/RecipeDetails.aspx") + "?id=" + recipeId;
+
+            string shareUrl = new Uri(Request.Url, recipePath).AbsoluteUri;
+
+            using (QRCodeGenerator generator = new QRCodeGenerator())
+            using (QRCodeData data = generator.CreateQrCode(shareUrl, QRCodeGenerator.ECCLevel.Q))
+            using (PngByteQRCode qr = new PngByteQRCode(data))
+            {
+                byte[] imageBytes = qr.GetGraphic(10);
+
+                string imageUrl =
+                    "data:image/png;base64," +
+                    Convert.ToBase64String(imageBytes);
+
+                imgRecipeQr.ImageUrl = imageUrl;
+                txtShareUrl.Text = shareUrl;
+
+                lnkDownloadQr.NavigateUrl = imageUrl;
+                lnkDownloadQr.Attributes["download"] = "Masaking-Recipe-" + recipeId + "-QR.png";
+            }
         }
     }
 }

@@ -1,329 +1,775 @@
+using Masaking.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.UI.WebControls;
-using Masaking.Infrastructure;
 
 namespace Masaking.Recipes
 {
     public partial class SubmitRecipe : ResponsivePage
     {
-        protected TextBox txtTitle, txtDescription, txtCuisine, txtRegion, txtServings, txtPrep, txtCost, txtIngredients, txtSteps, txtStepImages;
-        protected FileUpload uploadRecipeImage;
-        protected Image imgExistingRecipe;
-        protected DropDownList ddlDifficulty;
-        protected Label lblMessage;
-        protected Button btnSave;
-        private int? EditId
+        private int? editId;
+
+        private class Ingredient
         {
-            get
-            {
-                int id;
-                return Int32.TryParse(Request.QueryString["id"], out id) ? (int? )id : null;
-            }
+            public string Name;
+            public decimal Quantity;
+            public string Unit;
         }
 
-        private sealed class RecipeStep
+        private class CookingStep
         {
-            public int LineIndex;
+            public int UploadIndex;
             public string Instruction;
-            public string ImageUrl;
+            public string Image;
+            public int Minutes;
+        }
+
+        protected override void OnInit(EventArgs e)
+        {
+            ViewStateUserKey = Session.SessionID;
+            base.OnInit(e);
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Database.RequireUser(Response))
-                return;
-            Form.Enctype = "multipart/form-data";
-            Title = EditId.HasValue ? "Edit recipe | Masaking" : "Share a recipe | Masaking";
-            recipeHeading.InnerText = EditId.HasValue ? "Edit your recipe" : "Share your recipe";
-            btnSave.Text = EditId.HasValue ? "Save changes" : "Submit for review";
-            lblApprovalNotice.Text = Server.HtmlEncode(EditId.HasValue
-                ? "Your changes are saved without another approval request. The recipe keeps its current approval status."
-                : "New recipes need administrator approval before they appear publicly.");
-            if (!IsPostBack && EditId.HasValue)
-                LoadRecipe();
-        }
-
-        private void LoadRecipe()
-        {
-            using (SqlConnection cn = Database.Open())
             {
-                using (SqlCommand cmd = new SqlCommand("SELECT title,description,cuisine,region,difficulty,preparationTime,estimatedCost,servings,image FROM recipes WHERE recipeID=@id AND userID=@user", cn))
-                {
-                    cmd.Parameters.AddWithValue("@id", EditId.Value);
-                    cmd.Parameters.AddWithValue("@user", Database.UserId.Value);
-                    using (SqlDataReader rd = cmd.ExecuteReader())
-                    {
-                        if (!rd.Read())
-                        {
-                            Response.Redirect("MyRecipes.aspx");
-                            return;
-                        }
-
-                        txtTitle.Text = rd.GetString(0);
-                        txtDescription.Text = rd.IsDBNull(1) ? "" : rd.GetString(1);
-                        txtCuisine.Text = rd.GetString(2);
-                        txtRegion.Text = rd.GetString(3);
-                        ddlDifficulty.SelectedValue = rd.GetString(4);
-                        txtPrep.Text = rd.GetInt32(5).ToString();
-                        txtCost.Text = rd.GetDecimal(6).ToString(CultureInfo.InvariantCulture);
-                        txtServings.Text = rd.GetInt32(7).ToString();
-                        string image = rd.IsDBNull(8) ? "" : rd.GetString(8);
-                        imgExistingRecipe.ImageUrl = PhotoPreviewUrl(image);
-                        imgExistingRecipe.Visible = !String.IsNullOrEmpty(imgExistingRecipe.ImageUrl);
-                    }
-                }
-
-                using (SqlCommand cmd = new SqlCommand("SELECT ingredientName,quantity,unit FROM ingredients WHERE recipeID=@id ORDER BY displayOrder", cn))
-                {
-                    cmd.Parameters.AddWithValue("@id", EditId.Value);
-                    using (SqlDataReader rd = cmd.ExecuteReader())
-                        while (rd.Read())
-                            txtIngredients.Text += (txtIngredients.Text.Length == 0 ? "" : Environment.NewLine) + rd.GetString(0) + " | " + rd.GetDecimal(1).ToString(CultureInfo.InvariantCulture) + " | " + rd.GetString(2);
-                }
-
-                List<string> stepImageUrls = new List<string>();
-                using (SqlCommand cmd = new SqlCommand("SELECT instruction,image FROM steps WHERE recipeID=@id ORDER BY stepNumber", cn))
-                {
-                    cmd.Parameters.AddWithValue("@id", EditId.Value);
-                    using (SqlDataReader rd = cmd.ExecuteReader())
-                        while (rd.Read())
-                        {
-                            txtSteps.Text += (txtSteps.Text.Length == 0 ? "" : Environment.NewLine) + rd.GetString(0);
-                            stepImageUrls.Add(rd.IsDBNull(1) ? "" : rd.GetString(1));
-                        }
-                }
-
-                txtStepImages.Text = String.Join(Environment.NewLine, stepImageUrls.ToArray());
+                return;
             }
 
+            Form.Enctype = "multipart/form-data";
+
+            if (!ReadEditId())
+            {
+                return;
+            }
+
+            SetPageText();
+
+            if (!IsPostBack)
+            {
+                LoadCategories();
+
+                if (editId.HasValue)
+                {
+                    if (!LoadRecipe())
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    ingredientEditor.Initialise();
+                    stepEditor.Initialise();
+                }
+            }
+        }
+
+        private bool ReadEditId()
+        {
+            string value = Request.QueryString["id"];
+
+            if (value == null)
+            {
+                editId = null;
+                return true;
+            }
+
+            int id;
+
+            if (!int.TryParse(value, out id) || id <= 0)
+            {
+                ShowUnavailableRecipe();
+                return false;
+            }
+
+            editId = id;
+            return true;
+        }
+
+        private void SetPageText()
+        {
+            Page.Title = editId.HasValue ? "Edit Recipe" : "Submit Recipe";
+            recipeHeading.InnerText = editId.HasValue
+                ? "Edit your recipe" : "Share your recipe";
+
+            btnSave.Text = editId.HasValue
+                ? "Save and resubmit" : "Submit for review";
+
+            lblApprovalNotice.Text = editId.HasValue
+                ? "Saving changes returns your recipe to Pending for approval."
+                : "Your recipe will appear publicly after approval.";
+        }
+
+        private DataSet ReadOwnedRecipe(
+            SqlConnection con, SqlTransaction transaction, int recipeId)
+        {
+            SqlCommand cmd = new SqlCommand(@"
+                SELECT
+                    r.title,
+                    r.description,
+                    r.cuisine,
+                    r.region,
+                    r.difficulty,
+                    r.preparationTime,
+                    r.estimatedCost,
+                    r.servings,
+                    r.image,
+                    (
+                        SELECT rc.categoryID
+                        FROM dbo.recipesCategories AS rc
+                        WHERE rc.recipeID = r.recipeID
+                    ) AS categoryID
+                FROM dbo.recipes AS r
+                WHERE r.recipeID = @recipeID
+                    AND r.userID = @userID
+                    AND r.status IN ('Approved', 'Pending', 'Rejected');
+
+                SELECT 
+                    i.ingredientName, 
+                    i.quantity, 
+                    i.unit, 
+                    i.image,                      
+                    i.isOptional, 
+                    i.displayOrder
+                FROM dbo.ingredients AS i
+                INNER JOIN dbo.recipes AS r 
+                    ON r.recipeID = i.recipeID
+                WHERE r.recipeID = @recipeID 
+                    AND r.userID = @userID
+                    AND r.status IN ('Approved', 'Pending', 'Rejected')
+                ORDER BY i.displayOrder,
+                    i.ingredientID;
+
+                SELECT s.instruction,
+                    s.image, 
+                    s.estimatedMinutes
+                FROM dbo.steps AS s
+                INNER JOIN dbo.recipes AS r 
+                    ON r.recipeID = s.recipeID
+                WHERE r.recipeID = @recipeID 
+                    AND r.userID = @userID
+                    AND r.status IN ('Approved', 'Pending', 'Rejected')
+                ORDER BY s.stepNumber, 
+                    s.stepID;", con, transaction);
+
+            cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+            cmd.Parameters.Add("@userID", SqlDbType.Int).Value = Database.UserId.Value;
+
+            DataSet recipe = new DataSet();
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            adapter.Fill(recipe);
+
+            return recipe;
+        }
+
+        private bool LoadRecipe()
+        {
+            SqlConnection con = Database.Open();
+            DataSet data;
+
+            try
+            {
+                data = ReadOwnedRecipe(con, null, editId.Value);
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            if (data.Tables[0].Rows.Count == 0)
+            {
+                ShowUnavailableRecipe();
+                return false;
+            }
+
+            DataRow recipe = data.Tables[0].Rows[0];
+
+            txtTitle.Text = recipe["title"].ToString();
+            txtDescription.Text = recipe["description"].ToString();
+            txtCuisine.Text = recipe["cuisine"].ToString();
+            txtRegion.Text = recipe["region"].ToString();
+            ddlDifficulty.SelectedValue = recipe["difficulty"].ToString();
+            txtPrep.Text = recipe["preparationTime"].ToString();
+            txtServings.Text = recipe["servings"].ToString();
+            txtCost.Text = Convert.ToDecimal(recipe["estimatedCost"])
+                .ToString("0.00", CultureInfo.InvariantCulture);
+
+            imgExistingRecipe.ImageUrl = GetPhotoPreview(recipe["image"].ToString());
+            imgExistingRecipe.Visible = !string.IsNullOrEmpty(imgExistingRecipe.ImageUrl);
+
+            ListItem category = ddlCategory.Items.FindByValue(recipe["categoryID"].ToString());
+
+            if (category != null)
+            {
+                ddlCategory.ClearSelection();
+                category.Selected = true;
+            }
+
+            // Prepare the column names expected by IngredientEditor
+            DataTable ingredients = data.Tables[1].Copy();
+            ingredients.Columns["ingredientName"].ColumnName = "name";
+            ingredientEditor.Initialise(ingredients);
+
+            // Prepare the column names expected by CookingStepEditor
+            DataTable steps = data.Tables[2].Copy();
+            steps.Columns["estimatedMinutes"].ColumnName = "minutes";
+            stepEditor.Initialise(steps);
+
+            return true;
+        }
+
+        private void LoadCategories()
+        {
+            ddlCategory.DataSource =
+                CategoryRepository.GetActiveCategories(true);
+
+            ddlCategory.DataTextField = "categoryName";
+            ddlCategory.DataValueField = "categoryID";
+            ddlCategory.DataBind();
+
+            ddlCategory.Items.Insert(
+                0, new ListItem("Choose a category", ""));
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            int servings, prep;
+            if (!Database.RequireUser(Response) || !ReadEditId())
+            {
+                return;
+            }
+
+            int servings;
+            int preparationTime;
             decimal cost;
-            if (String.IsNullOrWhiteSpace(txtTitle.Text) || txtTitle.Text.Trim().Length > 150 || txtDescription.Text.Length > 1000 || String.IsNullOrWhiteSpace(txtCuisine.Text) || txtCuisine.Text.Trim().Length > 80 || String.IsNullOrWhiteSpace(txtRegion.Text) || txtRegion.Text.Trim().Length > 80 || !Int32.TryParse(txtServings.Text, out servings) || servings < 1 || servings > 100 || !Int32.TryParse(txtPrep.Text, out prep) || prep < 0 || prep > 1440 || !Decimal.TryParse(txtCost.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out cost) || cost < 0 || cost > 999999.99m)
+
+            if (!ValidateDetails(out servings, out preparationTime, out cost))
             {
-                Show("Check the recipe name, cuisine, region, serving count, preparation time and cost.", false);
                 return;
             }
 
-            List<string[]> ingredients = new List<string[]>();
-            foreach (string line in txtIngredients.Text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
+            List<Ingredient> ingredients = ReadIngredients();
+            if (ingredients == null)
             {
-                string[] parts = line.Split('|');
-                decimal qty;
-                if (parts.Length != 3 || String.IsNullOrWhiteSpace(parts[0]) || parts[0].Trim().Length > 50 || !Decimal.TryParse(parts[1].Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out qty) || qty < 0 || qty > 99999999.99m || Decimal.Round(qty, 2) != qty || String.IsNullOrWhiteSpace(parts[2]) || parts[2].Trim().Length > 30)
-                {
-                    Show("Check each ingredient row: enter a name, a quantity with up to two decimal places, and a unit.", false);
-                    return;
-                }
-
-                ingredients.Add(new[] { parts[0].Trim(), qty.ToString(CultureInfo.InvariantCulture), parts[2].Trim() });
-            }
-
-            string[] stepLines = txtSteps.Text.Replace("\r\n", "\n").Split('\n');
-            string[] urlLines = txtStepImages.Text.Replace("\r\n", "\n").Split('\n');
-            List<RecipeStep> steps = new List<RecipeStep>();
-            for (int i = 0; i < stepLines.Length; i++)
-            {
-                string instruction = stepLines[i].Trim();
-                if (instruction.Length == 0)
-                    continue;
-                if (instruction.Length > 2000)
-                {
-                    Show("Keep each cooking step within 2,000 characters.", false);
-                    return;
-                }
-
-                string imageUrl = i < urlLines.Length ? urlLines[i].Trim() : "";
-                steps.Add(new RecipeStep { LineIndex = i, Instruction = instruction, ImageUrl = imageUrl });
-            }
-
-            if (ingredients.Count == 0 || steps.Count == 0)
-            {
-                Show("Add at least one ingredient and one cooking step.", false);
                 return;
             }
 
+            List<CookingStep> steps = ReadSteps();
+            if (steps == null)
+            {
+                return;
+            }
+
+            if (!SaveRecipe(servings, preparationTime, cost, ingredients, steps))
+            {
+                return;
+            }
+
+            Response.Redirect(ResolveUrl("~/Recipes/MyRecipes") +
+                (editId.HasValue ? "?saved=updated" : "?saved=1"), false);
+            Context.ApplicationInstance.CompleteRequest();
+        }
+
+        private bool ValidateDetails(
+            out int servings, out int preparationTime, out decimal cost)
+        {
+            servings = 0;
+            preparationTime = 0;
+            cost = 0;
+
+            if (string.IsNullOrWhiteSpace(txtTitle.Text) || txtTitle.Text.Trim().Length > 150)
+            {
+                return ShowError("Enter a recipe name within 150 characters.");
+            }
+
+            if (txtDescription.Text.Length > 1000)
+            {
+                return ShowError("Keep the description within 1,000 characters.");
+            }
+
+            if (string.IsNullOrWhiteSpace(txtCuisine.Text) || txtCuisine.Text.Trim().Length > 80 ||
+                string.IsNullOrWhiteSpace(txtRegion.Text) || txtRegion.Text.Trim().Length > 80)
+            {
+                return ShowError("Enter a cuisine and region within 80 characters each.");
+            }
+
+            string difficulty = ddlDifficulty.SelectedValue;
+            if (difficulty != "Easy" && difficulty != "Medium" && difficulty != "Hard")
+            {
+                return ShowError("Choose Easy, Medium or Hard.");
+            }
+
+            if (!int.TryParse(txtServings.Text, out servings) || servings < 1 || servings > 100)
+            {
+                return ShowError("Enter between 1 and 100 servings.");
+            }
+
+            if (!int.TryParse(txtPrep.Text, out preparationTime) || preparationTime < 0 || preparationTime > 1440)
+            {
+                return ShowError("Enter a preparation time from 0 to 1,440 minutes.");
+            }
+
+            if (!TryReadDecimal(txtCost.Text, out cost) || cost < 0 || cost > 999999.99m ||
+                decimal.Round(cost, 2) != cost)
+            {
+                return ShowError("Enter a valid cost with no more than two decimal places.");
+            }
+
+            int categoryId;
+
+            if (!int.TryParse(ddlCategory.SelectedValue, out categoryId) ||
+                categoryId <= 0)
+            {
+                return ShowError("Choose a category.");
+            }
+
+            return true;
+        }
+
+        private List<Ingredient> ReadIngredients()
+        {
+            DataTable rows;
+
+            try
+            {
+                rows = ingredientEditor.GetIngredients();
+            }
+            catch (InvalidDataException ex)
+            {
+                ShowError(ex.Message);
+                return null;
+            }
+
+            List<Ingredient> ingredients = new List<Ingredient>();
+
+            foreach (DataRow row in rows.Rows)
+            {
+                string name = row["name"].ToString().Trim();
+                string unit = row["unit"].ToString().Trim();
+                decimal quantity;
+
+                if (string.IsNullOrWhiteSpace(name) || name.Length > 50 ||
+                    string.IsNullOrWhiteSpace(unit) || unit.Length > 30 ||
+                    name.Contains("|") || unit.Contains("|") ||
+                    name.Contains("\n") || name.Contains("\r") ||
+                    unit.Contains("\n") || unit.Contains("\r") ||
+                    !TryReadDecimal(row["quantity"].ToString(), out quantity) ||
+                    quantity < 0 || quantity > 99999999.99m || decimal.Round(quantity, 2) != quantity)
+                {
+                    ShowError("Check ingredient names, quantities and units. Do not use vertical bars or line breaks.");
+                    return null;
+                }
+
+                ingredients.Add(new Ingredient { Name = name, Quantity = quantity, Unit = unit });
+            }
+
+            if (ingredients.Count == 0)
+            {
+                ShowError("Add at least one ingredient.");
+                return null;
+            }
+
+            return ingredients;
+        }
+
+        private List<CookingStep> ReadSteps()
+        {
+            DataTable rows;
+
+            try
+            {
+                rows = stepEditor.GetSteps();
+            }
+            catch (InvalidDataException ex)
+            {
+                ShowError(ex.Message);
+                return null;
+            }
+
+            List<CookingStep> steps = new List<CookingStep>();
+
+            for (int i = 0; i < rows.Rows.Count; i++)
+            {
+                DataRow row = rows.Rows[i];
+
+                string instruction = row["instruction"].ToString().Trim();
+                int minutes;
+
+                if (string.IsNullOrWhiteSpace(instruction) ||
+                    instruction.Length > 2000)
+                {
+                    ShowError("Enter an instruction within 2,000 characters for each step.");
+                    return null;
+                }
+
+                if (!int.TryParse(row["minutes"].ToString(), out minutes) ||
+                    minutes < 0 || minutes > 1440)
+                {
+                    ShowError("Enter between 0 and 1,440 minutes for each step.");
+                    return null;
+                }
+
+                steps.Add(new CookingStep
+                {
+                    UploadIndex = i,
+                    Instruction = instruction,
+                    Image = row["image"].ToString(),
+                    Minutes = minutes
+                });
+            }
+
+            if (steps.Count == 0)
+            {
+                ShowError("Add at least one cooking step.");
+                return null;
+            }
+
+            return steps;
+        }
+
+        private bool TryReadDecimal(string value, out decimal number)
+        {
+            return decimal.TryParse(value.Trim(), NumberStyles.AllowDecimalPoint,
+                CultureInfo.InvariantCulture, out number);
+        }
+
+        private bool SaveRecipe(int servings, int preparationTime, decimal cost,
+            List<Ingredient> ingredients, List<CookingStep> steps)
+        {
+            SqlConnection con = null;
+            SqlTransaction transaction = null;
             List<string> newUploads = new List<string>();
-            List<string> oldStepImages = new List<string>();
-            List<string> keptStepImages = new List<string>();
-            string oldRecipeImage = null, savedRecipeImage = null;
-            bool committed = false;
-            using (SqlConnection cn = Database.Open())
-            using (SqlTransaction tx = cn.BeginTransaction())
+
+            try
             {
-                try
+                con = Database.Open();
+                transaction = con.BeginTransaction();
+
+                DataSet existing = null;
+                string image = null;
+
+                if (editId.HasValue)
                 {
-                    if (EditId.HasValue)
-                    {
-                        using (SqlCommand check = new SqlCommand("SELECT image FROM recipes WHERE recipeID=@id AND userID=@user", cn, tx))
-                        {
-                            check.Parameters.AddWithValue("@id", EditId.Value);
-                            check.Parameters.AddWithValue("@user", Database.UserId.Value);
-                            object value = check.ExecuteScalar();
-                            if (value == null)
-                                throw new InvalidOperationException("You can only edit your own recipes.");
-                            oldRecipeImage = value == DBNull.Value ? null : Convert.ToString(value);
-                        }
+                    // Lock this recipe while its related rows are replaced
+                    SqlCommand check = new SqlCommand(@"
+                        SELECT image FROM dbo.recipes WITH (UPDLOCK, HOLDLOCK)
+                        WHERE recipeID = @recipeID AND userID = @userID;", con, transaction);
 
-                        using (SqlCommand old = new SqlCommand("SELECT image FROM steps WHERE recipeID=@id ORDER BY stepNumber", cn, tx))
-                        {
-                            old.Parameters.AddWithValue("@id", EditId.Value);
-                            using (SqlDataReader rd = old.ExecuteReader())
-                                while (rd.Read())
-                                    oldStepImages.Add(rd.IsDBNull(0) ? null : rd.GetString(0));
-                        }
+                    check.Parameters.Add("@recipeID", SqlDbType.Int).Value = editId.Value;
+                    check.Parameters.Add("@userID", SqlDbType.Int).Value = Database.UserId.Value;
+
+                    object oldImage = check.ExecuteScalar();
+                    if (oldImage == null)
+                    {
+                        throw new InvalidOperationException("This recipe is unavailable or does not belong to you.");
                     }
 
-                    if (uploadRecipeImage.HasFile)
-                    {
-                        savedRecipeImage = ImageUpload.Save(uploadRecipeImage.PostedFile, "Recipes", false);
-                        newUploads.Add(savedRecipeImage);
-                    }
-                    else
-                        savedRecipeImage = oldRecipeImage;
-                    int recipeId;
-                    if (EditId.HasValue)
-                    {
-                        recipeId = EditId.Value;
-                        // Editing preserves the current approval status; only new recipes enter review.
-                        using (SqlCommand cmd = new SqlCommand("UPDATE recipes SET title=@title,description=@description,cuisine=@cuisine,region=@region,difficulty=@difficulty,preparationTime=@prep,estimatedCost=@cost,servings=@servings,image=@image,updatedAt=@updated WHERE recipeID=@id AND userID=@user", cn, tx))
-                        {
-                            AddRecipeParameters(cmd, servings, prep, cost, savedRecipeImage);
-                            cmd.Parameters.AddWithValue("@updated", DateTime.UtcNow);
-                            cmd.Parameters.AddWithValue("@id", recipeId);
-                            cmd.Parameters.AddWithValue("@user", Database.UserId.Value);
-                            if (cmd.ExecuteNonQuery() != 1)
-                                throw new InvalidOperationException("The recipe could not be updated. You can only edit your own recipes.");
-                        }
-
-                        using (SqlCommand cmd = new SqlCommand("DELETE FROM ingredients WHERE recipeID=@id; DELETE FROM steps WHERE recipeID=@id", cn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@id", recipeId);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-                    else
-                    {
-                        using (SqlCommand cmd = new SqlCommand("INSERT INTO recipes(title,description,cuisine,region,difficulty,preparationTime,estimatedCost,servings,image,status,createdAt,updatedAt,userID) VALUES(@title,@description,@cuisine,@region,@difficulty,@prep,@cost,@servings,@image,'Pending',@created,NULL,@user); SELECT CAST(SCOPE_IDENTITY() AS int)", cn, tx))
-                        {
-                            AddRecipeParameters(cmd, servings, prep, cost, savedRecipeImage);
-                            cmd.Parameters.AddWithValue("@created", DateTime.UtcNow);
-                            cmd.Parameters.AddWithValue("@user", Database.UserId.Value);
-                            recipeId = Convert.ToInt32(cmd.ExecuteScalar());
-                        }
-                    }
-
-                    for (int i = 0; i < ingredients.Count; i++)
-                    {
-                        using (SqlCommand cmd = new SqlCommand("INSERT INTO ingredients(ingredientName,quantity,unit,image,isOptional,displayOrder,recipeID) VALUES(@name,@quantity,@unit,NULL,0,@order,@recipe)", cn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@name", ingredients[i][0]);
-                            cmd.Parameters.AddWithValue("@quantity", Decimal.Parse(ingredients[i][1], CultureInfo.InvariantCulture));
-                            cmd.Parameters.AddWithValue("@unit", ingredients[i][2]);
-                            cmd.Parameters.AddWithValue("@order", i + 1);
-                            cmd.Parameters.AddWithValue("@recipe", recipeId);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-
-                    for (int i = 0; i < steps.Count; i++)
-                    {
-                        RecipeStep step = steps[i];
-                        string stepImage = step.ImageUrl;
-                        HttpPostedFile upload = Request.Files["stepUpload_" + step.LineIndex];
-                        if (upload != null && upload.ContentLength > 0)
-                        {
-                            stepImage = ImageUpload.Save(upload, "Steps", false);
-                            newUploads.Add(stepImage);
-                        }
-                        else if (!String.IsNullOrWhiteSpace(stepImage) && !oldStepImages.Contains(stepImage))
-                            throw new InvalidDataException("Choose step photos from your device. New image links are not accepted.");
-                        else if (String.IsNullOrWhiteSpace(stepImage))
-                            stepImage = null;
-                        if (!String.IsNullOrEmpty(stepImage) && oldStepImages.Contains(stepImage))
-                            keptStepImages.Add(stepImage);
-                        using (SqlCommand cmd = new SqlCommand("INSERT INTO steps(stepNumber,instruction,image,estimatedMinutes,recipeID) VALUES(@number,@instruction,@image,0,@recipe)", cn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@number", i + 1);
-                            cmd.Parameters.AddWithValue("@instruction", step.Instruction);
-                            cmd.Parameters.AddWithValue("@image", (object)stepImage ?? DBNull.Value);
-                            cmd.Parameters.AddWithValue("@recipe", recipeId);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-
-                    tx.Commit();
-                    committed = true;
-                    if (!String.IsNullOrEmpty(oldRecipeImage) && !String.Equals(oldRecipeImage, savedRecipeImage, StringComparison.Ordinal))
-                        ImageUpload.DeleteUploaded(oldRecipeImage, "Recipes");
-                    foreach (string old in oldStepImages)
-                        if (!String.IsNullOrEmpty(old) && !keptStepImages.Contains(old))
-                            ImageUpload.DeleteUploaded(old, "Steps");
-                    Response.Redirect(EditId.HasValue ? "MyRecipes.aspx?saved=updated" : "MyRecipes.aspx?saved=1", false);
-                    Context.ApplicationInstance.CompleteRequest();
+                    image = oldImage == DBNull.Value ? null : oldImage.ToString();
+                    existing = ReadOwnedRecipe(con, transaction, editId.Value);
                 }
-                catch (Exception ex)
+
+                if (uploadRecipeImage.HasFile)
                 {
-                    if (!committed)
-                    {
-                        try
-                        {
-                            tx.Rollback();
-                        }
-                        catch
-                        {
-                        }
-
-                        foreach (string upload in newUploads)
-                            ImageUpload.DeleteUploaded(upload, upload.IndexOf("/Recipes/", StringComparison.OrdinalIgnoreCase) >= 0 ? "Recipes" : "Steps");
-                    }
-
-                    Show(ex is InvalidOperationException || ex is InvalidDataException ? ex.Message : "Your recipe could not be saved. Check the details and try again.", false);
+                    image = ImageUpload.Save(uploadRecipeImage.PostedFile, "Recipes", false);
+                    newUploads.Add(image);
                 }
+
+                int recipeId = SaveRecipeDetails(con, transaction, servings, preparationTime, cost, image);
+                SaveCategory(con, transaction, recipeId);
+
+                if (editId.HasValue)
+                {
+                    SqlCommand clear = new SqlCommand(@"
+                        DELETE FROM dbo.ingredients WHERE recipeID = @recipeID;
+                        DELETE FROM dbo.steps WHERE recipeID = @recipeID;", con, transaction);
+
+                    clear.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+                    clear.ExecuteNonQuery();
+                }
+
+                SaveIngredients(con, transaction, recipeId, ingredients, existing);
+                SaveSteps(con, transaction, recipeId, steps, existing, newUploads);
+
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (transaction != null)
+                {
+                    try { transaction.Rollback(); }
+                    catch (Exception rollbackError)
+                    {
+                        Trace.Warn("SubmitRecipe", "Could not roll back the recipe save.", rollbackError);
+                    }
+                }
+
+                foreach (string image in newUploads)
+                {
+                    try
+                    {
+                        string folder = image.Contains("/Recipes/") ? "Recipes" : "Steps";
+                        ImageUpload.DeleteUploaded(image, folder);
+                    }
+                    catch (Exception cleanupError)
+                    {
+                        Trace.Warn("SubmitRecipe", "Could not clean up a new upload.", cleanupError);
+                    }
+                }
+
+                Trace.Warn("SubmitRecipe", "Recipe save failed.", ex);
+                ShowError(ex is InvalidDataException || ex is InvalidOperationException
+                    ? ex.Message : "Your recipe could not be saved. Please try again.");
+                return false;
+            }
+            finally
+            {
+                if (transaction != null) transaction.Dispose();
+                if (con != null) con.Close();
             }
         }
 
-        private void AddRecipeParameters(SqlCommand cmd, int servings, int prep, decimal cost, string image)
+        private int SaveRecipeDetails(SqlConnection con, SqlTransaction transaction,
+            int servings, int preparationTime, decimal cost, string image)
         {
-            cmd.Parameters.AddWithValue("@title", txtTitle.Text.Trim());
-            cmd.Parameters.AddWithValue("@description", String.IsNullOrWhiteSpace(txtDescription.Text) ? (object)DBNull.Value : txtDescription.Text.Trim());
-            cmd.Parameters.AddWithValue("@cuisine", txtCuisine.Text.Trim());
-            cmd.Parameters.AddWithValue("@region", txtRegion.Text.Trim());
-            cmd.Parameters.AddWithValue("@difficulty", ddlDifficulty.SelectedValue);
-            cmd.Parameters.AddWithValue("@prep", prep);
-            cmd.Parameters.AddWithValue("@cost", cost);
-            cmd.Parameters.AddWithValue("@servings", servings);
-            cmd.Parameters.AddWithValue("@image", (object)image ?? DBNull.Value);
+            string sql;
+
+            if (editId.HasValue)
+            {
+                sql = @"
+                    UPDATE dbo.recipes
+                    SET title = @title, description = @description,
+                        cuisine = @cuisine, region = @region, difficulty = @difficulty,
+                        preparationTime = @prep, estimatedCost = @cost,
+                        servings = @servings, image = @image,
+                        status = 'Pending', updatedAt = SYSUTCDATETIME()
+                    WHERE recipeID = @recipeID
+                        AND userID = @userID
+                        AND status IN ('Approved', 'Pending', 'Rejected');";
+            }
+            else
+            {
+                sql = @"
+                    INSERT INTO dbo.recipes
+                        (title, description, cuisine, region, difficulty,
+                         preparationTime, estimatedCost, servings, image,
+                         status, createdAt, updatedAt, userID)
+                    VALUES
+                        (@title, @description, @cuisine, @region, @difficulty,
+                         @prep, @cost, @servings, @image,
+                         'Pending', SYSUTCDATETIME(), NULL, @userID);
+                    SELECT CAST(SCOPE_IDENTITY() AS int);";
+            }
+
+            SqlCommand cmd = new SqlCommand(sql, con, transaction);
+            AddRecipeParameters(cmd, servings, preparationTime, cost, image);
+
+            if (!editId.HasValue)
+            {
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+
+            cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = editId.Value;
+
+            if (cmd.ExecuteNonQuery() != 1)
+            {
+                throw new InvalidOperationException("You can only edit your own recipes.");
+            }
+
+            return editId.Value;
         }
 
-        private string PhotoPreviewUrl(string value)
+        private void AddRecipeParameters(SqlCommand cmd,
+            int servings, int preparationTime, decimal cost, string image)
         {
-            if (String.IsNullOrWhiteSpace(value))
-                return "";
+            cmd.Parameters.Add("@title", SqlDbType.NVarChar, 150).Value = txtTitle.Text.Trim();
+            cmd.Parameters.Add("@description", SqlDbType.NVarChar, 1000).Value =
+                string.IsNullOrWhiteSpace(txtDescription.Text)
+                    ? (object)DBNull.Value : txtDescription.Text.Trim();
+            cmd.Parameters.Add("@cuisine", SqlDbType.NVarChar, 100).Value = txtCuisine.Text.Trim();
+            cmd.Parameters.Add("@region", SqlDbType.NVarChar, 100).Value = txtRegion.Text.Trim();
+            cmd.Parameters.Add("@difficulty", SqlDbType.NVarChar, 20).Value = ddlDifficulty.SelectedValue;
+            cmd.Parameters.Add("@prep", SqlDbType.Int).Value = preparationTime;
+            SqlParameter costParameter = cmd.Parameters.Add("@cost", SqlDbType.Decimal);
+            costParameter.Precision = 10;
+            costParameter.Scale = 2;
+            costParameter.Value = cost;
+            cmd.Parameters.Add("@servings", SqlDbType.Int).Value = servings;
+            cmd.Parameters.Add("@image", SqlDbType.NVarChar, 255).Value = (object)image ?? DBNull.Value;
+            cmd.Parameters.Add("@userID", SqlDbType.Int).Value = Database.UserId.Value;
+        }
+
+        private void SaveIngredients(SqlConnection con, SqlTransaction transaction,
+            int recipeId, List<Ingredient> ingredients, DataSet existing)
+        {
+            for (int i = 0; i < ingredients.Count; i++)
+            {
+                Ingredient ingredient = ingredients[i];
+                object image = DBNull.Value;
+                bool optional = false;
+
+                // Preserve metadata that the current editor does not expose.
+                if (existing != null)
+                {
+                    foreach (DataRow old in existing.Tables[1].Rows)
+                    {
+                        if (old["ingredientName"].ToString() == ingredient.Name)
+                        {
+                            image = old["image"];
+                            optional = Convert.ToBoolean(old["isOptional"]);
+                            break;
+                        }
+                    }
+                }
+
+                SqlCommand cmd = new SqlCommand(@"
+                    INSERT INTO dbo.ingredients
+                        (ingredientName, quantity, unit, image, isOptional, displayOrder, recipeID)
+                    VALUES (@name, @quantity, @unit, @image, @optional, @order, @recipeID);", con, transaction);
+
+                cmd.Parameters.Add("@name", SqlDbType.NVarChar, 50).Value = ingredient.Name;
+                SqlParameter quantity = cmd.Parameters.Add("@quantity", SqlDbType.Decimal);
+                quantity.Precision = 10;
+                quantity.Scale = 2;
+                quantity.Value = ingredient.Quantity;
+                cmd.Parameters.Add("@unit", SqlDbType.NVarChar, 30).Value = ingredient.Unit;
+                cmd.Parameters.Add("@image", SqlDbType.NVarChar, 255).Value = image;
+                cmd.Parameters.Add("@optional", SqlDbType.Bit).Value = optional;
+                cmd.Parameters.Add("@order", SqlDbType.Int).Value = i + 1;
+                cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private void SaveSteps(SqlConnection con, SqlTransaction transaction,
+            int recipeId, List<CookingStep> steps, DataSet existing, List<string> newUploads)
+        {
+            for (int i = 0; i < steps.Count; i++)
+            {
+                CookingStep step = steps[i];
+                string image = step.Image;
+                int minutes = step.Minutes;
+                bool allowedExistingImage = string.IsNullOrWhiteSpace(image);
+
+                if (existing != null)
+                {
+                    foreach (DataRow old in existing.Tables[2].Rows)
+                    {
+                        if (old["image"].ToString() == image)
+                        {
+                            allowedExistingImage = true;
+                        }
+                    }
+                }
+
+                HttpPostedFile upload = Request.Files["stepUpload_" + step.UploadIndex];
+
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    image = ImageUpload.Save(upload, "Steps", false);
+                    newUploads.Add(image);
+                }
+                else if (!allowedExistingImage)
+                {
+                    throw new InvalidDataException("Choose step photos from your device. New image links are not accepted.");
+                }
+
+                SqlCommand cmd = new SqlCommand(@"
+                    INSERT INTO dbo.steps
+                        (stepNumber, instruction, image, estimatedMinutes, recipeID)
+                    VALUES (@number, @instruction, @image, @minutes, @recipeID);", con, transaction);
+
+                cmd.Parameters.Add("@number", SqlDbType.Int).Value = i + 1;
+                cmd.Parameters.Add("@instruction", SqlDbType.NVarChar, -1).Value = step.Instruction;
+                cmd.Parameters.Add("@image", SqlDbType.NVarChar, 255).Value =
+                    string.IsNullOrWhiteSpace(image) ? (object)DBNull.Value : image;
+                cmd.Parameters.Add("@minutes", SqlDbType.Int).Value = minutes;
+                cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private void SaveCategory(SqlConnection con, SqlTransaction transaction, int recipeId)
+        {
+            int categoryId = Convert.ToInt32(ddlCategory.SelectedValue);
+
+            SqlCommand check = new SqlCommand(@"
+                SELECT COUNT(*)
+                FROM dbo.categories WITH (HOLDLOCK)
+                WHERE categoryID = @categoryID
+                    AND isActive = 1;", con, transaction);
+
+            check.Parameters.Add("@categoryID", SqlDbType.Int).Value =
+                categoryId;
+
+            if (Convert.ToInt32(check.ExecuteScalar()) != 1)
+            {
+                throw new InvalidOperationException(
+                    "That category is no longer available. Choose another category.");
+            }
+
+            SqlCommand cmd = new SqlCommand(@"
+                DELETE FROM dbo.recipesCategories
+                WHERE recipeID = @recipeID;
+
+                INSERT INTO dbo.recipesCategories (recipeID, categoryID)
+                VALUES (@recipeID, @categoryID);", con, transaction);
+
+            cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
+            cmd.Parameters.Add("@categoryID", SqlDbType.Int).Value = categoryId;
+
+            cmd.ExecuteNonQuery();
+        }
+
+        private string GetPhotoPreview(string image)
+        {
+            if (string.IsNullOrWhiteSpace(image)) return "";
+
             Uri uri;
-            if (Uri.TryCreate(value, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
-                return value;
-            string image = value.Replace("/Content/Uploads/Recipes/", "/Content/images/Uploads/Recipes/");
-            const string prefix = "/Content/images/Uploads/Recipes/";
-            Guid id;
-            string name = Path.GetFileName(image);
-            if (!image.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) || image.Substring(prefix.Length) != name || !name.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || !Guid.TryParseExact(Path.GetFileNameWithoutExtension(name), "N", out id))
+            if (Uri.TryCreate(image, UriKind.Absolute, out uri))
+            {
+                return uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps
+                    ? image : "";
+            }
+
+            image = image.Replace("/Content/Uploads/Recipes/", "/Content/images/Uploads/Recipes/");
+            if (!image.StartsWith("/Content/images/", StringComparison.OrdinalIgnoreCase) ||
+                image.Contains("..") || image.Contains("\\"))
+            {
                 return "";
+            }
+
+            string extension = Path.GetExtension(image).ToLowerInvariant();
+            if (extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif")
+            {
+                return "";
+            }
+
             return ResolveUrl(image);
         }
 
-        private void Show(string text, bool success)
+        private bool ShowError(string message)
         {
-            lblMessage.CssClass = success ? "alert alert-success d-block" : "alert alert-danger d-block";
-            lblMessage.Text = Server.HtmlEncode(text);
+            lblMessage.Text = Server.HtmlEncode(message);
+            lblMessage.CssClass = "alert alert-danger d-block mb-4";
+            lblMessage.Visible = true;
+
+            Page.SetFocus(lblMessage);
+
+            return false;
+        }
+
+        private void ShowUnavailableRecipe()
+        {
+            btnSave.Enabled = false;
+            ShowError("This recipe is unavailable or does not belong to you.");
+            Response.StatusCode = 404;
+            Response.TrySkipIisCustomErrors = true;
         }
     }
 }

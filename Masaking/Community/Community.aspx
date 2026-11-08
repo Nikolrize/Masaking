@@ -66,7 +66,7 @@
                     <article id="postCard" runat="server" class="card community-card rounded-3 mb-3 community-feed-post">
                         <div class="card-body p-3 p-sm-4">
                             <div class="community-post-layout d-flex gap-3">
-                                <asp:HyperLink ID="lnkAuthorProfile" runat="server" CssClass="community-post-avatar d-inline-flex flex-shrink-0 align-self-start text-decoration-none">
+                                <asp:HyperLink ID="lnkAuthorProfile" runat="server" class="community-post-avatar d-inline-flex flex-shrink-0 align-self-start text-decoration-none">
                                     <asp:Label ID="lblAuthorAvatar" runat="server" />
                                 </asp:HyperLink>
 
@@ -120,7 +120,7 @@
                                                 <span class="small text-secondary">
                                                     <asp:Label ID="lblRecipeSummary" runat="server" />
                                                 </span>
-                                                <span class="d-block small mt-1">View recipe →</span>
+                                                <asp:Label ID="lblRecipeAction" runat="server" class="d-block small mt-1" />
                                             </span>
                                         </asp:HyperLink>
                                     </div>

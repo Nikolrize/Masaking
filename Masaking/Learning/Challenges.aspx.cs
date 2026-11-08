@@ -21,7 +21,7 @@ namespace Masaking.Learning
                 FROM dbo.challenges c
                 OUTER APPLY (SELECT COUNT(*) AS attemptCount,COUNT(CASE WHEN a.status='Completed' THEN 1 END) AS completedCount FROM dbo.challengeAttempts a WHERE a.challengeID=c.challengeID AND a.userID=@user) history
                 OUTER APPLY (SELECT TOP (1) a.attemptID,a.status FROM dbo.challengeAttempts a WHERE a.challengeID=c.challengeID AND a.userID=@user AND a.status IN ('InProgress','Paused') ORDER BY a.startedAt DESC,a.attemptID DESC) saved
-                WHERE c.isActive=1
+                WHERE c.isActive=1 AND (c.recipeID IS NULL OR EXISTS (SELECT 1 FROM dbo.recipes linkedRecipe WHERE linkedRecipe.recipeID=c.recipeID AND linkedRecipe.status='Approved'))
                     AND EXISTS (SELECT 1 FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID)
                     AND (@search='' OR CHARINDEX(@search,c.title)>0)
                     AND (@difficulty='' OR c.difficulty=@difficulty)
