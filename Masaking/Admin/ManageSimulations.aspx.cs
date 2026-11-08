@@ -156,13 +156,7 @@ namespace Masaking.Admin
 
                     if (EditingId.HasValue)
                     {
-                        using (SqlCommand check = new SqlCommand(@"
-                            SELECT s.cookwareImage,s.completedImage
-                            FROM dbo.simulations s WITH (UPDLOCK,HOLDLOCK)
-                            WHERE s.simulationID=@id AND s.isActive=0
-                                AND (@imagesOnly=1 OR NOT EXISTS
-                                    (SELECT 1 FROM dbo.simulationProgress p
-                                     WHERE p.simulationID=@id));", cn, tx))
+                        using (SqlCommand check = new SqlCommand(@" SELECT s.cookwareImage,s.completedImage FROM dbo.simulations s WITH (UPDLOCK,HOLDLOCK) WHERE s.simulationID=@id AND s.isActive=0 AND (@imagesOnly=1 OR NOT EXISTS (SELECT 1 FROM dbo.simulationProgress p WHERE p.simulationID=@id));", cn, tx))
                         {
                             check.Parameters.Add("@id", SqlDbType.Int).Value = EditingId.Value;
                             check.Parameters.Add("@imagesOnly", SqlDbType.Bit).Value = imagesOnly;

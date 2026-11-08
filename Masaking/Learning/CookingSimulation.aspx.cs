@@ -193,11 +193,9 @@ namespace Masaking.Learning
                             bool cookingAction = Convert.ToString(currentStep["actionType"]) == "Action";
                             pnlCookingAction.Visible = cookingAction;
                             pnlIngredientChoices.Visible = !cookingAction;
-                            lblAreaHint.Text = cookingAction ? "Follow the instruction, then select Complete step."
-                                : "Drop an ingredient here, or use its Add button.";
+                            lblAreaHint.Text = cookingAction ? "Follow the instruction, then select Complete step." : "Drop an ingredient here, or use its Add button.";
                             string stageTitle = Convert.ToString(currentStep["stageTitle"]);
-                            lblStage.Text = stageTitle.Length == 0 ? "Cooking area"
-                                : Server.HtmlEncode("Stage " + Convert.ToInt32(currentStep["stageNumber"]) + " of " + Convert.ToInt32(currentStep["stageCount"]) + ": " + stageTitle);
+                            lblStage.Text = stageTitle.Length == 0 ? "Cooking area" : Server.HtmlEncode("Stage " + Convert.ToInt32(currentStep["stageNumber"]) + " of " + Convert.ToInt32(currentStep["stageCount"]) + ": " + stageTitle);
                             lblStageInstructions.Text = Server.HtmlEncode(Convert.ToString(currentStep["stageInstructions"]));
                             imgCookware.AlternateText = stageTitle.Length == 0 ? "Cooking area" : stageTitle;
                             string image = SafeImage(Convert.ToString(currentStep["stageImage"]));
@@ -210,9 +208,7 @@ namespace Masaking.Learning
                     else feedback = "This run was restarted. Start a new attempt to practice again.";
                 }
             }
-            lblMessage.Text = Server.HtmlEncode(feedback ?? (pnlGame.Visible
-                ? (pnlCookingAction.Visible ? "Follow the cooking instruction and select Complete step." : "Choose the ingredient for the current instruction.")
-                : "Take your time and practice the ingredient order."));
+            lblMessage.Text = Server.HtmlEncode(feedback ?? (pnlGame.Visible ? (pnlCookingAction.Visible ? "Follow the cooking instruction and select Complete step." : "Choose the ingredient for the current instruction.") : "Take your time and practice the ingredient order."));
             lblMessage.CssClass = effect == "wrong" ? "alert alert-warning d-block mb-3" : "alert alert-info d-block mb-3";
             base.OnPreRender(e);
         }

@@ -82,8 +82,7 @@
             </div>
 
             <div class="col-12">
-                <p class="small text-secondary mb-0"> Photos are optional. Choose a stock picture first, or upload your own. An upload takes priority. Leave both unchanged to keep the current picture. If no finished-dish photo is set, gameplay uses the linked recipe photo.
-                </p>
+                <p class="small text-secondary mb-0"> Photos are optional. Choose a stock picture first, or upload your own. An upload takes priority. Leave both unchanged to keep the current picture.</p>
             </div>
 
             <div class="col-12 d-flex flex-wrap gap-2">

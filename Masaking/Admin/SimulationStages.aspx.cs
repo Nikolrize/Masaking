@@ -39,12 +39,7 @@ namespace Masaking.Admin
         private void BindPage()
         {
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@"SELECT s.title,s.isActive,
-                (SELECT COUNT(*) FROM dbo.simulationProgress p WHERE p.simulationID=s.simulationID) AS attempts
-                FROM dbo.simulations s WHERE s.simulationID=@id;
-                SELECT simulationStageID,stageNumber,title,instructions,
-                (SELECT COUNT(*) FROM dbo.simulationSteps st WHERE st.simulationStageID=g.simulationStageID) AS stepCount
-                FROM dbo.simulationStages g WHERE simulationID=@id ORDER BY stageNumber;", cn))
+            using (SqlCommand cmd = new SqlCommand(@"SELECT s.title,s.isActive, (SELECT COUNT(*) FROM dbo.simulationProgress p WHERE p.simulationID=s.simulationID) AS attempts FROM dbo.simulations s WHERE s.simulationID=@id; SELECT simulationStageID,stageNumber,title,instructions, (SELECT COUNT(*) FROM dbo.simulationSteps st WHERE st.simulationStageID=g.simulationStageID) AS stepCount FROM dbo.simulationStages g WHERE simulationID=@id ORDER BY stageNumber;", cn))
             {
                 cmd.Parameters.Add("@id", SqlDbType.Int).Value = SimulationId;
                 DataSet data = new DataSet();
@@ -53,9 +48,7 @@ namespace Masaking.Admin
                 DataRow simulation = data.Tables[0].Rows[0];
                 bool editable = !Convert.ToBoolean(simulation["isActive"]) && Convert.ToInt32(simulation["attempts"]) == 0;
                 lblHeading.Text = Server.HtmlEncode("Stages: " + Convert.ToString(simulation["title"]));
-                lblStatus.Text = editable
-                    ? "Create stages, then assign every step to a stage. Stage and step numbers must run consecutively."
-                    : "Stages are locked. Structural changes require an unpublished simulation without attempts.";
+                lblStatus.Text = editable ? "Create stages, then assign every step to a stage. Stage and step numbers must run consecutively." : "Stages are locked. Structural changes require an unpublished simulation without attempts.";
                 pnlStageEditor.Visible = editable;
                 gvStages.Columns[4].Visible = editable;
                 gvStages.DataSource = data.Tables[1];
@@ -72,8 +65,7 @@ namespace Masaking.Admin
             int number;
             string title = txtStageTitle.Text.Trim();
             string instructions = txtStageInstructions.Text.Trim();
-            if (!Int32.TryParse(txtStageNumber.Text, out number) || number < 1 || number > 20
-                || title.Length == 0 || title.Length > 100 || instructions.Length > 1000)
+            if (!Int32.TryParse(txtStageNumber.Text, out number) || number < 1 || number > 20 || title.Length == 0 || title.Length > 100 || instructions.Length > 1000)
             {
                 Message("Enter a stage number from 1-20, a title within 100 characters and instructions within 1,000 characters.", false);
                 return;
@@ -96,10 +88,7 @@ namespace Masaking.Admin
                 using (SqlTransaction tx = cn.BeginTransaction(IsolationLevel.Serializable))
                 {
                     CheckActivity("simulation", SimulationId, cn, tx);
-                    using (SqlCommand check = new SqlCommand(@"SELECT s.simulationID FROM dbo.simulations s WITH (UPDLOCK,HOLDLOCK)
-                        INNER JOIN dbo.recipes r ON r.recipeID=s.recipeID
-                        WHERE s.simulationID=@id AND s.isActive=0 AND r.status='Approved'
-                        AND NOT EXISTS (SELECT 1 FROM dbo.simulationProgress p WHERE p.simulationID=s.simulationID);", cn, tx))
+                    using (SqlCommand check = new SqlCommand(@"SELECT s.simulationID FROM dbo.simulations s WITH (UPDLOCK,HOLDLOCK) INNER JOIN dbo.recipes r ON r.recipeID=s.recipeID WHERE s.simulationID=@id AND s.isActive=0 AND r.status='Approved' AND NOT EXISTS (SELECT 1 FROM dbo.simulationProgress p WHERE p.simulationID=s.simulationID);", cn, tx))
                     {
                         check.Parameters.Add("@id", SqlDbType.Int).Value = SimulationId;
                         if (check.ExecuteScalar() == null)
@@ -179,9 +168,7 @@ namespace Masaking.Admin
             int stage;
             if (!Int32.TryParse(Convert.ToString(e.CommandArgument), out stage)) return;
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@"SELECT g.* FROM dbo.simulationStages g INNER JOIN dbo.simulations s ON s.simulationID=g.simulationID
-                WHERE g.simulationStageID=@stage AND g.simulationID=@id AND s.isActive=0
-                AND NOT EXISTS (SELECT 1 FROM dbo.simulationProgress p WHERE p.simulationID=s.simulationID);", cn))
+            using (SqlCommand cmd = new SqlCommand(@"SELECT g.* FROM dbo.simulationStages g INNER JOIN dbo.simulations s ON s.simulationID=g.simulationID WHERE g.simulationStageID=@stage AND g.simulationID=@id AND s.isActive=0 AND NOT EXISTS (SELECT 1 FROM dbo.simulationProgress p WHERE p.simulationID=s.simulationID);", cn))
             {
                 cmd.Parameters.Add("@id", SqlDbType.Int).Value = SimulationId;
                 cmd.Parameters.Add("@stage", SqlDbType.Int).Value = stage;
