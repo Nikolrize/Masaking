@@ -1,8 +1,10 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="IngredientEditor.ascx.cs" Inherits="Masaking.Controls.IngredientEditor" %>
 
 <div data-ingredient-editor>
+    <!-- Store ingredient data as JSON -->
     <asp:HiddenField ID="ingredientData" runat="server" />
 
+    <!-- Ingredient rows -->
     <div class="recipe-ingredient-rows" data-ingredient-list></div>
 
     <button type="button"
@@ -10,9 +12,9 @@
         data-add-ingredient>
         <i class="bi bi-plus-lg"></i>
         Add ingredient
-   
     </button>
 
+    <!-- JS template for clone -->
     <template data-ingredient-template>
         <div class="recipe-ingredient-row">
             <div>

@@ -2,15 +2,15 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Security.Cryptography;
 using System.IO;
+using System.Security.Cryptography;
 using System.Web;
 
 namespace Masaking.Infrastructure
 {
     public static class Database
     {
-        // Transparent fallback: profile and navbar components display initials, never a user icon.
+        // Transparent image used when initials are displayed instead of a profile photo
         public const string DefaultAvatar = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
         public static string AvatarUrl(object value)
@@ -144,16 +144,6 @@ namespace Masaking.Infrastructure
                 }
             }
             catch { return false; }
-        }
-
-        public static string Html(object value)
-        {
-            return HttpUtility.HtmlEncode(Convert.ToString(value));
-        }
-
-        public static SqlParameter P(string name, object value)
-        {
-            return new SqlParameter(name, value ?? DBNull.Value);
         }
     }
 }

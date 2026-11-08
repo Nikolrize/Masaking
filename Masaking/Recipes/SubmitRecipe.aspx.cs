@@ -106,8 +106,6 @@ namespace Masaking.Recipes
                 : "Your recipe will appear publicly after approval.";
         }
 
-        // The same data is read again when saving: ownership is never trusted
-        // just because the user was allowed to open the form earlier
         private DataSet ReadOwnedRecipe(
             SqlConnection con, SqlTransaction transaction, int recipeId)
         {
@@ -199,8 +197,7 @@ namespace Masaking.Recipes
             ddlDifficulty.SelectedValue = recipe["difficulty"].ToString();
             txtPrep.Text = recipe["preparationTime"].ToString();
             txtServings.Text = recipe["servings"].ToString();
-            txtCost.Text = Convert.ToDecimal(recipe["estimatedCost"])
-                .ToString("0.00", CultureInfo.InvariantCulture);
+            txtCost.Text = Convert.ToDecimal(recipe["estimatedCost"]).ToString("0.00", CultureInfo.InvariantCulture);
 
             imgExistingRecipe.ImageUrl = GetPhotoPreview(recipe["image"].ToString());
             imgExistingRecipe.Visible = !string.IsNullOrEmpty(imgExistingRecipe.ImageUrl);
@@ -213,12 +210,12 @@ namespace Masaking.Recipes
                 category.Selected = true;
             }
 
-            // Prepare the column names expected by IngredientEditor
+            // Rename columns to match the cooking-step editor's expected fields
             DataTable ingredients = data.Tables[1].Copy();
             ingredients.Columns["ingredientName"].ColumnName = "name";
             ingredientEditor.Initialise(ingredients);
 
-            // Prepare the column names expected by CookingStepEditor
+            // Rename columns to match the cooking-step editor's expected fields
             DataTable steps = data.Tables[2].Copy();
             steps.Columns["estimatedMinutes"].ColumnName = "minutes";
             stepEditor.Initialise(steps);
@@ -228,15 +225,13 @@ namespace Masaking.Recipes
 
         private void LoadCategories()
         {
-            ddlCategory.DataSource =
-                CategoryRepository.GetActiveCategories(true);
+            ddlCategory.DataSource = CategoryRepository.GetActiveCategories(true);
 
             ddlCategory.DataTextField = "categoryName";
             ddlCategory.DataValueField = "categoryID";
             ddlCategory.DataBind();
 
-            ddlCategory.Items.Insert(
-                0, new ListItem("Choose a category", ""));
+            ddlCategory.Items.Insert(0, new ListItem("Choose a category", ""));
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -272,8 +267,7 @@ namespace Masaking.Recipes
                 return;
             }
 
-            Response.Redirect(ResolveUrl("~/Recipes/MyRecipes") +
-                (editId.HasValue ? "?saved=updated" : "?saved=1"), false);
+            Response.Redirect(ResolveUrl("~/Recipes/MyRecipes") + (editId.HasValue ? "?saved=updated" : "?saved=1"), false);
             Context.ApplicationInstance.CompleteRequest();
         }
 
@@ -316,16 +310,14 @@ namespace Masaking.Recipes
                 return ShowError("Enter a preparation time from 0 to 1,440 minutes.");
             }
 
-            if (!TryReadDecimal(txtCost.Text, out cost) || cost < 0 || cost > 999999.99m ||
-                decimal.Round(cost, 2) != cost)
+            if (!TryReadDecimal(txtCost.Text, out cost) || cost < 0 || cost > 999999.99m || decimal.Round(cost, 2) != cost)
             {
                 return ShowError("Enter a valid cost with no more than two decimal places.");
             }
 
             int categoryId;
 
-            if (!int.TryParse(ddlCategory.SelectedValue, out categoryId) ||
-                categoryId <= 0)
+            if (!int.TryParse(ddlCategory.SelectedValue, out categoryId) || categoryId <= 0)
             {
                 return ShowError("Choose a category.");
             }
@@ -402,15 +394,13 @@ namespace Masaking.Recipes
                 string instruction = row["instruction"].ToString().Trim();
                 int minutes;
 
-                if (string.IsNullOrWhiteSpace(instruction) ||
-                    instruction.Length > 2000)
+                if (string.IsNullOrWhiteSpace(instruction) || instruction.Length > 2000)
                 {
                     ShowError("Enter an instruction within 2,000 characters for each step.");
                     return null;
                 }
 
-                if (!int.TryParse(row["minutes"].ToString(), out minutes) ||
-                    minutes < 0 || minutes > 1440)
+                if (!int.TryParse(row["minutes"].ToString(), out minutes) || minutes < 0 || minutes > 1440)
                 {
                     ShowError("Enter between 0 and 1,440 minutes for each step.");
                     return null;
@@ -436,8 +426,7 @@ namespace Masaking.Recipes
 
         private bool TryReadDecimal(string value, out decimal number)
         {
-            return decimal.TryParse(value.Trim(), NumberStyles.AllowDecimalPoint,
-                CultureInfo.InvariantCulture, out number);
+            return decimal.TryParse(value.Trim(), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out number);
         }
 
         private bool SaveRecipe(int servings, int preparationTime, decimal cost,
@@ -615,7 +604,6 @@ namespace Masaking.Recipes
                 object image = DBNull.Value;
                 bool optional = false;
 
-                // Preserve metadata that the current editor does not expose.
                 if (existing != null)
                 {
                     foreach (DataRow old in existing.Tables[1].Rows)
@@ -706,13 +694,11 @@ namespace Masaking.Recipes
                 WHERE categoryID = @categoryID
                     AND isActive = 1;", con, transaction);
 
-            check.Parameters.Add("@categoryID", SqlDbType.Int).Value =
-                categoryId;
+            check.Parameters.Add("@categoryID", SqlDbType.Int).Value = categoryId;
 
             if (Convert.ToInt32(check.ExecuteScalar()) != 1)
             {
-                throw new InvalidOperationException(
-                    "That category is no longer available. Choose another category.");
+                throw new InvalidOperationException("That category is no longer available. Choose another category.");
             }
 
             SqlCommand cmd = new SqlCommand(@"

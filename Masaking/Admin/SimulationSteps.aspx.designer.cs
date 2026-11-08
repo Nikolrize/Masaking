@@ -13,6 +13,11 @@ namespace Masaking.Admin
 
     public partial class SimulationSteps
     {
+        protected global::System.Web.UI.WebControls.HyperLink lnkStages;
+        protected global::System.Web.UI.WebControls.DropDownList ddlStage;
+        protected global::System.Web.UI.WebControls.DropDownList ddlActionType;
+        protected global::System.Web.UI.WebControls.DropDownList ddlStockImage;
+
 
         /// <summary>
         /// lnkBack control.

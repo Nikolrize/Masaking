@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using Masaking.Infrastructure;
 
 namespace Masaking.Learning
 {
-    public partial class TakeQuiz : System.Web.UI.Page
+    public partial class TakeQuiz : ResponsivePage
     {
         private int QuizId
         {
@@ -48,7 +49,7 @@ namespace Masaking.Learning
                 SELECT c.title, c.description, c.timeLimit,
                        (SELECT COUNT(*) FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID) AS questionCount
                 FROM dbo.challenges c
-                WHERE c.challengeID=@id AND c.isActive=1 AND EXISTS ( SELECT 1 FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID);";
+                WHERE c.challengeID=@id AND c.isActive=1 AND (c.recipeID IS NULL OR EXISTS (SELECT 1 FROM dbo.recipes linkedRecipe WHERE linkedRecipe.recipeID=c.recipeID AND linkedRecipe.status='Approved')) AND EXISTS ( SELECT 1 FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID);";
 
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))
@@ -59,7 +60,7 @@ namespace Masaking.Learning
                 {
                     if (!reader.Read())
                     {
-                        ShowError("This quiz is unavailable.");
+                        ShowError("This challenge is unavailable.");
                         return;
                     }
 
@@ -67,7 +68,7 @@ namespace Masaking.Learning
 
                     lblDescription.Text = Server.HtmlEncode(Convert.ToString(reader["description"]));
 
-                    lblTimeLimit.Text = "Time limit: " + Convert.ToInt32(reader["timeLimit"]) + " seconds";
+                    lblTimeLimit.Text = "Time limit: " + FormatSeconds(Convert.ToInt32(reader["timeLimit"]));
 
                     lblQuestionCount.Text = "Questions: " + Convert.ToInt32(reader["questionCount"]);
 
@@ -96,7 +97,7 @@ namespace Masaking.Learning
 
                     if (quiz.ExecuteScalar() == null)
                     {
-                        ShowError("Quiz not found.");
+                        ShowError("Challenge not found.");
                         return;
                     }
                 }
@@ -128,7 +129,7 @@ namespace Masaking.Learning
                         (score, timeTaken, status, startedAt, completedAt, userID, challengeID, remainingSeconds, lastResumedAt, currentQuestionNumber)
                         SELECT 0, 0, 'Paused', @now, NULL, @user, c.challengeID, c.timeLimit, NULL, 1
                         FROM dbo.challenges c
-                        WHERE c.challengeID=@quiz AND c.isActive=1 AND c.timeLimit BETWEEN 60 AND 3600
+                        WHERE c.challengeID=@quiz AND c.isActive=1 AND (c.recipeID IS NULL OR EXISTS (SELECT 1 FROM dbo.recipes linkedRecipe WHERE linkedRecipe.recipeID=c.recipeID AND linkedRecipe.status='Approved')) AND c.timeLimit BETWEEN 60 AND 3600
                           AND EXISTS (SELECT 1 FROM dbo.challengeQuestions q WHERE q.challengeID=c.challengeID);
                         SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
@@ -145,7 +146,7 @@ namespace Masaking.Learning
 
                         if (created == null || created == DBNull.Value)
                         {
-                            ShowError("This quiz no longer accepts new attempts.");
+                            ShowError("This challenge no longer accepts new attempts.");
                             return;
                         }
 
@@ -175,12 +176,28 @@ namespace Masaking.Learning
         //(shared) attempt-reading
         public int CountdownSeconds { get; private set; }
         public bool TimerRunning { get; private set; }
+        public int TotalSeconds { get; private set; }
+        public string RemainingPercentage
+        {
+            get
+            {
+                decimal percentage = TotalSeconds > 0 ? 100m * CountdownSeconds / TotalSeconds : 0m;
+                return Math.Max(0m, Math.Min(100m, percentage)).ToString("0.##", CultureInfo.InvariantCulture);
+            }
+        }
+
+        internal static string FormatSeconds(int seconds)
+        {
+            seconds = Math.Max(0, seconds);
+            return (seconds / 60).ToString("00", CultureInfo.InvariantCulture) + ":"
+                + (seconds % 60).ToString("00", CultureInfo.InvariantCulture);
+        }
 
         private DataRow ReadAttempt(SqlConnection cn, SqlTransaction tx)
         {
             string hint = tx == null ? "" : " WITH (UPDLOCK, HOLDLOCK)";
 
-            string sql = @"SELECT a.*, c.title,
+            string sql = @"SELECT a.*, c.title,c.timeLimit AS totalSeconds,
              (SELECT COUNT(*) FROM dbo.challengeQuestions q WHERE q.challengeID=a.challengeID) AS questionCount FROM dbo.challengeAttempts a" + hint + @" INNER JOIN dbo.challenges c ON c.challengeID=a.challengeID WHERE a.attemptID=@attempt AND a.userID=@user;";
 
             using (SqlCommand cmd = new SqlCommand(sql, cn, tx))
@@ -393,12 +410,14 @@ namespace Masaking.Learning
         {
             TimerRunning = false;
             CountdownSeconds = 0;
+            TotalSeconds = 0;
 
             pnlStart.Visible = false;
             pnlAttempt.Visible = false;
             pnlPaused.Visible = false;
             pnlQuestion.Visible = false;
             pnlResult.Visible = false;
+            pnlTimer.Visible = false;
 
             using (SqlConnection cn = Database.Open())
             {
@@ -414,8 +433,15 @@ namespace Masaking.Learning
                 int total = Convert.ToInt32(attempt["questionCount"]);
 
                 lblTitle.Text = Server.HtmlEncode(Convert.ToString(attempt["title"]));
-                lblAttempt.Text = "Attempt ID: " + AttemptId;
-                lblStatus.Text = "Status: " + Server.HtmlEncode(status);
+                using (SqlCommand ordinal = new SqlCommand(@" SELECT COUNT(*) FROM dbo.challengeAttempts WHERE userID=@user AND challengeID=@challenge AND attemptID<=@attempt;", cn))
+                {
+                    ordinal.Parameters.Add("@user", SqlDbType.Int).Value = Database.UserId.Value;
+                    ordinal.Parameters.Add("@challenge", SqlDbType.Int).Value = attempt["challengeID"];
+                    ordinal.Parameters.Add("@attempt", SqlDbType.Int).Value = AttemptId;
+                    lblAttempt.Text = "Attempt " + Convert.ToInt32(ordinal.ExecuteScalar());
+                }
+                lblStatus.Text = status == "InProgress" ? "In progress" : status == "TimedOut" ? "Time expired" : Server.HtmlEncode(status);
+                lblStatus.CssClass = status == "InProgress" ? "attempt-status status-running" : "attempt-status";
                 pnlAttempt.Visible = true;
 
                 if (status == "Completed" || status == "TimedOut")
@@ -425,14 +451,17 @@ namespace Masaking.Learning
 
                     lblResult.Text = score + " / " + total + " (" + percentage.ToString("0.#") + "%)";
 
-                    lblRemaining.Text = "Time used: " + Convert.ToInt32(attempt["timeTaken"]) + " seconds";
+                    lblTimeUsed.Text = "Time used: " + FormatSeconds(Convert.ToInt32(attempt["timeTaken"]));
 
                     pnlResult.Visible = true;
                     return;
                 }
 
                 int remaining = Convert.ToInt32(attempt["remainingSeconds"]);
-                lblRemaining.Text = "Time remaining: " + remaining + " seconds";
+                CountdownSeconds = remaining;
+                TotalSeconds = Convert.ToInt32(attempt["totalSeconds"]);
+                pnlTimer.Visible = true;
+                lblRemaining.Text = "Time remaining: " + FormatSeconds(remaining);
 
                 if (status == "Paused")
                 {
@@ -467,10 +496,13 @@ namespace Masaking.Learning
 
                         for (int i = 0; i < columns.Length; i++)
                         {
-                            rblAnswers.Items[i].Text = Server.HtmlEncode(Convert.ToString(reader[columns[i]]));
+                            rblAnswers.Items[i].Text = rblAnswers.Items[i].Value + ". "
+                                + Server.HtmlEncode(Convert.ToString(reader[columns[i]]));
                         }
 
                         string selected = Convert.ToString(reader["selectedOption"]).Trim();
+                        lblSaveState.Text = String.IsNullOrEmpty(selected)
+                            ? "No answer selected for this question." : "Your selected answer is saved.";
 
                         if (rblAnswers.Items.FindByValue(selected) != null)
                         {

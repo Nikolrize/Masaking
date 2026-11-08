@@ -81,12 +81,6 @@ namespace Masaking.Infrastructure
                     .GetAwaiter().GetResult();
         }
 
-        public static bool HasValidFormat(string token)
-        {
-            byte[] bytes;
-            return TryDecode(token, out bytes);
-        }
-
         private static bool TryDecode(string token, out byte[] bytes)
         {
             bytes = null;

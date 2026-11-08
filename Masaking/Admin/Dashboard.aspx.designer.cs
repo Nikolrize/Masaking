@@ -10,13 +10,9 @@
 namespace Masaking.Admin
 {
 
+
     public partial class Dashboard
     {
-
-        /// <summary>
-        /// BodyContent control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Content BodyContent;
 
         /// <summary>
         /// rptStatistics control.
@@ -55,39 +51,21 @@ namespace Masaking.Admin
         protected global::System.Web.UI.WebControls.HyperLink lnkManageRecipes;
 
         /// <summary>
-        /// pnlShortcuts control.
+        /// pnlRecentActivity control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlShortcuts;
+        protected global::System.Web.UI.WebControls.Panel pnlRecentActivity;
 
         /// <summary>
-        /// lnkManageUsers control.
+        /// gvRecentActivity control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkManageUsers;
-
-        /// <summary>
-        /// lnkModeration control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkModeration;
-
-        /// <summary>
-        /// lnkManageQuizzes control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkManageQuizzes;
+        protected global::System.Web.UI.WebControls.GridView gvRecentActivity;
     }
 }

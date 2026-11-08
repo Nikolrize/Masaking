@@ -1,18 +1,19 @@
+using Masaking.Infrastructure;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
-    public partial class SimulationSteps : System.Web.UI.Page
+    public partial class SimulationSteps : ActivityEditorPage
     {
+        protected override string ActivityKind { get { return "simulation"; } }
+        protected override int ActivityId { get { return SimulationId; } }
+
         private int SimulationId
         {
             get
@@ -35,11 +36,34 @@ namespace Masaking.Admin
             set { ViewState["ImagesOnly"] = value; }
         }
 
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            StockImages.Bind(ddlStockImage, "ingredients");
+        }
+
+        private void BindStages(SqlConnection cn)
+        {
+            using (SqlCommand cmd = new SqlCommand("SELECT simulationStageID,CONVERT(nvarchar(10),stageNumber)+N'. '+title AS label FROM dbo.simulationStages WHERE simulationID=@id ORDER BY stageNumber;", cn))
+            {
+                cmd.Parameters.Add("@id", SqlDbType.Int).Value = SimulationId;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    ddlStage.DataSource = reader;
+                    ddlStage.DataValueField = "simulationStageID";
+                    ddlStage.DataTextField = "label";
+                    ddlStage.DataBind();
+                }
+                ddlStage.Items.Insert(0, new ListItem("-- Main cooking area (no stage) --", ""));
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             Page.Form.Enctype = "multipart/form-data";
+            lnkStages.NavigateUrl = EditorUrl("SimulationStages.aspx?id=") + SimulationId;
             SetEditorMode(ImagesOnly);
 
             if (!IsPostBack)
@@ -72,7 +96,7 @@ namespace Masaking.Admin
                             return;
                         }
 
-                        lblHeading.Text = Server.HtmlEncode( "Steps: " + Convert.ToString(reader["title"]));
+                        lblHeading.Text = Server.HtmlEncode("Steps: " + Convert.ToString(reader["title"]));
 
                         canEditImages = !Convert.ToBoolean(reader["isActive"]);
                         editable = canEditImages && Convert.ToInt32(reader["attemptCount"]) == 0;
@@ -80,13 +104,12 @@ namespace Masaking.Admin
                         pnlEditor.Visible = canEditImages && (editable || ImagesOnly);
                         gvSteps.Columns[3].Visible = canEditImages;
 
-                        lblStatus.Text = editable
-                            ? "Draft: steps can be added, edited or deleted."
-                            : canEditImages
-                                ? "Step content is locked because attempts exist. Edit image changes artwork only."
-                                : "Published: unpublish before changing images. Step content stays locked once attempts exist.";
+                        lblStatus.Text = editable ? "Draft: steps can be added, edited or deleted."
+                            : canEditImages ? "Step content is locked because attempts exist. Edit image changes artwork only." : "Published: unpublish before changing images. Step content stays locked once attempts exist.";
                     }
                 }
+
+                BindStages(cn);
 
                 const string ingredientsSql = @" SELECT i.ingredientID, i.ingredientName FROM dbo.ingredients i INNER JOIN dbo.simulations s ON s.recipeID=i.recipeID WHERE s.simulationID=@id ORDER BY i.displayOrder, i.ingredientID;";
 
@@ -106,7 +129,7 @@ namespace Masaking.Admin
                     ddlIngredient.Items.Insert(0, new ListItem("--Select an ingredient --", ""));
                 }
 
-                const string stepsSql = @"SELECT st.simulationStepID, st.stepNumber, i.ingredientName, st.instruction FROM dbo.simulationSteps st INNER JOIN dbo.ingredients i ON i.ingredientID=st.ingredientID WHERE st.simulationID=@id ORDER BY st.stepNumber;";
+                const string stepsSql = @"SELECT st.simulationStepID,st.stepNumber,COALESCE(i.ingredientName,'Cooking action') AS ingredientName,st.instruction,st.actionType,COALESCE(g.title,'Main cooking area') AS stageTitle FROM dbo.simulationSteps st LEFT JOIN dbo.ingredients i ON i.ingredientID=st.ingredientID LEFT JOIN dbo.simulationStages g ON g.simulationStageID=st.simulationStageID WHERE st.simulationID=@id ORDER BY st.stepNumber;";
 
                 using (SqlCommand cmd = new SqlCommand(stepsSql, cn))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
@@ -137,14 +160,15 @@ namespace Masaking.Admin
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             int number = 0;
             int ingredientId = 0;
             string instruction = txtInstruction.Text.Trim();
 
             if (!ImagesOnly && (SimulationId == 0
                 || !Int32.TryParse(txtNumber.Text, out number) || number < 1 || number > 100
-                || !Int32.TryParse(ddlIngredient.SelectedValue, out ingredientId) || ingredientId <= 0
+                || (ddlActionType.SelectedValue == "Ingredient" && (!Int32.TryParse(ddlIngredient.SelectedValue, out ingredientId) || ingredientId <= 0))
+                || (ddlActionType.SelectedValue != "Ingredient" && ddlActionType.SelectedValue != "Action")
                 || instruction.Length == 0 || instruction.Length > 1000))
             {
                 ShowMessage("Enter a step number from 1-100, select an ingredient, "
@@ -156,9 +180,9 @@ namespace Masaking.Admin
                 ShowMessage("Select an existing step before changing its image.", false);
                 return;
             }
-            if (uploadStepImage.HasFile && chkUseDefaultImage.Checked)
+            if ((uploadStepImage.HasFile || ddlStockImage.SelectedValue.Length > 0) && chkUseDefaultImage.Checked)
             {
-                ShowMessage("Choose a replacement photo OR use the ingredient default, not both.", false);
+                ShowMessage("Choose a picture or reset to the ingredient picture, not both.", false);
                 return;
             }
 
@@ -186,6 +210,7 @@ namespace Masaking.Admin
                 using (SqlConnection cn = Database.Open())
                 using (SqlTransaction tx = cn.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    CheckActivity("simulation", SimulationId, cn, tx);
                     //image only edits preserve ingredient, order, instruction and saved results
                     const string eligibilitySql = @"SELECT s.recipeID FROM dbo.simulations s WITH (UPDLOCK,HOLDLOCK) WHERE s.simulationID=@id AND s.isActive=0 AND (@imagesOnly=1 OR (NOT EXISTS (SELECT 1 FROM dbo.simulationProgress p WHERE p.simulationID=@id) AND EXISTS (SELECT 1 FROM dbo.recipes r WHERE r.recipeID=s.recipeID AND r.status='Approved')));";
                     object recipe;
@@ -201,11 +226,14 @@ namespace Masaking.Admin
                         return false;
                     }
 
+                    string actionType = ddlActionType.SelectedValue;
+                    int parsedStage;
+                    int? stageId = Int32.TryParse(ddlStage.SelectedValue, out parsedStage) ? (int?)parsedStage : null;
                     string image = "";
                     int previousIngredient = 0;
                     if (stepId.HasValue)
                     {
-                        using (SqlCommand cmd = new SqlCommand(@"SELECT ingredientID,image FROM dbo.simulationSteps WITH (UPDLOCK,HOLDLOCK) WHERE simulationStepID=@step AND simulationID=@id;", cn, tx))
+                        using (SqlCommand cmd = new SqlCommand(@"SELECT ingredientID,image,actionType,simulationStageID FROM dbo.simulationSteps WITH (UPDLOCK,HOLDLOCK) WHERE simulationStepID=@step AND simulationID=@id;", cn, tx))
                         {
                             cmd.Parameters.Add("@step", SqlDbType.Int).Value = stepId.Value;
                             cmd.Parameters.Add("@id", SqlDbType.Int).Value = SimulationId;
@@ -217,7 +245,12 @@ namespace Masaking.Admin
                                     return false;
                                 }
                                 image = Convert.ToString(reader["image"]);
-                                previousIngredient = Convert.ToInt32(reader["ingredientID"]);
+                                previousIngredient = reader["ingredientID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ingredientID"]);
+                                if (imagesOnly)
+                                {
+                                    actionType = Convert.ToString(reader["actionType"]);
+                                    stageId = reader["simulationStageID"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["simulationStageID"]);
+                                }
                             }
                         }
                     }
@@ -227,7 +260,7 @@ namespace Masaking.Admin
                         return false;
                     }
 
-                    if (!imagesOnly && !deleting)
+                    if (!imagesOnly && !deleting && actionType == "Ingredient")
                     {
                         using (SqlCommand check = new SqlCommand(@"
                             SELECT ingredientID FROM dbo.ingredients
@@ -241,28 +274,47 @@ namespace Masaking.Admin
                                 return false;
                             }
                         }
-                        // An old garlic image must not remain attached after choosing a different ingredient.
+                        // Clear the image when the selected ingredient changes
                         if (stepId.HasValue && previousIngredient != ingredientId) image = "";
                     }
 
-                    if (!deleting)
+                    if (!imagesOnly && !deleting)
+                    {
+                        using (SqlCommand stageCheck = new SqlCommand("SELECT COUNT(*) FROM dbo.simulationStages WHERE simulationID=@id AND (@stage IS NULL OR simulationStageID=@stage);", cn, tx))
+                        {
+                            stageCheck.Parameters.Add("@id", SqlDbType.Int).Value = SimulationId;
+                            stageCheck.Parameters.Add("@stage", SqlDbType.Int).Value = stageId.HasValue ? (object)stageId.Value : DBNull.Value;
+                            int count = Convert.ToInt32(stageCheck.ExecuteScalar());
+                            if ((stageId.HasValue && count != 1) || (!stageId.HasValue && count > 0))
+                            {
+                                ShowMessage("Select a stage belonging to this simulation. Every step needs a stage once stages exist.", false);
+                                return false;
+                            }
+                        }
+                        if (actionType != "Ingredient" && actionType != "Action") return false;
+                    }
+                    if (!deleting && actionType == "Ingredient")
                     {
                         if (uploadStepImage.HasFile)
                         {
                             newUpload = SimulationImages.Save(uploadStepImage.PostedFile);
                             image = newUpload;
                         }
+                        else if (ddlStockImage.SelectedValue.Length > 0)
+                            image = StockImages.Selected(ddlStockImage, "ingredients");
                         else if (chkUseDefaultImage.Checked) image = "";
                         // No upload or reset: keep the existing override. A new step starts without one.
                     }
+
+                    if (actionType == "Action") image = "";
 
                     string sql = deleting
                         ? @"DELETE FROM dbo.simulationSteps WHERE simulationStepID=@step AND simulationID=@id;"
                         : imagesOnly
                             ? @"UPDATE dbo.simulationSteps SET image=@image WHERE simulationStepID=@step AND simulationID=@id;"
                             : stepId.HasValue
-                                ? @"UPDATE dbo.simulationSteps SET stepNumber=@number,ingredientID=@ingredient, instruction=@instruction,image=@image WHERE simulationStepID=@step AND simulationID=@id;"
-                                : @"INSERT INTO dbo.simulationSteps (simulationID,stepNumber,ingredientID,instruction,image) VALUES (@id,@number,@ingredient,@instruction,@image);";
+                                ? @"UPDATE dbo.simulationSteps SET stepNumber=@number,ingredientID=@ingredient,instruction=@instruction,image=@image,actionType=@type,simulationStageID=@stage WHERE simulationStepID=@step AND simulationID=@id;"
+                                : @"INSERT INTO dbo.simulationSteps (simulationID,stepNumber,ingredientID,instruction,image,actionType,simulationStageID) VALUES (@id,@number,@ingredient,@instruction,@image,@type,@stage);";
 
                     using (SqlCommand cmd = new SqlCommand(sql, cn, tx))
                     {
@@ -270,7 +322,9 @@ namespace Masaking.Admin
                         cmd.Parameters.Add("@step", SqlDbType.Int).Value =
                             stepId.HasValue ? (object)stepId.Value : DBNull.Value;
                         cmd.Parameters.Add("@number", SqlDbType.Int).Value = number;
-                        cmd.Parameters.Add("@ingredient", SqlDbType.Int).Value = ingredientId;
+                        cmd.Parameters.Add("@ingredient", SqlDbType.Int).Value = actionType == "Ingredient" ? (object)ingredientId : DBNull.Value;
+                        cmd.Parameters.Add("@type", SqlDbType.NVarChar, 20).Value = actionType;
+                        cmd.Parameters.Add("@stage", SqlDbType.Int).Value = stageId.HasValue ? (object)stageId.Value : DBNull.Value;
                         cmd.Parameters.Add("@instruction", SqlDbType.NVarChar, 1000).Value = instruction;
                         cmd.Parameters.Add("@image", SqlDbType.NVarChar, 255).Value =
                             image.Length == 0 ? (object)DBNull.Value : image;
@@ -320,7 +374,7 @@ namespace Masaking.Admin
 
         protected void gvSteps_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             bool editImage = e.CommandName == "EditStepImage";
             if (!editImage && e.CommandName != "EditStep" && e.CommandName != "RemoveStep") return;
             int stepId;
@@ -342,7 +396,7 @@ namespace Masaking.Admin
             }
 
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@"SELECT st.stepNumber,st.ingredientID,st.instruction FROM dbo.simulationSteps st INNER JOIN dbo.simulations s ON s.simulationID=st.simulationID WHERE st.simulationStepID=@step AND st.simulationID=@id AND s.isActive=0 AND (@imagesOnly=1 OR NOT EXISTS (SELECT 1 FROM dbo.simulationProgress WHERE simulationID=@id));", cn))
+            using (SqlCommand cmd = new SqlCommand(@"SELECT st.stepNumber,st.ingredientID,st.instruction,st.actionType,st.simulationStageID FROM dbo.simulationSteps st INNER JOIN dbo.simulations s ON s.simulationID=st.simulationID WHERE st.simulationStepID=@step AND st.simulationID=@id AND s.isActive=0 AND (@imagesOnly=1 OR NOT EXISTS (SELECT 1 FROM dbo.simulationProgress WHERE simulationID=@id));", cn))
             {
                 cmd.Parameters.Add("@step", SqlDbType.Int).Value = stepId;
                 cmd.Parameters.Add("@id", SqlDbType.Int).Value = SimulationId;
@@ -355,7 +409,7 @@ namespace Masaking.Admin
                         return;
                     }
                     string ingredient = Convert.ToString(reader["ingredientID"]);
-                    if (ddlIngredient.Items.FindByValue(ingredient) == null)
+                    if (reader["ingredientID"] != DBNull.Value && ddlIngredient.Items.FindByValue(ingredient) == null)
                     {
                         ShowMessage("The ingredient is no longer available for this recipe.", false);
                         return;
@@ -364,6 +418,10 @@ namespace Masaking.Admin
                     ImagesOnly = editImage;
                     txtNumber.Text = Convert.ToString(reader["stepNumber"]);
                     ddlIngredient.SelectedValue = ingredient;
+                    ddlActionType.SelectedValue = Convert.ToString(reader["actionType"]);
+                    string stageValue = Convert.ToString(reader["simulationStageID"]);
+                    ddlStage.SelectedValue = ddlStage.Items.FindByValue(stageValue) != null ? stageValue : "";
+                    ddlStockImage.SelectedIndex = 0;
                     txtInstruction.Text = Convert.ToString(reader["instruction"]);
                     chkUseDefaultImage.Checked = false;
                     lblEditorHeading.Text = editImage ? "Edit step image" : "Edit step";
@@ -376,7 +434,7 @@ namespace Masaking.Admin
 
         protected void btnClear_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             ResetEditor();
             BindPage();
@@ -386,9 +444,12 @@ namespace Masaking.Admin
         {
             EditingId = null;
             ImagesOnly = false;
+            ddlActionType.SelectedValue = "Ingredient";
             SetEditorMode(false);
             lblEditorHeading.Text = "New step";
             txtInstruction.Text = "";
+            ddlActionType.SelectedValue = "Ingredient";
+            ddlStockImage.SelectedIndex = 0;
             chkUseDefaultImage.Checked = false;
             if (ddlIngredient.Items.Count > 0) ddlIngredient.SelectedIndex = 0;
             SetImagePreview("", "");
@@ -396,18 +457,49 @@ namespace Masaking.Admin
 
         private void SetEditorMode(bool imagesOnly)
         {
-            txtNumber.Enabled = ddlIngredient.Enabled = txtInstruction.Enabled = !imagesOnly;
+            txtNumber.Enabled = txtInstruction.Enabled = ddlStage.Enabled = ddlActionType.Enabled = !imagesOnly;
+            bool ingredient = ddlActionType.SelectedValue == "Ingredient";
+            ddlIngredient.Enabled = !imagesOnly && ingredient;
+            ddlStockImage.Enabled = uploadStepImage.Enabled = chkUseDefaultImage.Enabled = ingredient;
             btnSave.Text = imagesOnly ? "Save image" : "Save step";
         }
 
         protected void ddlIngredient_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
+            ddlStockImage.SelectedIndex = 0;
+            RefreshImagePreview();
+        }
+
+        protected void ddlActionType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!RequireEditor()) return;
+            if (ddlActionType.SelectedValue == "Action") ddlIngredient.SelectedIndex = 0;
+            ddlStockImage.SelectedIndex = 0;
+            SetEditorMode(ImagesOnly);
+            RefreshImagePreview();
+        }
+
+        protected void ddlStockImage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!RequireEditor()) return;
             RefreshImagePreview();
         }
 
         private void RefreshImagePreview()
         {
+            if (ddlActionType.SelectedValue == "Action")
+            {
+                SetImagePreview("", "");
+                lblImageSource.Text = "Cooking actions use a Complete step button and do not need an ingredient picture.";
+                return;
+            }
+            if (ddlStockImage.SelectedValue.Length > 0)
+            {
+                SetImagePreview(StockImages.Selected(ddlStockImage, "ingredients"), "");
+                lblImageSource.Text = "Selected stock picture. An uploaded picture takes priority.";
+                return;
+            }
             int ingredientId;
             if (!Int32.TryParse(ddlIngredient.SelectedValue, out ingredientId))
             {

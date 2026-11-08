@@ -1,11 +1,9 @@
+using Masaking.Infrastructure;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
-using System.Web;
-using System.Web.UI;
-using Masaking.Infrastructure;
 
 namespace Masaking.Account
 {
@@ -45,21 +43,6 @@ namespace Masaking.Account
                     ? "M"
                     : (words[0].Substring(0, 1) + (words.Length > 1 ? words[words.Length - 1].Substring(0, 1) : "")).ToUpperInvariant();
             }
-        }
-
-        protected string H(object value)
-        {
-            return HttpUtility.HtmlEncode(Convert.ToString(value));
-        }
-
-        protected string Icon(string name, string extra = "")
-        {
-            return "<i class='bi bi-" + name + " profile-icon " + extra + "' aria-hidden='true'></i>";
-        }
-
-        protected string ContactIcon(string name)
-        {
-            return Icon(name);
         }
 
         protected override void OnInit(EventArgs e)
