@@ -118,7 +118,7 @@
                                     CommandName="EditSimulationImages"
                                     CommandArgument='<%# Eval("simulationID") %>'
                                     Visible='<%# !Convert.ToBoolean(Eval("isActive")) %>' />
-                                <asp:HyperLink ID="lnkSteps" runat="server" Text="Manage steps" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# "~/Admin/SimulationSteps.aspx?id=" + Eval("simulationID") %>' />
+                                <asp:HyperLink ID="lnkSteps" runat="server" Text="Manage steps" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# EditorUrl("SimulationSteps.aspx?id=") + Eval("simulationID") %>' />
 
                                 <asp:LinkButton ID="btnPublishSimulation" runat="server" Text="Publish" CausesValidation="False" CssClass="btn btn-sm btn-success" CommandName="PublishSimulation" CommandArgument='<%# Eval("simulationID") %>' Visible='<%# !Convert.ToBoolean(Eval("isActive")) %>' OnClientClick="return confirm('Publish this simulation?');" />
 

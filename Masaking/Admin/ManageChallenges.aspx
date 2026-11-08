@@ -15,6 +15,10 @@
         <asp:Label ID="lblEditorHeading" runat="server" Text="New challenge" CssClass="h5 d-block mb-3" />
 
         <div class="row g-3">
+            <div class="col-12">
+                <asp:Label ID="lblRecipe" runat="server" Text="Approved recipe" AssociatedControlID="ddlRecipe" CssClass="form-label" />
+                <asp:DropDownList ID="ddlRecipe" runat="server" CssClass="form-select" />
+            </div>
 
             <div class="col-12">
                 <asp:Label ID="lblQuizTitle" runat="server" AssociatedControlID="txtTitle" Text="Challenge title" CssClass="form-label" />
@@ -75,6 +79,7 @@
                 <Columns>
                     <asp:BoundField DataField="challengeID" HeaderText="ID" SortExpression="challengeID" />
                     <asp:BoundField DataField="title" HeaderText="Challenge" SortExpression="title" />
+                    <asp:BoundField DataField="recipeTitle" HeaderText="Recipe" />
                     <asp:TemplateField HeaderText="Difficulty" SortExpression="difficultyOrder">
                         <ItemTemplate><span class='<%# AdminTable.DifficultyBadge(Eval("difficulty")) %>'><%#: Eval("difficulty") %></span></ItemTemplate>
                     </asp:TemplateField>

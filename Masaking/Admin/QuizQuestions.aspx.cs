@@ -6,8 +6,11 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
-    public partial class QuizQuestions : System.Web.UI.Page
+    public partial class QuizQuestions : ActivityEditorPage
     {
+        protected override string ActivityKind { get { return "challenge"; } }
+        protected override int ActivityId { get { return QuizId; } }
+
         private int QuizId
         {
             get
@@ -31,7 +34,7 @@ namespace Masaking.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             if (!IsPostBack)
             {
@@ -70,11 +73,7 @@ namespace Masaking.Admin
                     }
                 }
 
-                using (SqlCommand cmd = new SqlCommand(@"
-                    SELECT questionID, questionNumber, questionText, correctOption
-                    FROM dbo.challengeQuestions
-                    WHERE challengeID=@id
-                    ORDER BY questionNumber;", cn))
+                using (SqlCommand cmd = new SqlCommand(@" SELECT questionID, questionNumber, questionText, correctOption FROM dbo.challengeQuestions WHERE challengeID=@id ORDER BY questionNumber;", cn))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                 {
                     cmd.Parameters.Add("@id", SqlDbType.Int).Value = QuizId;
@@ -93,7 +92,7 @@ namespace Masaking.Admin
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             int number = 0;
             string question = txtQuestion.Text.Trim();
@@ -131,6 +130,7 @@ namespace Masaking.Admin
                     using (SqlCommand check =
                         new SqlCommand(eligibility, cn, tx))
                     {
+                        CheckActivity("challenge", QuizId, cn, tx);
                         check.Parameters.Add("@id", SqlDbType.Int).Value = QuizId;
 
                         if (check.ExecuteScalar() == null)
@@ -162,9 +162,7 @@ namespace Masaking.Admin
                         }
                     }
 
-                    string sql = EditingId.HasValue ? @"UPDATE dbo.challengeQuestions
-                            SET questionNumber=@number, questionText=@question, optionA=@a, optionB=@b, optionC=@c, optionD=@d, correctOption=@correct, explanation=@explanation
-                            WHERE questionID=@questionId AND challengeID=@id;"
+                    string sql = EditingId.HasValue ? @"UPDATE dbo.challengeQuestions SET questionNumber=@number, questionText=@question, optionA=@a, optionB=@b, optionC=@c, optionD=@d, correctOption=@correct, explanation=@explanation WHERE questionID=@questionId AND challengeID=@id;"
                         : @"INSERT INTO dbo.challengeQuestions (challengeID, questionNumber, questionText, optionA, optionB, optionC, optionD, correctOption, explanation)
                             VALUES (@id, @number, @question, @a, @b, @c, @d, @correct, @explanation);";
 
@@ -210,7 +208,7 @@ namespace Masaking.Admin
         protected void gvQuestions_RowCommand(
             object sender, GridViewCommandEventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             if (e.CommandName != "EditQuestion" && e.CommandName != "RemoveQuestion") return;
 
             int id;
@@ -228,10 +226,7 @@ namespace Masaking.Admin
             }
 
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@"
-                SELECT questionNumber, questionText, optionA, optionB, optionC, optionD, correctOption, explanation
-                FROM dbo.challengeQuestions
-                WHERE questionID=@question AND challengeID=@quiz;", cn))
+            using (SqlCommand cmd = new SqlCommand(@" SELECT questionNumber, questionText, optionA, optionB, optionC, optionD, correctOption, explanation FROM dbo.challengeQuestions WHERE questionID=@question AND challengeID=@quiz;", cn))
             {
                 cmd.Parameters.Add("@question", SqlDbType.Int).Value = id;
                 cmd.Parameters.Add("@quiz", SqlDbType.Int).Value = QuizId;
@@ -263,7 +258,7 @@ namespace Masaking.Admin
 
         protected void btnNew_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             ResetEditor();
             BindQuestions();
         }
@@ -283,7 +278,7 @@ namespace Masaking.Admin
 
         protected void gvQuestions_Sorting(object sender, GridViewSortEventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) { e.Cancel = true; return; }
+            if (!RequireEditor()) { e.Cancel = true; return; }
             AdminTable.ToggleSort(e, ViewState, "Questions", "questionNumber", "ASC", "questionNumber", "questionText", "correctOption");
             BindQuestions();
         }
@@ -311,13 +306,9 @@ namespace Masaking.Admin
 
         private void DeleteQuestion(int questionId)
         {
-            const string sql = @"
-                IF EXISTS (SELECT challengeID FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK)
-                    WHERE challengeID=@quiz AND isActive=0
-                      AND NOT EXISTS (SELECT 1 FROM dbo.challengeAttempts WHERE challengeID=@quiz))
+            const string sql = @"IF EXISTS (SELECT challengeID FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK) WHERE challengeID=@quiz AND isActive=0AND NOT EXISTS (SELECT 1 FROM dbo.challengeAttempts WHERE challengeID=@quiz))
                 BEGIN
                     DELETE FROM dbo.challengeQuestions WHERE questionID=@question AND challengeID=@quiz;
-
                     SELECT @@ROWCOUNT;
                 END
                 ELSE
@@ -332,6 +323,7 @@ namespace Masaking.Admin
                             cn.BeginTransaction(IsolationLevel.Serializable))
                         using (SqlCommand cmd = new SqlCommand(sql, cn, tx))
                         {
+                            CheckActivity("challenge", QuizId, cn, tx);
                             cmd.Parameters.Add("@quiz", SqlDbType.Int).Value = QuizId;
 
                             cmd.Parameters.Add("@question", SqlDbType.Int).Value = questionId;

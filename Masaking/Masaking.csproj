@@ -44,6 +44,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\ActivityEditorPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Content Include="Database\003_RecipeActivities.sql" />
+    <Content Include="Database\RecipeActivities.md" />
+    <Content Include="Content\css\activity-editor.css" />
+    <Content Include="Learning\ManageChallenges.aspx" />
+    <Content Include="Learning\QuizQuestions.aspx" />
+    <Content Include="Learning\ManageSimulations.aspx" />
+    <Content Include="Learning\SimulationSteps.aspx" />
     <Compile Include="Infrastructure\AdminTable.cs" />
     <Content Include="Scripts\admin-tables.js" />
     <Content Include="Scripts\challenge.js" />

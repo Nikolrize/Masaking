@@ -11,7 +11,7 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
-    public partial class ManageSimulations : System.Web.UI.Page
+    public partial class ManageSimulations : ActivityEditorPage
     {
         private int? EditingId
         {
@@ -27,7 +27,7 @@ namespace Masaking.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             Page.Form.Enctype = "multipart/form-data";
             SetEditorMode(ImagesOnly);
@@ -37,15 +37,24 @@ namespace Masaking.Admin
                 BindRecipes();
                 BindSimulations();
                 ResetEditor();
+                SelectRequestedRecipe();
             }
+        }
+
+        private void SelectRequestedRecipe()
+        {
+            string requested = Request.QueryString["recipeId"];
+            if (ddlRecipe.Items.FindByValue(requested ?? "") != null)
+                ddlRecipe.SelectedValue = requested;
         }
 
         private void BindRecipes()
         {
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@" SELECT recipeID, title FROM dbo.recipes WHERE status='Approved' ORDER BY title, recipeID;", cn))
+            using (SqlCommand cmd = new SqlCommand(@" SELECT recipeID, title FROM dbo.recipes WHERE status='Approved' AND (@editorAdmin=1 OR userID=@editorUser) ORDER BY title, recipeID;", cn))
             using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
             {
+                AddOwnerParameters(cmd);
                 DataTable recipes = new DataTable();
                 adapter.Fill(recipes);
 
@@ -61,12 +70,13 @@ namespace Masaking.Admin
         private void BindSimulations()
         {
             const string sql = @" SELECT s.simulationID, s.title, s.difficulty, s.isActive, r.title AS recipeTitle,(SELECT COUNT(*) FROM dbo.simulationSteps step WHERE step.simulationID=s.simulationID) AS stepCount, (SELECT COUNT(*) FROM dbo.simulationProgress progress WHERE progress.simulationID=s.simulationID) AS attemptCount
-              FROM dbo.simulations s INNER JOIN dbo.recipes r ON r.recipeID=s.recipeID ORDER BY s.createdAt DESC, s.simulationID DESC;";
+              FROM dbo.simulations s INNER JOIN dbo.recipes r ON r.recipeID=s.recipeID WHERE (@editorAdmin=1 OR r.userID=@editorUser) ORDER BY s.createdAt DESC, s.simulationID DESC;";
 
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))
             using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
             {
+                AddOwnerParameters(cmd);
                 DataTable simulations = new DataTable();
                 adapter.Fill(simulations);
                 gvSimulations.DataSource = simulations;
@@ -76,7 +86,7 @@ namespace Masaking.Admin
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             int recipeId = 0;
             string title = txtTitle.Text.Trim();
@@ -118,6 +128,8 @@ namespace Masaking.Admin
                 using (SqlConnection cn = Database.Open())
                 using (SqlTransaction tx = cn.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    if (EditingId.HasValue) CheckActivity("simulation", EditingId.Value, cn, tx);
+                    if (!imagesOnly) CheckRecipe(recipeId, cn, tx);
                     string cookware = "";
                     string completedImage = "";
 
@@ -163,28 +175,14 @@ namespace Masaking.Admin
 
                     string sql;
                     if (imagesOnly)
-                        sql = @"UPDATE dbo.simulations
-                            SET cookwareImage=@cookware,completedImage=@completed
-                            WHERE simulationID=@id AND isActive=0;";
+                        sql = @"UPDATE dbo.simulations SET cookwareImage=@cookware,completedImage=@completed WHERE simulationID=@id AND isActive=0;";
                     else if (EditingId.HasValue)
-                        sql = @"UPDATE dbo.simulations
-                            SET title=@title,description=@description,difficulty=@difficulty,
-                                instructions=@instructions,recipeID=@recipe,
-                                cookwareImage=@cookware,completedImage=@completed
-                            WHERE simulationID=@id AND isActive=0
-                                AND NOT EXISTS (SELECT 1 FROM dbo.simulationProgress WHERE simulationID=@id)
-                                AND (recipeID=@recipe OR NOT EXISTS
-                                    (SELECT 1 FROM dbo.simulationSteps WHERE simulationID=@id))
-                                AND EXISTS (SELECT 1 FROM dbo.recipes
-                                            WHERE recipeID=@recipe AND status='Approved');";
+                        sql = @"UPDATE dbo.simulations SET title=@title,description=@description,difficulty=@difficulty, instructions=@instructions,recipeID=@recipe, cookwareImage=@cookware,completedImage=@completed
+                            WHERE simulationID=@id AND isActive=0 AND NOT EXISTS (SELECT 1 FROM dbo.simulationProgress WHERE simulationID=@id) AND (recipeID=@recipe OR NOT EXISTS (SELECT 1 FROM dbo.simulationSteps WHERE simulationID=@id)) AND EXISTS (SELECT 1 FROM dbo.recipes WHERE recipeID=@recipe AND status='Approved');";
                     else
-                        sql = @"INSERT INTO dbo.simulations
-                            (title,description,difficulty,instructions,isActive,createdAt,
-                             recipeID,cookwareImage,completedImage)
-                            SELECT @title,@description,@difficulty,@instructions,0,@now,
-                                @recipe,@cookware,@completed
-                            WHERE EXISTS (SELECT 1 FROM dbo.recipes
-                                          WHERE recipeID=@recipe AND status='Approved');";
+                        sql = @"INSERT INTO dbo.simulations (title,description,difficulty,instructions,isActive,createdAt, recipeID,cookwareImage,completedImage)
+                            SELECT @title,@description,@difficulty,@instructions,0,@now, @recipe,@cookware,@completed
+                            WHERE EXISTS (SELECT 1 FROM dbo.recipes WHERE recipeID=@recipe AND status='Approved');";
 
                     using (SqlCommand cmd = new SqlCommand(sql, cn, tx))
                     {
@@ -203,9 +201,7 @@ namespace Masaking.Admin
 
                         if (cmd.ExecuteNonQuery() != 1)
                         {
-                            ShowMessage("No change made. Check that the recipe is still approved "
-                                + "and the draft is eligible. Remove its steps before changing "
-                                + "the linked recipe.", false);
+                            ShowMessage("No change made. Check that the recipe is still approved " + "and the draft is eligible. Remove its steps before changing " + "the linked recipe.", false);
                             return;
                         }
                     }
@@ -237,7 +233,7 @@ namespace Masaking.Admin
             }
             finally
             {
-                // A database rollback cannot remove physical files.
+                // a database rollback cannot remove physical files. if the database save failed, delete any new files that were uploaded
                 if (!committed)
                     foreach (string path in newUploads)
                     {
@@ -250,7 +246,7 @@ namespace Masaking.Admin
 
         protected void gvSimulations_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             bool editImages = e.CommandName == "EditSimulationImages";
             bool editSettings = e.CommandName == "EditSimulation";
             if (!editImages && !editSettings && e.CommandName != "PublishSimulation"
@@ -263,6 +259,7 @@ namespace Masaking.Admin
                 return;
             }
 
+            CheckActivity("simulation", id);
             if (!editImages && !editSettings)
             {
                 if (ChangeSimulation(id, e.CommandName))
@@ -277,13 +274,8 @@ namespace Masaking.Admin
             ResetEditor();
             BindRecipes();
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@"
-                SELECT title,description,difficulty,instructions,recipeID,
-                    cookwareImage,completedImage
-                FROM dbo.simulations
-                WHERE simulationID=@id AND isActive=0
-                    AND (@imagesOnly=1 OR NOT EXISTS
-                        (SELECT 1 FROM dbo.simulationProgress WHERE simulationID=@id));", cn))
+            using (SqlCommand cmd = new SqlCommand(@" SELECT title,description,difficulty,instructions,recipeID, cookwareImage,completedImage FROM dbo.simulations
+                WHERE simulationID=@id AND isActive=0 AND (@imagesOnly=1 OR NOT EXISTS (SELECT 1 FROM dbo.simulationProgress WHERE simulationID=@id));", cn))
             {
                 cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                 cmd.Parameters.Add("@imagesOnly", SqlDbType.Bit).Value = editImages;
@@ -291,8 +283,7 @@ namespace Masaking.Admin
                 {
                     if (!reader.Read())
                     {
-                        ShowMessage("Unpublish before editing images. Settings also require "
-                            + "a simulation without attempts.", false);
+                        ShowMessage("Unpublish before editing images. Settings also require " + "a simulation without attempts.", false);
                         return;
                     }
 
@@ -308,8 +299,7 @@ namespace Masaking.Admin
                     if (ddlRecipe.Items.FindByValue(recipe) == null
                         || ddlDifficulty.Items.FindByValue(difficulty) == null)
                     {
-                        ShowMessage("This simulation uses an unapproved recipe "
-                            + "or unsupported difficulty.", false);
+                        ShowMessage("This simulation uses an unapproved recipe " + "or unsupported difficulty.", false);
                         return;
                     }
 
@@ -323,8 +313,7 @@ namespace Masaking.Admin
                     SetPreview(imgCookwarePreview, Convert.ToString(reader["cookwareImage"]));
                     SetPreview(imgCompletedPreview, Convert.ToString(reader["completedImage"]));
                     SetEditorMode(editImages);
-                    lblEditorHeading.Text = editImages ? "Edit images for simulation #" + id
-                        : "Edit simulation #" + id;
+                    lblEditorHeading.Text = editImages ? "Edit images for simulation #" + id : "Edit simulation #" + id;
                 }
             }
         }
@@ -335,6 +324,7 @@ namespace Masaking.Admin
             using (SqlTransaction tx =
                 cn.BeginTransaction(IsolationLevel.Serializable))
             {
+                CheckActivity("simulation", id, cn, tx);
                 int recipeId;
                 int attempts;
                 bool published;
@@ -343,8 +333,7 @@ namespace Masaking.Admin
                 string instructions;
 
                 const string detailsSql = @"SELECT s.recipeID, s.isActive, s.title, s.instructions, r.status AS recipeStatus,
-                (SELECT COUNT(*) FROM dbo.simulationProgress p WHERE p.simulationID=s.simulationID) AS attemptCount
-                 FROM dbo.simulations s WITH (UPDLOCK, HOLDLOCK) INNER JOIN dbo.recipes r ON r.recipeID=s.recipeID WHERE s.simulationID=@id;";
+                (SELECT COUNT(*) FROM dbo.simulationProgress p WHERE p.simulationID=s.simulationID) AS attemptCount FROM dbo.simulations s WITH (UPDLOCK, HOLDLOCK) INNER JOIN dbo.recipes r ON r.recipeID=s.recipeID WHERE s.simulationID=@id;";
 
                 using (SqlCommand cmd = new SqlCommand(detailsSql, cn, tx))
                 {
@@ -505,7 +494,7 @@ namespace Masaking.Admin
         }
         protected void btnNew_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             ResetEditor();
             BindRecipes();
         }
@@ -559,7 +548,7 @@ namespace Masaking.Admin
         protected void gvSimulations_PageIndexChanging(
             object sender, GridViewPageEventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             gvSimulations.PageIndex = e.NewPageIndex;
             BindSimulations();
         }

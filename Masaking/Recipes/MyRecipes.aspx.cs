@@ -84,6 +84,16 @@ namespace Masaking.Recipes
                             throw new InvalidOperationException();
                     }
 
+                    using (SqlCommand linked = new SqlCommand(@"SELECT (SELECT COUNT(*) FROM dbo.simulations WITH (UPDLOCK,HOLDLOCK) WHERE recipeID=@id) + (SELECT COUNT(*) FROM dbo.challenges WITH (UPDLOCK,HOLDLOCK) WHERE recipeID=@id);", cn, tx))
+                    {
+                        linked.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                        if (Convert.ToInt32(linked.ExecuteScalar()) > 0)
+                        {
+                            tx.Rollback();
+                            Show("This recipe has learning activities and cannot be deleted. Unpublish its activities if they should no longer be available.", false);
+                            return;
+                        }
+                    }
                     string[] deletes =
                     {
                         "DELETE FROM postComments WHERE postID IN (SELECT postID FROM posts WHERE recipeID=@id)",

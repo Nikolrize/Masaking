@@ -57,6 +57,8 @@
                                     <asp:HyperLink ID="lnkEditRecipe" runat="server" ClientIDMode="Static" class="btn btn-sm btn-outline-success">
                                         <span aria-hidden="true">✎</span> Edit
                                     </asp:HyperLink>
+                                    <asp:HyperLink ID="lnkManageSimulations" runat="server" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# "~/Learning/ManageSimulations.aspx?recipeId=" + Eval("recipeID") %>' Visible='<%# Convert.ToString(Eval("status")) == "Approved" %>' Text="Manage simulations" />
+                                    <asp:HyperLink ID="lnkManageChallenges" runat="server" CssClass="btn btn-sm btn-outline-success" NavigateUrl='<%# "~/Learning/ManageChallenges.aspx?recipeId=" + Eval("recipeID") %>' Visible='<%# Convert.ToString(Eval("status")) == "Approved" %>' Text="Manage challenges" />
                                     <asp:LinkButton ID="btnDelete" runat="server" class="btn btn-sm btn-outline-danger" CommandName="deleteRecipe" OnClientClick="return confirm('Delete this recipe and its community activity?');">
                                         <span aria-hidden="true">⌫</span> Delete
                                     </asp:LinkButton>

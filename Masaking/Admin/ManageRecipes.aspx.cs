@@ -190,16 +190,12 @@ namespace Masaking.Admin
 
             const string sql = @" IF NOT EXISTS (SELECT 1 FROM dbo.recipes WHERE recipeID = @id) SELECT 0;
             ELSE IF
-                EXISTS (SELECT 1 FROM dbo.favourites
-                        WHERE recipeID = @id)
-                OR EXISTS (SELECT 1 FROM dbo.posts
-                           WHERE recipeID = @id)
-                OR EXISTS (SELECT 1 FROM dbo.recipeProgress
-                           WHERE recipeID = @id)
-                OR EXISTS (SELECT 1 FROM dbo.reviews
-                           WHERE recipeID = @id)
-                OR EXISTS (SELECT 1 FROM dbo.simulations
-                           WHERE recipeID = @id)
+                EXISTS (SELECT 1 FROM dbo.favourites WHERE recipeID = @id)
+                OR EXISTS (SELECT 1 FROM dbo.posts WHERE recipeID = @id)
+                OR EXISTS (SELECT 1 FROM dbo.recipeProgress WHERE recipeID = @id)
+                OR EXISTS (SELECT 1 FROM dbo.reviews WHERE recipeID = @id)
+                OR EXISTS (SELECT 1 FROM dbo.simulations WHERE recipeID = @id)
+                OR EXISTS (SELECT 1 FROM dbo.challenges WHERE recipeID = @id)
                 SELECT -1;
             ELSE
             BEGIN
@@ -235,9 +231,7 @@ namespace Masaking.Admin
                 }
                 else if (result == -1)
                 {
-                    lblMessage.Text =
-                        "This recipe has favourites, community activity or learning records "
-                        + "and cannot be permanently deleted.";
+                    lblMessage.Text = "This recipe has favourites, community activity or learning records " + "and cannot be permanently deleted.";
 
                     lblMessage.CssClass = "alert alert-warning d-block";
                 }
@@ -249,16 +243,13 @@ namespace Masaking.Admin
             }
             catch (SqlException ex) when (ex.Number == 547)
             {
-                lblMessage.Text =
-                    "Deletion was blocked by a related database record. "
-                    + "No changes were saved.";
+                lblMessage.Text = "Deletion was blocked by a related database record. " + "No changes were saved.";
 
                 lblMessage.CssClass = "alert alert-warning d-block";
             }
             catch (SqlException ex) when (ex.Number == 1205)
             {
-                lblMessage.Text =
-                    "Another database operation interrupted deletion. Please try again.";
+                lblMessage.Text = "Another database operation interrupted deletion. Please try again.";
 
                 lblMessage.CssClass = "alert alert-warning d-block";
             }
@@ -290,14 +281,8 @@ namespace Masaking.Admin
                 return;
             }
 
-            const string sql = @"
-                SELECT r.recipeID,r.title,r.description,u.displayName,r.status,r.cuisine,r.region, r.difficulty,r.preparationTime,r.estimatedCost,r.servings,r.image,r.createdAt
-                FROM dbo.recipes r INNER JOIN dbo.users u ON u.userID=r.userID
-                WHERE r.recipeID=@id;
-                SELECT ingredientID,ingredientName,quantity,unit,displayOrder
-                FROM dbo.ingredients WHERE recipeID=@id ORDER BY displayOrder,ingredientID;
-                SELECT stepID,stepNumber,instruction
-                FROM dbo.steps WHERE recipeID=@id ORDER BY stepNumber,stepID;";
+            const string sql = @" SELECT r.recipeID,r.title,r.description,u.displayName,r.status,r.cuisine,r.region, r.difficulty,r.preparationTime,r.estimatedCost,r.servings,r.image,r.createdAt FROM dbo.recipes r INNER JOIN dbo.users u ON u.userID=r.userID WHERE r.recipeID=@id;
+             SELECT ingredientID,ingredientName,quantity,unit,displayOrder FROM dbo.ingredients WHERE recipeID=@id ORDER BY displayOrder,ingredientID; SELECT stepID,stepNumber,instruction FROM dbo.steps WHERE recipeID=@id ORDER BY stepNumber,stepID;";
 
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))

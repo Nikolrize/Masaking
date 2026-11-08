@@ -11,8 +11,11 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
-    public partial class SimulationSteps : System.Web.UI.Page
+    public partial class SimulationSteps : ActivityEditorPage
     {
+        protected override string ActivityKind { get { return "simulation"; } }
+        protected override int ActivityId { get { return SimulationId; } }
+
         private int SimulationId
         {
             get
@@ -37,7 +40,7 @@ namespace Masaking.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             Page.Form.Enctype = "multipart/form-data";
             SetEditorMode(ImagesOnly);
@@ -80,11 +83,8 @@ namespace Masaking.Admin
                         pnlEditor.Visible = canEditImages && (editable || ImagesOnly);
                         gvSteps.Columns[3].Visible = canEditImages;
 
-                        lblStatus.Text = editable
-                            ? "Draft: steps can be added, edited or deleted."
-                            : canEditImages
-                                ? "Step content is locked because attempts exist. Edit image changes artwork only."
-                                : "Published: unpublish before changing images. Step content stays locked once attempts exist.";
+                        lblStatus.Text = editable ? "Draft: steps can be added, edited or deleted."
+                            : canEditImages ? "Step content is locked because attempts exist. Edit image changes artwork only." : "Published: unpublish before changing images. Step content stays locked once attempts exist.";
                     }
                 }
 
@@ -137,7 +137,7 @@ namespace Masaking.Admin
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             int number = 0;
             int ingredientId = 0;
             string instruction = txtInstruction.Text.Trim();
@@ -186,6 +186,7 @@ namespace Masaking.Admin
                 using (SqlConnection cn = Database.Open())
                 using (SqlTransaction tx = cn.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    CheckActivity("simulation", SimulationId, cn, tx);
                     //image only edits preserve ingredient, order, instruction and saved results
                     const string eligibilitySql = @"SELECT s.recipeID FROM dbo.simulations s WITH (UPDLOCK,HOLDLOCK) WHERE s.simulationID=@id AND s.isActive=0 AND (@imagesOnly=1 OR (NOT EXISTS (SELECT 1 FROM dbo.simulationProgress p WHERE p.simulationID=@id) AND EXISTS (SELECT 1 FROM dbo.recipes r WHERE r.recipeID=s.recipeID AND r.status='Approved')));";
                     object recipe;
@@ -320,7 +321,7 @@ namespace Masaking.Admin
 
         protected void gvSteps_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             bool editImage = e.CommandName == "EditStepImage";
             if (!editImage && e.CommandName != "EditStep" && e.CommandName != "RemoveStep") return;
             int stepId;
@@ -376,7 +377,7 @@ namespace Masaking.Admin
 
         protected void btnClear_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             ResetEditor();
             BindPage();
@@ -402,7 +403,7 @@ namespace Masaking.Admin
 
         protected void ddlIngredient_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             RefreshImagePreview();
         }
 
