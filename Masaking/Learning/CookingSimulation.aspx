@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Cooking Simulation" Language="C#" MasterPageFile="~/Site.Master"
     AutoEventWireup="true" CodeBehind="CookingSimulation.aspx.cs" Inherits="Masaking.Learning.CookingSimulation" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <link runat="server" href="~/Content/css/simulation.css" rel="stylesheet" />
+    <link href="<%= ResolveUrl("~/Content/css/simulation.css") %>" rel="stylesheet" />
     <main class="simulation-page py-4 py-md-5">
         <div class="d-flex flex-wrap gap-2 mb-3">
             <asp:HyperLink ID="lnkBrowse" runat="server" Text="All simulations" NavigateUrl="~/Learning/Simulations.aspx" CssClass="btn btn-outline-success" />

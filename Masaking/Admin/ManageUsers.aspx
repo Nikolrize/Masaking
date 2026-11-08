@@ -4,6 +4,46 @@
     <h1 class="page-heading"><asp:Label ID="lblTitle" runat="server" Text="Manage users" /></h1>
     <p class="text-secondary"><asp:Label ID="lblIntroduction" runat="server" Text="Find accounts and manage member access. Administrator accounts are protected on this page." /></p>
 
+    <asp:Panel ID="pnlCreateUser" runat="server" DefaultButton="btnCreateUser" CssClass="card p-3 p-md-4 mb-4">
+        <h2 class="h5">Create user</h2>
+        <p class="small text-secondary">New accounts start as active members. Use Make admin in the account table if administrator access is needed.</p>
+        <asp:Label ID="lblCreateMessage" runat="server" EnableViewState="False" role="status" />
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <asp:Label ID="lblCreateName" runat="server" AssociatedControlID="txtCreateName" Text="Display name" CssClass="form-label" />
+                <asp:TextBox ID="txtCreateName" runat="server" MaxLength="80" CssClass="form-control" autocomplete="off" />
+            </div>
+            <div class="col-12 col-md-6">
+                <asp:Label ID="lblCreateUsername" runat="server" AssociatedControlID="txtCreateUsername" Text="Username" CssClass="form-label" />
+                <asp:TextBox ID="txtCreateUsername" runat="server" MaxLength="40" CssClass="form-control" autocomplete="off" />
+            </div>
+            <div class="col-12 col-md-6">
+                <asp:Label ID="lblCreateEmail" runat="server" AssociatedControlID="txtCreateEmail" Text="Email address" CssClass="form-label" />
+                <asp:TextBox ID="txtCreateEmail" runat="server" TextMode="Email" MaxLength="254" CssClass="form-control" autocomplete="off" />
+            </div>
+            <div class="col-12 col-md-6">
+                <asp:Label ID="lblCreateCountry" runat="server" AssociatedControlID="ddlCreateCountry" Text="Country" CssClass="form-label" />
+                <asp:DropDownList ID="ddlCreateCountry" runat="server" CssClass="form-select" />
+            </div>
+            <div class="col-12">
+                <asp:Label ID="lblCreateOtherCountry" runat="server" AssociatedControlID="txtCreateOtherCountry" Text="Other country (only when Other is selected)" CssClass="form-label" />
+                <asp:TextBox ID="txtCreateOtherCountry" runat="server" MaxLength="80" CssClass="form-control" />
+            </div>
+            <div class="col-12 col-md-6">
+                <asp:Label ID="lblCreatePassword" runat="server" AssociatedControlID="txtCreatePassword" Text="Password (8-64 characters)" CssClass="form-label" />
+                <asp:TextBox ID="txtCreatePassword" runat="server" TextMode="Password" MaxLength="64" CssClass="form-control" autocomplete="new-password" />
+            </div>
+            <div class="col-12 col-md-6">
+                <asp:Label ID="lblCreateConfirm" runat="server" AssociatedControlID="txtCreateConfirm" Text="Confirm password" CssClass="form-label" />
+                <asp:TextBox ID="txtCreateConfirm" runat="server" TextMode="Password" MaxLength="64" CssClass="form-control" autocomplete="new-password" />
+            </div>
+            <div class="col-12 d-flex flex-wrap gap-2">
+                <asp:Button ID="btnCreateUser" runat="server" Text="Create user" CssClass="btn btn-success" OnClick="btnCreateUser_Click" />
+                <asp:Button ID="btnClearCreate" runat="server" Text="Clear form" CausesValidation="False" formnovalidate="formnovalidate" CssClass="btn btn-outline-secondary" OnClick="btnClearCreate_Click" />
+            </div>
+        </div>
+    </asp:Panel>
+
     <asp:Panel ID="pnlFilters" runat="server" DefaultButton="btnSearch" CssClass="card p-3 p-md-4 mb-4">
         <div class="row g-3">
             <div class="col-12 col-lg-6">

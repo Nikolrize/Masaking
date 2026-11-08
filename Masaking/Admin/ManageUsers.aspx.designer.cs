@@ -13,6 +13,24 @@ namespace Masaking.Admin
 
     public partial class ManageUsers
     {
+        protected global::System.Web.UI.WebControls.Panel pnlCreateUser;
+        protected global::System.Web.UI.WebControls.Label lblCreateMessage;
+        protected global::System.Web.UI.WebControls.Label lblCreateName;
+        protected global::System.Web.UI.WebControls.TextBox txtCreateName;
+        protected global::System.Web.UI.WebControls.Label lblCreateUsername;
+        protected global::System.Web.UI.WebControls.TextBox txtCreateUsername;
+        protected global::System.Web.UI.WebControls.Label lblCreateEmail;
+        protected global::System.Web.UI.WebControls.TextBox txtCreateEmail;
+        protected global::System.Web.UI.WebControls.Label lblCreateCountry;
+        protected global::System.Web.UI.WebControls.DropDownList ddlCreateCountry;
+        protected global::System.Web.UI.WebControls.Label lblCreateOtherCountry;
+        protected global::System.Web.UI.WebControls.TextBox txtCreateOtherCountry;
+        protected global::System.Web.UI.WebControls.Label lblCreatePassword;
+        protected global::System.Web.UI.WebControls.TextBox txtCreatePassword;
+        protected global::System.Web.UI.WebControls.Label lblCreateConfirm;
+        protected global::System.Web.UI.WebControls.TextBox txtCreateConfirm;
+        protected global::System.Web.UI.WebControls.Button btnCreateUser;
+        protected global::System.Web.UI.WebControls.Button btnClearCreate;
 
         /// <summary>
         /// lblTitle control.
