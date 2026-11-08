@@ -13,6 +13,11 @@ namespace Masaking.Learning
 
     public partial class Progress
     {
+        protected global::System.Web.UI.WebControls.Content PageHead;
+        protected global::System.Web.UI.WebControls.Content BodyContent;
+        protected global::System.Web.UI.WebControls.Label lblChallengesCompleted;
+        protected global::System.Web.UI.WebControls.Label lblFinished;
+        protected global::System.Web.UI.WebControls.Label lblPendingSummary;
 
         /// <summary>
         /// lnkQuizzes control.

@@ -101,7 +101,12 @@ namespace Masaking.Recipes
                 RecipeCard card = (RecipeCard)e.Item.FindControl("recipeCard");
 
                 card.FromMyRecipes = true;
-                card.DisplayRecipe((DataRowView)e.Item.DataItem);
+                DataRowView recipe = (DataRowView)e.Item.DataItem;
+                card.DisplayRecipe(recipe);
+                Panel activities = (Panel)e.Item.FindControl("pnlActivities");
+                activities.Visible = Database.UserId.HasValue
+                    && Convert.ToInt32(recipe["userID"]) == Database.UserId.Value
+                    && Convert.ToString(recipe["status"]) == "Approved";
             }
         }
     }

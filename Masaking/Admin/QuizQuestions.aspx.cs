@@ -6,8 +6,11 @@ using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
-    public partial class QuizQuestions : System.Web.UI.Page
+    public partial class QuizQuestions : ActivityEditorPage
     {
+        protected override string ActivityKind { get { return "challenge"; } }
+        protected override int ActivityId { get { return QuizId; } }
+
         private int QuizId
         {
             get
@@ -23,9 +26,15 @@ namespace Masaking.Admin
             set { ViewState["QuestionId"] = value; }
         }
 
+        protected bool CanEditQuestions
+        {
+            get { return ViewState["CanEditQuestions"] as bool? ?? false; }
+            private set { ViewState["CanEditQuestions"] = value; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
             if (!IsPostBack)
             {
@@ -38,43 +47,54 @@ namespace Masaking.Admin
             using (SqlConnection cn = Database.Open())
             {
                 using (SqlCommand cmd = new SqlCommand(
-                    "SELECT title FROM dbo.challenges WHERE challengeID=@id", cn))
+                    @"SELECT title,isActive,
+                        (SELECT COUNT(*) FROM dbo.challengeAttempts WHERE challengeID=@id) AS attemptCount
+                      FROM dbo.challenges WHERE challengeID=@id", cn))
                 {
                     cmd.Parameters.Add("@id", SqlDbType.Int).Value = QuizId;
-                    object title = cmd.ExecuteScalar();
-
-                    if (title == null)
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        btnSave.Enabled = false;
-                        ShowMessage("Quiz not found.", false);
-                        return;
+                        if (!reader.Read())
+                        {
+                            CanEditQuestions = false;
+                            btnSave.Enabled = btnNew.Enabled = false;
+                            gvQuestions.Visible = false;
+                            ShowMessage("Challenge not found.", false);
+                            return;
+                        }
+                        CanEditQuestions = !Convert.ToBoolean(reader["isActive"])
+                            && Convert.ToInt32(reader["attemptCount"]) == 0;
+                        btnSave.Enabled = btnNew.Enabled = CanEditQuestions;
+                        foreach (TextBox field in new[] { txtQuestion, txtA, txtB, txtC, txtD, txtExplanation })
+                            field.ReadOnly = !CanEditQuestions;
+                        ddlCorrect.Enabled = CanEditQuestions;
+                        lblHeading.Text = Server.HtmlEncode("Questions: " + Convert.ToString(reader["title"]));
+                        lblEditorNote.Text = CanEditQuestions ? "Question numbers are assigned automatically. A gap left by a deleted question is filled first." : "Read-only: questions can change only while the challenge is unpublished and has no attempts.";
                     }
-
-                    lblHeading.Text = Server.HtmlEncode(
-                        "Questions: " + Convert.ToString(title));
                 }
 
-                using (SqlCommand cmd = new SqlCommand(@"
-                    SELECT questionID, questionNumber, questionText, correctOption
-                    FROM dbo.challengeQuestions
-                    WHERE challengeID=@id
-                    ORDER BY questionNumber;", cn))
+                using (SqlCommand cmd = new SqlCommand(@" SELECT questionID, questionNumber, questionText, correctOption FROM dbo.challengeQuestions WHERE challengeID=@id ORDER BY questionNumber;", cn))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                 {
                     cmd.Parameters.Add("@id", SqlDbType.Int).Value = QuizId;
                     DataTable questions = new DataTable();
                     adapter.Fill(questions);
-                    gvQuestions.DataSource = questions;
-                    gvQuestions.DataBind();
+                    AdminTable.Bind(gvQuestions, questions, ViewState, "Questions", "questionNumber", "ASC");
+                    if (!EditingId.HasValue)
+                    {
+                        int next = FindNextNumber(questions);
+                        txtNumber.Text = next == 0 ? "Full" : next.ToString();
+                        btnSave.Enabled = CanEditQuestions && next > 0;
+                    }
                 }
             }
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
 
-            int number;
+            int number = 0;
             string question = txtQuestion.Text.Trim();
             string explanation = txtExplanation.Text.Trim();
             string[] options = {
@@ -82,11 +102,10 @@ namespace Masaking.Admin
                 txtC.Text.Trim(), txtD.Text.Trim()
             };
 
-            if (QuizId == 0 || !Int32.TryParse(txtNumber.Text, out number)
-                || number < 1 || number > 100 || question.Length == 0 || question.Length > 1000 || explanation.Length > 1000
+            if (QuizId == 0 || question.Length == 0 || question.Length > 1000 || explanation.Length > 1000
                 || (ddlCorrect.SelectedValue != "A" && ddlCorrect.SelectedValue != "B" && ddlCorrect.SelectedValue != "C" && ddlCorrect.SelectedValue != "D"))
             {
-                ShowMessage("Enter a question number from 1-100, question text " + "within 1,000 characters and a valid correct answer. " + "Keep explanations within 1,000 characters.", false);
+                ShowMessage("Enter question text within 1,000 characters and a valid correct answer. Keep explanations within 1,000 characters.", false);
                 return;
             }
 
@@ -111,18 +130,39 @@ namespace Masaking.Admin
                     using (SqlCommand check =
                         new SqlCommand(eligibility, cn, tx))
                     {
+                        CheckActivity("challenge", QuizId, cn, tx);
                         check.Parameters.Add("@id", SqlDbType.Int).Value = QuizId;
 
                         if (check.ExecuteScalar() == null)
                         {
-                            ShowMessage("Questions can only change on unpublished " + "quizzes without attempts.", false);
+                            ShowMessage("Questions can only change on unpublished " + "challenges without attempts.", false);
                             return;
                         }
                     }
 
-                    string sql = EditingId.HasValue ? @"UPDATE dbo.challengeQuestions
-                            SET questionNumber=@number, questionText=@question, optionA=@a, optionB=@b, optionC=@c, optionD=@d, correctOption=@correct, explanation=@explanation
-                            WHERE questionID=@questionId AND challengeID=@id;"
+                    //assign the number after locking the parent challenge, never from the browser
+                    using (SqlCommand numbers = new SqlCommand(@"
+                        SELECT questionID,questionNumber FROM dbo.challengeQuestions WHERE challengeID=@id;", cn, tx))
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(numbers))
+                    {
+                        numbers.Parameters.Add("@id", SqlDbType.Int).Value = QuizId;
+                        DataTable existing = new DataTable();
+                        adapter.Fill(existing);
+                        if (EditingId.HasValue)
+                        {
+                            foreach (DataRow row in existing.Rows)
+                                if (Convert.ToInt32(row["questionID"]) == EditingId.Value)
+                                    number = Convert.ToInt32(row["questionNumber"]);
+                        }
+                        else number = FindNextNumber(existing);
+                        if (number < 1 || number > 100)
+                        {
+                            ShowMessage(EditingId.HasValue ? "The question no longer exists." : "This challenge already has 100 questions.", false);
+                            return;
+                        }
+                    }
+
+                    string sql = EditingId.HasValue ? @"UPDATE dbo.challengeQuestions SET questionNumber=@number, questionText=@question, optionA=@a, optionB=@b, optionC=@c, optionD=@d, correctOption=@correct, explanation=@explanation WHERE questionID=@questionId AND challengeID=@id;"
                         : @"INSERT INTO dbo.challengeQuestions (challengeID, questionNumber, questionText, optionA, optionB, optionC, optionD, correctOption, explanation)
                             VALUES (@id, @number, @question, @a, @b, @c, @d, @correct, @explanation);";
 
@@ -161,14 +201,14 @@ namespace Masaking.Admin
             catch (SqlException ex)
                 when (ex.Number == 2601 || ex.Number == 2627)
             {
-                ShowMessage("That question number is already used in this quiz.", false);
+                ShowMessage("That question number is already used. Reload and try again.", false);
             }
         }
 
         protected void gvQuestions_RowCommand(
             object sender, GridViewCommandEventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             if (e.CommandName != "EditQuestion" && e.CommandName != "RemoveQuestion") return;
 
             int id;
@@ -186,10 +226,7 @@ namespace Masaking.Admin
             }
 
             using (SqlConnection cn = Database.Open())
-            using (SqlCommand cmd = new SqlCommand(@"
-                SELECT questionNumber, questionText, optionA, optionB, optionC, optionD, correctOption, explanation
-                FROM dbo.challengeQuestions
-                WHERE questionID=@question AND challengeID=@quiz;", cn))
+            using (SqlCommand cmd = new SqlCommand(@" SELECT questionNumber, questionText, optionA, optionB, optionC, optionD, correctOption, explanation FROM dbo.challengeQuestions WHERE questionID=@question AND challengeID=@quiz;", cn))
             {
                 cmd.Parameters.Add("@question", SqlDbType.Int).Value = id;
                 cmd.Parameters.Add("@quiz", SqlDbType.Int).Value = QuizId;
@@ -214,14 +251,36 @@ namespace Masaking.Admin
                     txtExplanation.Text =
                         Convert.ToString(reader["explanation"]);
                     btnSave.Text = "Update question";
+                    btnNew.Text = "New question";
                 }
             }
         }
 
         protected void btnNew_Click(object sender, EventArgs e)
         {
-            if (!Database.RequireAdmin(Response)) return;
+            if (!RequireEditor()) return;
             ResetEditor();
+            BindQuestions();
+        }
+
+        internal static int FindNextNumber(DataTable questions)
+        {
+            bool[] used = new bool[101];
+            foreach (DataRow row in questions.Rows)
+            {
+                int number = Convert.ToInt32(row["questionNumber"]);
+                if (number >= 1 && number <= 100) used[number] = true;
+            }
+            for (int number = 1; number <= 100; number++)
+                if (!used[number]) return number;
+            return 0;
+        }
+
+        protected void gvQuestions_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            if (!RequireEditor()) { e.Cancel = true; return; }
+            AdminTable.ToggleSort(e, ViewState, "Questions", "questionNumber", "ASC", "questionNumber", "questionText", "correctOption");
+            BindQuestions();
         }
 
         private void ResetEditor()
@@ -236,6 +295,7 @@ namespace Masaking.Admin
             txtExplanation.Text = "";
             ddlCorrect.SelectedIndex = 0;
             btnSave.Text = "Save question";
+            btnNew.Text = "Reset form";
         }
 
         private void ShowMessage(string message, bool success)
@@ -246,13 +306,9 @@ namespace Masaking.Admin
 
         private void DeleteQuestion(int questionId)
         {
-            const string sql = @"
-                IF EXISTS (SELECT challengeID FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK)
-                    WHERE challengeID=@quiz AND isActive=0
-                      AND NOT EXISTS (SELECT 1 FROM dbo.challengeAttempts WHERE challengeID=@quiz))
+            const string sql = @"IF EXISTS (SELECT challengeID FROM dbo.challenges WITH (UPDLOCK, HOLDLOCK) WHERE challengeID=@quiz AND isActive=0AND NOT EXISTS (SELECT 1 FROM dbo.challengeAttempts WHERE challengeID=@quiz))
                 BEGIN
                     DELETE FROM dbo.challengeQuestions WHERE questionID=@question AND challengeID=@quiz;
-
                     SELECT @@ROWCOUNT;
                 END
                 ELSE
@@ -267,6 +323,7 @@ namespace Masaking.Admin
                             cn.BeginTransaction(IsolationLevel.Serializable))
                         using (SqlCommand cmd = new SqlCommand(sql, cn, tx))
                         {
+                            CheckActivity("challenge", QuizId, cn, tx);
                             cmd.Parameters.Add("@quiz", SqlDbType.Int).Value = QuizId;
 
                             cmd.Parameters.Add("@question", SqlDbType.Int).Value = questionId;
@@ -278,12 +335,12 @@ namespace Masaking.Admin
                         if (result == 1)
                         {
                             ResetEditor();
-                            ShowMessage("Question deleted. Check the remaining question numbers.", true);
+                            ShowMessage("Question deleted.", true);
                         }
                         else
                         {
                             ShowMessage(
-                                result == -1 ? "Only unpublished quizzes without attempts can change." : "The question no longer exists.", false);
+                                result == -1 ? "Only unpublished challenges without attempts can change." : "The question no longer exists.", false);
                         }
 
                         BindQuestions();

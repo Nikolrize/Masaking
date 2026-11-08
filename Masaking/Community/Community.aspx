@@ -60,7 +60,7 @@
                 </div>
             </asp:Panel>
 
-            <!-- Individual, softly bordered post cards match the community-feed reference. -->
+            <!-- Post cards -->
             <asp:Repeater ID="rptPosts" runat="server" OnItemCommand="rptPosts_ItemCommand" OnItemDataBound="rptPosts_ItemDataBound">
                 <ItemTemplate>
                     <article id="postCard" runat="server" class="card community-card rounded-3 mb-3 community-feed-post">

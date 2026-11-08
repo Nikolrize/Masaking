@@ -96,6 +96,24 @@ namespace Masaking.Recipes
         protected global::System.Web.UI.WebControls.HyperLink lnkStartLearning;
 
         /// <summary>
+        /// lnkDownloadPdf control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkDownloadPdf;
+
+        /// <summary>
+        /// btnShare control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlButton btnShare;
+
+        /// <summary>
         /// phOwnerActions control.
         /// </summary>
         /// <remarks>
@@ -346,5 +364,32 @@ namespace Masaking.Recipes
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater rptReviews;
+
+        /// <summary>
+        /// imgRecipeQr control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgRecipeQr;
+
+        /// <summary>
+        /// txtShareUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtShareUrl;
+
+        /// <summary>
+        /// lnkDownloadQr control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkDownloadQr;
     }
 }

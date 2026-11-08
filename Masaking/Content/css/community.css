@@ -698,7 +698,7 @@
     height: 48px;
 }
 
-/* Icon font sizing retains the previous layout and animations. */
+/* Community icon sizing */
 [data-community-page] i.community-icon {
     display: inline-flex;
     align-items: center;
