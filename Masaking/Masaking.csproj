@@ -47,8 +47,6 @@
     <Compile Include="Infrastructure\ActivityEditorPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Content Include="Database\003_RecipeActivities.sql" />
-    <Content Include="Database\RecipeActivities.md" />
     <Content Include="Content\css\activity-editor.css" />
     <Content Include="Learning\ManageChallenges.aspx" />
     <Content Include="Learning\QuizQuestions.aspx" />
