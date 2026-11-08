@@ -1,3 +1,4 @@
+using Masaking.Infrastructure;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -5,7 +6,6 @@ using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Masaking.Infrastructure;
 
 namespace Masaking.Community
 {
@@ -182,20 +182,6 @@ namespace Masaking.Community
             string encodedCount = HttpUtility.HtmlEncode(Convert.ToString(likeCount));
             return "<span class=\"community-like-heart\"><i class=\"bi bi-heart community-icon community-heart-outline\" aria-hidden=\"true\"></i><i class=\"bi bi-heart-fill community-icon community-heart-filled\" aria-hidden=\"true\"></i></span>" +
                    $"<span class=\"small\">{encodedCount}</span><span class=\"visually-hidden\">likes</span>";
-        }
-
-        protected string PostHeading(object value)
-        {
-            string content = Convert.ToString(value).Replace("\r\n", "\n");
-            int end = content.IndexOf('\n');
-            return end > 0 && end <= 140 ? content.Substring(0, end) : "";
-        }
-
-        protected string PostBody(object value)
-        {
-            string content = Convert.ToString(value).Replace("\r\n", "\n");
-            string heading = PostHeading(value);
-            return heading.Length == 0 ? content : content.Substring(heading.Length).TrimStart('\n');
         }
 
         protected void rptPosts_ItemCommand(object source, RepeaterCommandEventArgs e)

@@ -54,7 +54,6 @@ namespace Masaking.Infrastructure
             using (SqlConnection cn = Database.Open()) CheckActivity(kind, id, cn, null);
         }
 
-        // Call again inside the write transaction. HOLDLOCK keeps ownership stable until commit.
         //call again inside the write transaction HOLDLOCK keeps ownership stable until commit 
         protected void CheckActivity(string kind, int id, SqlConnection cn, SqlTransaction tx)
         {

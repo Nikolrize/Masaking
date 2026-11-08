@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Masaking.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Web.UI.WebControls;
-using Masaking.Infrastructure;
 
 namespace Masaking.Learning
 {
@@ -44,7 +44,6 @@ namespace Masaking.Learning
             BindHistory(gvAttempts, attempts);
         }
 
-        // Prepare display values without modifying any saved attempts.
         //prepare display values without modifying any saved attempts
         internal static ChallengeSummary PrepareChallengeHistory(DataTable attempts, DateTime utcNow)
         {

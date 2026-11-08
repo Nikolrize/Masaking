@@ -1,8 +1,10 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CookingStepEditor.ascx.cs" Inherits="Masaking.Controls.CookingStepEditor" %>
 
 <div data-step-editor>
+    <!-- Store step data as JSON -->
     <asp:HiddenField ID="stepData" runat="server" />
 
+     <!-- Step rows -->
     <div class="recipe-step-rows" data-step-list></div>
 
     <button type="button"
@@ -12,8 +14,11 @@
         Add step
     </button>
 
+    <!-- JS template for clone -->
     <template data-step-template>
         <div class="recipe-step-card">
+
+            <!-- Step number and remove button -->
             <div class="recipe-step-title">
                 <div class="d-flex align-items-center gap-2">
                     <span class="detail-step-number" data-step-number></span>
@@ -28,6 +33,7 @@
                 </button>
             </div>
 
+            <!-- Instruction -->
             <label class="form-label" data-label="instruction">
                 Cooking instruction
             </label>
@@ -51,6 +57,7 @@
                 step="1"
                 required />
 
+            <!-- Photo upload and preview -->
             <div class="recipe-step-photo">
                 <label class="form-label" data-photo-label>
                     Step photo
@@ -65,7 +72,6 @@
 
                 <p class="form-text">
                     JPG, PNG or GIF. Maximum size: 5 MB.
-   
                 </p>
 
                 <p class="text-danger small"
@@ -81,7 +87,6 @@
                     class="recipe-remove-photo"
                     data-remove-photo hidden>
                     Remove photo
-   
                 </button>
             </div>
         </div>

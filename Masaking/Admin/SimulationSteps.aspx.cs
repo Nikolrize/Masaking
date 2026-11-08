@@ -1,13 +1,11 @@
+using Masaking.Infrastructure;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
@@ -75,7 +73,7 @@ namespace Masaking.Admin
                             return;
                         }
 
-                        lblHeading.Text = Server.HtmlEncode( "Steps: " + Convert.ToString(reader["title"]));
+                        lblHeading.Text = Server.HtmlEncode("Steps: " + Convert.ToString(reader["title"]));
 
                         canEditImages = !Convert.ToBoolean(reader["isActive"]);
                         editable = canEditImages && Convert.ToInt32(reader["attemptCount"]) == 0;
@@ -242,7 +240,7 @@ namespace Masaking.Admin
                                 return false;
                             }
                         }
-                        // An old garlic image must not remain attached after choosing a different ingredient.
+                        // Clear the image when the selected ingredient changes
                         if (stepId.HasValue && previousIngredient != ingredientId) image = "";
                     }
 

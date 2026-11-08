@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Masaking.Infrastructure;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
-using Masaking.Infrastructure;
 
 namespace Masaking.Admin
 {
@@ -151,7 +151,6 @@ namespace Masaking.Admin
             string table;
             string key;
 
-            // Table names must come from this fixed list.
             //table names must come from this fixed list 
             switch (args[0])
             {
@@ -200,7 +199,7 @@ namespace Masaking.Admin
                 return;
             }
 
-            string sql ="UPDATE dbo." + table + " SET status=@status,updatedAt=@now" + " WHERE " + key + "=@id" + " AND status=@previousStatus;";
+            string sql = "UPDATE dbo." + table + " SET status=@status,updatedAt=@now" + " WHERE " + key + "=@id" + " AND status=@previousStatus;";
 
             using (SqlConnection cn = Database.Open())
             using (SqlCommand cmd = new SqlCommand(sql, cn))

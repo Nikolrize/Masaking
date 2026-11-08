@@ -1,4 +1,4 @@
-/* Add member controls while keeping the original Bootstrap navbar typography. */
+/* Navbar search and account controls */
 .site-header .navbar-collapse { min-width: 0; }
 .site-header .site-nav-member-actions {
     min-width: 0;
