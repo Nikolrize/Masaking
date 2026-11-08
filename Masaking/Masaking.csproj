@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -97,6 +97,10 @@
     <Content Include="Learning\Default.aspx" />
     <Content Include="Content\css\learning.css" />
     <Compile Include="Infrastructure\SimulationImages.cs" />
+    <Compile Include="Infrastructure\StockImages.cs" />
+    <Compile Include="Infrastructure\SimulationStructure.cs" />
+    <Compile Include="Admin\SimulationStages.aspx.cs"><DependentUpon>SimulationStages.aspx</DependentUpon><SubType>ASPXCodeBehind</SubType></Compile>
+    <Compile Include="Admin\SimulationStages.aspx.designer.cs"><DependentUpon>SimulationStages.aspx</DependentUpon></Compile>
     <Content Include="Scripts\cooking-step-editor.js" />
     <Content Include="Scripts\ingredient-editor.js" />
     <Content Include="Scripts\simulation-upload.js" />
@@ -138,6 +142,8 @@
     </Compile>
     <Content Include="Admin\Admin.Master" />
     <Content Include="Admin\SimulationSteps.aspx" />
+    <Content Include="Admin\SimulationStages.aspx" />
+    <Content Include="Learning\SimulationStages.aspx" />
     <Content Include="Content\css\simulation.css" />
     <Content Include="Learning\Simulations.aspx" />
     <Content Include="Learning\TakeQuiz.aspx" />
@@ -658,6 +664,67 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Content\images\simulation\defaults\cookware\bamboo-skewers.png" />
+    <Content Include="Content\images\simulation\defaults\cookware\grill.svg" />
+    <Content Include="Content\images\simulation\defaults\cookware\mixing-bowl.png" />
+    <Content Include="Content\images\simulation\defaults\cookware\mug.jpg" />
+    <Content Include="Content\images\simulation\defaults\cookware\plate.jpeg" />
+    <Content Include="Content\images\simulation\defaults\cookware\rice-cooker.jpeg" />
+    <Content Include="Content\images\simulation\defaults\cookware\saucepan.png" />
+    <Content Include="Content\images\simulation\defaults\cookware\wok.jpg" />
+    <Content Include="Content\images\simulation\defaults\dishes\char-kway-teow.jpg" />
+    <Content Include="Content\images\simulation\defaults\dishes\chicken-satay.jpg" />
+    <Content Include="Content\images\simulation\defaults\dishes\egg-fried-rice.jpg" />
+    <Content Include="Content\images\simulation\defaults\dishes\nasi-lemak.jpg" />
+    <Content Include="Content\images\simulation\defaults\dishes\peanut-sauce.jpg" />
+    <Content Include="Content\images\simulation\defaults\dishes\teh-tarik.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\bean-sprouts.jpg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\black-tea-leaves.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\chicken-pieces.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\chinese-sausage.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\coconut-milk.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\condensed-milk.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\cooked-coconut-rice.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\cooked-rice.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\coriander-powder.jpg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\cucumber-slices.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\dark-soy-sauce.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\dried-red-chilies.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\eggs.jpg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\evaporated-milk.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\fried-anchovies.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\fried-fish-cake.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\galangal.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\garlic-chives.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\garlic.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\ginger.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\hard-boiled-egg.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\jasmine-rice.jpg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\kecap-manis.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\lemongrass.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\light-soy-sauce.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\oil.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\onion.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\oyster-sauce.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\pandan-leaves.jpg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\prawns.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\prepared-sambal.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\roasted-peanuts.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\salt.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\sambal-paste.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\sesame-oil.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\shallots.jpg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\soy-sauce.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\spring-onions.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\sugar.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\tamarind-pulp.jpeg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\turmeric-powder.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\water.png" />
+    <Content Include="Content\images\simulation\defaults\ingredients\white-pepper.jpg" />
+    <Content Include="Content\images\simulation\defaults\ingredients\wide-rice-noodles.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />

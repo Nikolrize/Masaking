@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Cooking Simulation" Language="C#" MasterPageFile="~/Site.Master"
+<%@ Page Title="Cooking Simulation" Language="C#" MasterPageFile="~/Site.Master"
     AutoEventWireup="true" CodeBehind="CookingSimulation.aspx.cs" Inherits="Masaking.Learning.CookingSimulation" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="<%= ResolveUrl("~/Content/css/simulation.css") %>" rel="stylesheet" />
@@ -16,7 +16,7 @@
                 <asp:Label ID="lblMessage" runat="server" EnableViewState="False" CssClass="d-block mb-3" role="status" aria-live="polite" />
                 <asp:Panel ID="pnlStart" runat="server" Visible="False" CssClass="card p-3 p-md-4">
                     <asp:Label ID="lblInstructions" runat="server" CssClass="d-block mb-3" />
-                    <p>There is no time limit. Drag an ingredient into the cooking area, or select its Add button. Each choice is saved automatically.</p>
+                    <p>There is no time limit. Drag an ingredient into the cooking area or select Add. Cooking actions use a Complete step button. Each step is saved automatically.</p>
                     <asp:Button ID="btnStart" runat="server" Text="Start cooking"
                         CssClass="btn btn-success align-self-start" CausesValidation="False" OnClick="btnStart_Click" />
                 </asp:Panel>
@@ -36,17 +36,24 @@
                     <div class="row g-4">
                         <div class="col-12 col-lg-6">
                             <div id="dropZone" class="cooking-area card p-3 p-md-4"
-                                aria-label="Drop an ingredient into the cooking area">
-                                <h2 class="h5">Cooking area</h2>
+                                aria-label="Cooking area">
+                                <asp:Label ID="lblStage" runat="server" CssClass="h5 d-block" />
+                                <asp:Label ID="lblStageInstructions" runat="server" CssClass="small text-secondary d-block mb-3" />
                                 <div class="cookware">
                                     <asp:Image ID="imgCookware" runat="server" AlternateText="Cookware for this recipe" CssClass="cookware-image" />
                                     <asp:Panel ID="pnlCookwarePlaceholder" runat="server" CssClass="cookware-placeholder" aria-hidden="true" />
                                     <div class="steam" aria-hidden="true"><span></span><span></span><span></span></div>
                                 </div>
-                                <p class="text-secondary mb-0">Drop an ingredient here, or use its Add button.</p>
+                                <asp:Label ID="lblAreaHint" runat="server" CssClass="text-secondary d-block mb-0" />
                             </div>
                         </div>
                         <div class="col-12 col-lg-6">
+                            <asp:Panel ID="pnlCookingAction" runat="server" Visible="False" CssClass="card p-3 p-md-4">
+                                <h2 class="h5">Cooking action</h2>
+                                <p>Read the current instruction, then select Complete step to continue. This is an untimed practice activity.</p>
+                                <asp:Button ID="btnCompleteAction" runat="server" Text="Complete step" CssClass="btn btn-success align-self-start" CausesValidation="False" OnClick="btnCompleteAction_Click" />
+                            </asp:Panel>
+                            <asp:Panel ID="pnlIngredientChoices" runat="server">
                             <h2 class="h5">Ingredients</h2>
                             <div class="row g-3">
                                 <asp:Repeater ID="rptIngredients" runat="server" OnItemCommand="rptIngredients_ItemCommand">
@@ -62,6 +69,7 @@
                                     </ItemTemplate>
                                 </asp:Repeater>
                             </div>
+                            </asp:Panel>
                         </div>
                     </div>
                     <p class="small text-secondary mt-3"> Leaving this page keeps your progress. Reopen this simulation to continue. Some recipes use the same ingredient in more than one step.</p>
@@ -72,7 +80,6 @@
                     <h2>Dish completed!</h2>
                     <asp:Image ID="imgCompleted" runat="server" AlternateText="The completed dish" CssClass="completed-image mx-auto mb-3" />
                     <asp:Label ID="lblResult" runat="server" CssClass="fs-4 d-block mb-2" />
-                    <p class="small text-secondary"> Accuracy = correct ingredient additions divided by all ingredient choices.</p>
                 </asp:Panel>
 
                 <asp:Panel ID="pnlAttemptActions" runat="server" Visible="False" CssClass="d-flex flex-wrap gap-2 mt-4">

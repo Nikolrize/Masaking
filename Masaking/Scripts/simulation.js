@@ -115,6 +115,12 @@
             }
             flyIngredient(card, area, true);
             sizzle(); tone(660, 0.12, 0.12);
+        } else if (result === "action") {
+            if (area) {
+                area.classList.add("cooking-correct");
+                window.setTimeout(function () { area.classList.remove("cooking-correct"); }, 900);
+            }
+            tone(660, 0.12);
         } else if (result === "wrong") {
             if (card) {
                 card.classList.add("ingredient-wrong");

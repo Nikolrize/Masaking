@@ -48,6 +48,8 @@
             <div class="col-12 col-md-6">
                 <asp:Label ID="lblCookware" runat="server" Text="Cookware photo"
                     AssociatedControlID="uploadCookware" CssClass="form-label" />
+                <asp:Label runat="server" AssociatedControlID="ddlCookwareStock" Text="Stock picture" CssClass="form-label d-block" />
+                <asp:DropDownList ID="ddlCookwareStock" runat="server" EnableViewState="False" AutoPostBack="True" OnSelectedIndexChanged="ddlStock_SelectedIndexChanged" CssClass="form-select mb-3" />
                 <asp:Image ID="imgCookwarePreview" runat="server" ClientIDMode="Static"
                     AlternateText="Cookware photo preview" CssClass="img-fluid rounded border mb-2"
                     Style="display:none;max-height:180px;object-fit:contain;" />
@@ -64,6 +66,8 @@
             <div class="col-12 col-md-6">
                 <asp:Label ID="lblCompletedImage" runat="server" Text="Finished-dish photo"
                     AssociatedControlID="uploadCompletedImage" CssClass="form-label" />
+                <asp:Label runat="server" AssociatedControlID="ddlCompletedStock" Text="Stock picture" CssClass="form-label d-block" />
+                <asp:DropDownList ID="ddlCompletedStock" runat="server" EnableViewState="False" AutoPostBack="True" OnSelectedIndexChanged="ddlStock_SelectedIndexChanged" CssClass="form-select mb-3" />
                 <asp:Image ID="imgCompletedPreview" runat="server" ClientIDMode="Static"
                     AlternateText="Finished-dish photo preview" CssClass="img-fluid rounded border mb-2"
                     Style="display:none;max-height:180px;object-fit:contain;" />
@@ -78,8 +82,7 @@
             </div>
 
             <div class="col-12">
-                <p class="small text-secondary mb-0"> Photos are optional. Choose them from your device. Leave a file input empty to keep its current image. If no finished-dish photo is set, gameplay uses the linked recipe photo.
-                </p>
+                <p class="small text-secondary mb-0"> Photos are optional. Choose a stock picture first, or upload your own. An upload takes priority. Leave both unchanged to keep the current picture.</p>
             </div>
 
             <div class="col-12 d-flex flex-wrap gap-2">

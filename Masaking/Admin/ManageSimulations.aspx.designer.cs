@@ -132,6 +132,15 @@ namespace Masaking.Admin
         protected global::System.Web.UI.WebControls.Label lblCookware;
 
         /// <summary>
+        /// ddlCookwareStock control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlCookwareStock;
+
+        /// <summary>
         /// imgCookwarePreview control.
         /// </summary>
         /// <remarks>
@@ -166,6 +175,15 @@ namespace Masaking.Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblCompletedImage;
+
+        /// <summary>
+        /// ddlCompletedStock control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlCompletedStock;
 
         /// <summary>
         /// imgCompletedPreview control.
