@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security.DataProtection;
 
+
 namespace Masaking.Infrastructure
 {
     // Account snapshot used to bind recovery proofs to the current credentials.
