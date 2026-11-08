@@ -7,6 +7,8 @@
 
     <asp:HyperLink ID="lnkBack" runat="server" NavigateUrl="~/Learning/ManageSimulations.aspx" Text="Back to simulations" CssClass="btn btn-outline-success mb-3" />
 
+    <asp:HyperLink ID="lnkStages" runat="server" Text="Manage stages" CssClass="btn btn-outline-success mb-3 ms-2" />
+
     <asp:Label ID="lblHeading" runat="server" Text="Simulation steps" CssClass="h1 d-block mb-3" />
     <asp:Label ID="lblMessage" runat="server" EnableViewState="False" CssClass="d-block" role="status" />
     <asp:Panel ID="pnlContent" runat="server" Visible="False">
@@ -16,6 +18,18 @@
 
             <asp:Label ID="lblEditorHeading" runat="server" Text="New step" CssClass="h5 d-block mb-3" />
             <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <asp:Label runat="server" Text="Stage" AssociatedControlID="ddlStage" CssClass="form-label" />
+                    <asp:DropDownList ID="ddlStage" runat="server" CssClass="form-select" />
+                </div>
+                <div class="col-12 col-md-6">
+                    <asp:Label runat="server" Text="Step type" AssociatedControlID="ddlActionType" CssClass="form-label" />
+                    <asp:DropDownList ID="ddlActionType" runat="server" CssClass="form-select" AutoPostBack="True" OnSelectedIndexChanged="ddlActionType_SelectedIndexChanged">
+                        <asp:ListItem Value="Ingredient">Add an ingredient</asp:ListItem>
+                        <asp:ListItem Value="Action">Cooking action (Complete step button)</asp:ListItem>
+                    </asp:DropDownList>
+                    <p class="form-text">Use cooking actions for instructions such as mixing, cooking, resting or pulling tea. The activity is untimed.</p>
+                </div>
                 <div class="col-12 col-md-4">
                     <asp:Label ID="lblNumber" runat="server" Text="Step number" AssociatedControlID="txtNumber" CssClass="form-label" />
 
@@ -37,6 +51,8 @@
                 <div class="col-12">
                     <asp:Label ID="lblImage" runat="server" Text="Ingredient photo (optional)"
                         AssociatedControlID="uploadStepImage" CssClass="form-label" />
+                    <asp:Label runat="server" Text="Stock ingredient picture" AssociatedControlID="ddlStockImage" CssClass="form-label d-block" />
+                    <asp:DropDownList ID="ddlStockImage" runat="server" CssClass="form-select mb-3" EnableViewState="False" AutoPostBack="True" OnSelectedIndexChanged="ddlStockImage_SelectedIndexChanged" />
                     <asp:Image ID="imgStepPreview" runat="server" ClientIDMode="Static"
                         AlternateText="Ingredient photo preview" CssClass="img-fluid rounded border mb-2"
                         Style="display:none;max-height:180px;object-fit:contain;" />
@@ -45,14 +61,13 @@
                         data-simulation-preview="imgStepPreview"
                         data-simulation-error="stepImageError" />
                     <p class="form-text">
-                        JPG, PNG or GIF, up to 5 MB. Leave empty to keep the current step image.
-                        New steps use the ingredient's default image unless you upload a replacement. Select the ingredient before choosing a photo.
+                        Choose the ingredient and stock picture before choosing a file. Uploading your own picture takes priority. JPG, PNG or GIF, up to 5 MB. Leave both empty to keep the current step picture.
                     </p>
                     <div id="stepImageError" class="small text-danger" role="status"></div>
                     <asp:Label ID="lblImageSource" runat="server"
                         CssClass="small text-secondary d-block mb-2" />
                     <asp:CheckBox ID="chkUseDefaultImage" runat="server"
-                        Text=" Use ingredient default image instead of the step override (applies when saved)" />
+                        Text=" Remove the step picture and use the recipe ingredient picture, if available" />
                 </div>
 
                 <div class="col-12">
@@ -92,6 +107,8 @@
                                 </div>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:BoundField DataField="stageTitle" HeaderText="Stage" />
+                        <asp:BoundField DataField="actionType" HeaderText="Type" />
                     </Columns>
                 </asp:GridView>
             </div>

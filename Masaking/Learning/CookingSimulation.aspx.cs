@@ -100,24 +100,13 @@ namespace Masaking.Learning
 
         private DataTable ReadSteps(SqlConnection cn, SqlTransaction tx)
         {
-            using (SqlCommand cmd = new SqlCommand(@"SELECT st.stepNumber,st.ingredientID,st.instruction, i.ingredientName,i.recipeID, COALESCE(NULLIF(st.image,''),i.image,'') AS ingredientImage FROM dbo.simulationSteps st
-                INNER JOIN dbo.ingredients i ON i.ingredientID=st.ingredientID WHERE st.simulationID=@id ORDER BY st.stepNumber;", cn, tx))
-            {
-                cmd.Parameters.Add("@id", SqlDbType.Int).Value = SimulationId;
-                DataTable table = new DataTable();
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd)) adapter.Fill(table);
-                return table;
-            }
+            return SimulationStructure.ReadSteps(cn, tx, SimulationId);
         }
 
         private bool StepsAreValid()
         {
-            if (steps == null || steps.Rows.Count == 0 || steps.Rows.Count > 100) return false;
-            int recipeId = Convert.ToInt32(simulation["recipeID"]);
-            for (int i = 0; i < steps.Rows.Count; i++)
-                if (Convert.ToInt32(steps.Rows[i]["stepNumber"]) != i + 1 || Convert.ToInt32(steps.Rows[i]["recipeID"]) != recipeId || String.IsNullOrWhiteSpace(Convert.ToString(steps.Rows[i]["instruction"])))
-                    return false;
-            return true;
+            string message;
+            return SimulationStructure.IsValid(steps, Convert.ToInt32(simulation["recipeID"]), out message);
         }
 
         private void BindIngredients()
@@ -129,6 +118,7 @@ namespace Masaking.Learning
             HashSet<int> added = new HashSet<int>();
             foreach (DataRow step in steps.Rows)
             {
+                if (step["ingredientID"] == DBNull.Value) continue;
                 int id = Convert.ToInt32(step["ingredientID"]);
                 if (added.Add(id))
                     ingredients.Rows.Add(id, Convert.ToString(step["ingredientName"]),
@@ -199,7 +189,19 @@ namespace Masaking.Learning
                             progressTrack.Attributes["aria-valuemin"] = "0";
                             progressTrack.Attributes["aria-valuemax"] = "100";
                             progressTrack.Attributes["aria-valuenow"] = percentage.ToString();
-                            string image = SafeImage(Convert.ToString(simulation["cookwareImage"]));
+                            DataRow currentStep = steps.Rows[current - 1];
+                            bool cookingAction = Convert.ToString(currentStep["actionType"]) == "Action";
+                            pnlCookingAction.Visible = cookingAction;
+                            pnlIngredientChoices.Visible = !cookingAction;
+                            lblAreaHint.Text = cookingAction ? "Follow the instruction, then select Complete step."
+                                : "Drop an ingredient here, or use its Add button.";
+                            string stageTitle = Convert.ToString(currentStep["stageTitle"]);
+                            lblStage.Text = stageTitle.Length == 0 ? "Cooking area"
+                                : Server.HtmlEncode("Stage " + Convert.ToInt32(currentStep["stageNumber"]) + " of " + Convert.ToInt32(currentStep["stageCount"]) + ": " + stageTitle);
+                            lblStageInstructions.Text = Server.HtmlEncode(Convert.ToString(currentStep["stageInstructions"]));
+                            imgCookware.AlternateText = stageTitle.Length == 0 ? "Cooking area" : stageTitle;
+                            string image = SafeImage(Convert.ToString(currentStep["stageImage"]));
+                            if (image.Length == 0) image = SafeImage(Convert.ToString(simulation["cookwareImage"]));
                             imgCookware.ImageUrl = image;
                             imgCookware.Visible = image.Length > 0;
                             pnlCookwarePlaceholder.Visible = image.Length == 0;
@@ -208,7 +210,9 @@ namespace Masaking.Learning
                     else feedback = "This run was restarted. Start a new attempt to practice again.";
                 }
             }
-            lblMessage.Text = Server.HtmlEncode(feedback ?? (pnlGame.Visible ? "Choose the ingredient for the current instruction." : "Take your time and practice the ingredient order."));
+            lblMessage.Text = Server.HtmlEncode(feedback ?? (pnlGame.Visible
+                ? (pnlCookingAction.Visible ? "Follow the cooking instruction and select Complete step." : "Choose the ingredient for the current instruction.")
+                : "Take your time and practice the ingredient order."));
             lblMessage.CssClass = effect == "wrong" ? "alert alert-warning d-block mb-3" : "alert alert-info d-block mb-3";
             base.OnPreRender(e);
         }
@@ -308,13 +312,25 @@ namespace Masaking.Learning
             hfIngredient.Value = "";
         }
 
+        protected void btnCompleteAction_Click(object sender, EventArgs e)
+        {
+            AdvanceStep(null);
+        }
+
         private void AddIngredient(int ingredientId)
+        {
+            AdvanceStep(ingredientId);
+        }
+
+        private void AdvanceStep(int? ingredientId)
         {
             if (!Database.RequireUser(Response) || !available || !AttemptId.HasValue) return;
             using (SqlConnection cn = Database.Open())
             using (SqlTransaction tx = cn.BeginTransaction(IsolationLevel.Serializable))
             {
                 if (!LockAvailableSimulation(cn, tx)) { feedback = "This simulation is no longer available."; return; }
+                steps = ReadSteps(cn, tx);
+                if (!StepsAreValid()) { feedback = "The simulation needs its steps checked."; return; }
                 int current, mistakes;
                 string status;
                 using (SqlCommand cmd = new SqlCommand(@"SELECT currentStepNumber,mistakes,status FROM dbo.simulationProgress WITH (UPDLOCK,HOLDLOCK)
@@ -336,16 +352,24 @@ namespace Masaking.Learning
                     feedback = "Your saved progress changed. The latest state is shown below.";
                     return;
                 }
-                bool listed = false;
-                foreach (DataRow step in steps.Rows)
-                    if (Convert.ToInt32(step["ingredientID"]) == ingredientId) listed = true;
-                if (!listed) { feedback = "Choose one of the displayed ingredients."; return; }
-                bool correct = ingredientId == Convert.ToInt32(steps.Rows[current - 1]["ingredientID"]);
+                DataRow currentStep = steps.Rows[current - 1];
+                bool action = Convert.ToString(currentStep["actionType"]) == "Action";
+                if (action != !ingredientId.HasValue)
+                {
+                    feedback = action ? "Follow the instruction and select Complete step." : "Select the ingredient shown in the instruction.";
+                    return;
+                }
+                if (!action && !steps.AsEnumerable().Any(row => row["ingredientID"] != DBNull.Value && Convert.ToInt32(row["ingredientID"]) == ingredientId.Value))
+                {
+                    feedback = "Choose one of the displayed ingredients.";
+                    return;
+                }
+                bool correct = action || ingredientId.Value == Convert.ToInt32(currentStep["ingredientID"]);
                 if (correct) current++; else mistakes++;
-                int correctCount = current - 1;
+                int correctCount = steps.AsEnumerable().Take(current - 1).Count(row => Convert.ToString(row["actionType"]) == "Ingredient");
                 bool completed = current > steps.Rows.Count;
                 int choices = correctCount + mistakes;
-                int score = choices == 0 ? 0 : (int)Math.Round(100m * correctCount / choices, MidpointRounding.AwayFromZero);
+                int score = choices == 0 ? (completed ? 100 : 0) : (int)Math.Round(100m * correctCount / choices, MidpointRounding.AwayFromZero);
                 using (SqlCommand cmd = new SqlCommand(@"UPDATE dbo.simulationProgress SET currentStepNumber=@step,mistakes=@mistakes,score=@score,status=@status,completedAt=@completed
                     WHERE simulationProgressID=@attempt AND simulationID=@id AND userID=@user;", cn, tx))
                 {
@@ -360,8 +384,8 @@ namespace Masaking.Learning
                     cmd.ExecuteNonQuery();
                 }
                 tx.Commit();
-                effect = completed ? "complete" : correct ? "correct" : "wrong";
-                feedback = completed ? "Well done! Your completed result has been saved." : correct ? "Correct! Your progress has been saved." : "Not yet. That ingredient stays in the tray. Follow the current instruction.";
+                effect = completed ? "complete" : correct ? (action ? "action" : "correct") : "wrong";
+                feedback = completed ? "Well done! Your completed result has been saved." : correct ? (action ? "Step completed. Your progress has been saved." : "Correct! Your progress has been saved.") : "Not yet. That ingredient stays in the tray. Follow the current instruction.";
             }
         }
     }

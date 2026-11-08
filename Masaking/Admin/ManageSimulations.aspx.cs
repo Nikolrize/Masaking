@@ -25,6 +25,22 @@ namespace Masaking.Admin
             set { ViewState["ImagesOnly"] = value; }
         }
 
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            StockImages.Bind(ddlCookwareStock, "cookware");
+            StockImages.Bind(ddlCompletedStock, "dishes");
+        }
+
+        protected void ddlStock_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!RequireEditor()) return;
+            if (sender == ddlCookwareStock && ddlCookwareStock.SelectedValue.Length > 0)
+                SetPreview(imgCookwarePreview, StockImages.Selected(ddlCookwareStock, "cookware"));
+            else if (sender == ddlCompletedStock && ddlCompletedStock.SelectedValue.Length > 0)
+                SetPreview(imgCompletedPreview, StockImages.Selected(ddlCompletedStock, "dishes"));
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!RequireEditor()) return;
@@ -111,8 +127,8 @@ namespace Masaking.Admin
                 return;
             }
 
-            if ((uploadCookware.HasFile && chkRemoveCookware.Checked)
-                || (uploadCompletedImage.HasFile && chkRemoveCompleted.Checked))
+            if (((uploadCookware.HasFile || ddlCookwareStock.SelectedValue.Length > 0) && chkRemoveCookware.Checked)
+                || ((uploadCompletedImage.HasFile || ddlCompletedStock.SelectedValue.Length > 0) && chkRemoveCompleted.Checked))
             {
                 ShowMessage("Choose a replacement image OR remove the current image, not both.", false);
                 return;
@@ -169,6 +185,8 @@ namespace Masaking.Admin
                         cookware = SimulationImages.Save(uploadCookware.PostedFile);
                         newUploads.Add(cookware);
                     }
+                    else if (ddlCookwareStock.SelectedValue.Length > 0)
+                        cookware = StockImages.Selected(ddlCookwareStock, "cookware");
                     else if (chkRemoveCookware.Checked) cookware = "";
 
                     if (uploadCompletedImage.HasFile)
@@ -176,6 +194,8 @@ namespace Masaking.Admin
                         completedImage = SimulationImages.Save(uploadCompletedImage.PostedFile);
                         newUploads.Add(completedImage);
                     }
+                    else if (ddlCompletedStock.SelectedValue.Length > 0)
+                        completedImage = StockImages.Selected(ddlCompletedStock, "dishes");
                     else if (chkRemoveCompleted.Checked) completedImage = "";
 
                     string sql;
@@ -315,6 +335,7 @@ namespace Masaking.Admin
                     txtInstructions.Text = Convert.ToString(reader["instructions"]);
                     ddlRecipe.SelectedValue = recipe;
                     ddlDifficulty.SelectedValue = difficulty;
+                    ddlCookwareStock.SelectedIndex = ddlCompletedStock.SelectedIndex = 0;
                     SetPreview(imgCookwarePreview, Convert.ToString(reader["cookwareImage"]));
                     SetPreview(imgCompletedPreview, Convert.ToString(reader["completedImage"]));
                     SetEditorMode(editImages);
@@ -409,7 +430,7 @@ namespace Masaking.Admin
                     }
 
                     //remove the child records before the parent 
-                    using (SqlCommand cmd = new SqlCommand(@" DELETE FROM dbo.simulationSteps WHERE simulationID=@id;", cn, tx))
+                    using (SqlCommand cmd = new SqlCommand(@" DELETE FROM dbo.simulationSteps WHERE simulationID=@id; DELETE FROM dbo.simulationStages WHERE simulationID=@id;", cn, tx))
                     {
                         cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                         cmd.ExecuteNonQuery();
@@ -448,54 +469,10 @@ namespace Masaking.Admin
             int simulationId,
             int recipeId)
         {
-            const string sql = @"SELECT st.stepNumber, st.instruction, i.recipeID AS ingredientRecipeID FROM dbo.simulationSteps st INNER JOIN dbo.ingredients i ON i.ingredientID=st.ingredientID WHERE st.simulationID=@id ORDER BY st.stepNumber;";
-
-            int expectedNumber = 1;
-
-            using (SqlCommand cmd = new SqlCommand(sql, cn, tx))
-            {
-                cmd.Parameters.Add("@id", SqlDbType.Int).Value = simulationId;
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int number = Convert.ToInt32(reader["stepNumber"]);
-
-                        int ingredientRecipeId =Convert.ToInt32(reader["ingredientRecipeID"]);
-
-                        string instruction =Convert.ToString(reader["instruction"]);
-
-                        if (number != expectedNumber || number > 100)
-                        {
-                            ShowMessage("Number the simulation steps consecutively " + "from 1, with no gaps, up to 100.", false);
-                            return false;
-                        }
-
-                        if (ingredientRecipeId != recipeId)
-                        {
-                            ShowMessage("Every step must use an ingredient " + "from the linked recipe.", false);
-                            return false;
-                        }
-
-                        if (String.IsNullOrWhiteSpace(instruction) || instruction.Length > 1000)
-                        {
-                            ShowMessage("Every step needs an instruction " + "within 1,000 characters.", false);
-                            return false;
-                        }
-
-                        expectedNumber++;
-                    }
-                }
-            }
-
-            if (expectedNumber == 1)
-            {
-                ShowMessage("Add at least one step before publishing.",false);
-                return false;
-            }
-
-            return true;
+            string message;
+            bool valid = SimulationStructure.IsValid(SimulationStructure.ReadSteps(cn, tx, simulationId), recipeId, out message);
+            if (!valid) ShowMessage(message, false);
+            return valid;
         }
         protected void btnNew_Click(object sender, EventArgs e)
         {
@@ -509,6 +486,7 @@ namespace Masaking.Admin
             EditingId = null;
             ImagesOnly = false;
             SetEditorMode(false);
+            ddlCookwareStock.SelectedIndex = ddlCompletedStock.SelectedIndex = 0;
             txtTitle.Text = "";
             txtDescription.Text = "";
             txtInstructions.Text = "";
