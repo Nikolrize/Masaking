@@ -238,9 +238,7 @@ namespace Masaking.Infrastructure
                 foreach (int categoryId in categoryIds)
                 {
                     string parameterName = "@category" + categoryParameters.Count;
-
                     categoryParameters.Add(parameterName);
-
                     cmd.Parameters.Add(parameterName, SqlDbType.Int).Value = categoryId;
                 }
 
@@ -282,7 +280,6 @@ namespace Masaking.Infrastructure
                       AND status IN ('Approved', 'Pending', 'Rejected');", con);
 
                 cmd.Parameters.Add("@recipeID", SqlDbType.Int).Value = recipeId;
-
                 cmd.Parameters.Add("@userID", SqlDbType.Int).Value = Database.UserId.Value;
 
                 return cmd.ExecuteNonQuery();

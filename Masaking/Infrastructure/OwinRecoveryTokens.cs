@@ -3,9 +3,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security.DataProtection;
 
 namespace Masaking.Infrastructure
 {
@@ -79,12 +76,6 @@ namespace Masaking.Infrastructure
             using (var manager = CreateManager(user))
                 return manager.VerifyUserTokenAsync(user.Id, "ResetPassword", Convert.ToBase64String(protectedBytes))
                     .GetAwaiter().GetResult();
-        }
-
-        public static bool HasValidFormat(string token)
-        {
-            byte[] bytes;
-            return TryDecode(token, out bytes);
         }
 
         private static bool TryDecode(string token, out byte[] bytes)

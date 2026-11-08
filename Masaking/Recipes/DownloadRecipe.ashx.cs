@@ -36,7 +36,7 @@ namespace Masaking.Recipes
 
             DataRow recipe = recipes.Rows[0];
 
-            // build pdf content
+            // Build pdf content
             Document document = new Document();
             document.Info.Title = recipe["title"].ToString();
 
@@ -52,16 +52,14 @@ namespace Masaking.Recipes
             brand.Format.Font.Size = 12;
             brand.Format.SpaceAfter = Unit.FromCentimeter(0.5);
 
-            Paragraph title =
-                section.AddParagraph(recipe["title"].ToString());
+            Paragraph title = section.AddParagraph(recipe["title"].ToString());
 
             title.Format.Font.Size = 24;
             title.Format.Font.Bold = true;
             title.Format.Font.Color = Colors.DarkGreen;
             title.Format.SpaceAfter = Unit.FromCentimeter(0.3);
 
-            Paragraph author = section.AddParagraph(
-                "By " + recipe["displayName"].ToString());
+            Paragraph author = section.AddParagraph("By " + recipe["displayName"].ToString());
 
             author.Format.SpaceAfter = Unit.FromCentimeter(0.5);
 
@@ -93,7 +91,7 @@ namespace Masaking.Recipes
                 "Estimated cost: RM" +
                 Convert.ToDecimal(recipe["estimatedCost"]).ToString("0.00"));
 
-            // Load ingredients and steps after recipe access has been checked.
+            // Load ingredients and steps
             DataSet contents = LoadRecipeContents(recipeId);
 
             // Ingredients
@@ -106,8 +104,7 @@ namespace Masaking.Recipes
 
             foreach (DataRow ingredient in contents.Tables[0].Rows)
             {
-                string quantity =
-                    Convert.ToDecimal(ingredient["quantity"]).ToString("0.##");
+                string quantity = Convert.ToDecimal(ingredient["quantity"]).ToString("0.##");
 
                 string optional = Convert.ToBoolean(ingredient["isOptional"])
                     ? " (optional)"
@@ -115,7 +112,7 @@ namespace Masaking.Recipes
 
                 Paragraph item = section.AddParagraph(
                     "- " + ingredient["ingredientName"] +
-                    " — " + quantity + " " + ingredient["unit"] + optional);
+                    " - " + quantity + " " + ingredient["unit"] + optional);
 
                 item.Format.SpaceAfter = Unit.FromCentimeter(0.15);
             }
@@ -145,8 +142,7 @@ namespace Masaking.Recipes
 
                 AddPhoto(context, section, step["image"], 5);
 
-                Paragraph instruction =
-                    section.AddParagraph(step["instruction"].ToString());
+                Paragraph instruction = section.AddParagraph(step["instruction"].ToString());
 
                 instruction.Format.SpaceAfter = Unit.FromCentimeter(0.4);
             }
@@ -156,7 +152,7 @@ namespace Masaking.Recipes
                 section.AddParagraph("No cooking steps listed.");
             }
 
-            // convert document into PDF bytes
+            // Convert document into PDF bytes
             PdfDocumentRenderer renderer = new PdfDocumentRenderer();
             renderer.Document = document;
             renderer.RenderDocument();
@@ -171,7 +167,7 @@ namespace Masaking.Recipes
 
             renderer.PdfDocument.Close();
 
-            // send file to browser
+            // Send file to browser
             context.Response.Clear();
             context.Response.ContentType = "application/pdf";
             context.Response.AddHeader(
@@ -250,8 +246,7 @@ namespace Masaking.Recipes
                 return;
             }
 
-            MigraDoc.DocumentObjectModel.Shapes.Image photo =
-                section.AddImage(imagePath);
+            MigraDoc.DocumentObjectModel.Shapes.Image photo = section.AddImage(imagePath);
 
             photo.LockAspectRatio = true;
             photo.Width = Unit.FromCentimeter(width);
