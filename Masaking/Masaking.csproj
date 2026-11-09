@@ -466,6 +466,7 @@
     <Compile Include="Account\ResetPassword.aspx.designer.cs">
       <DependentUpon>ResetPassword.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\RecipePhoto.cs" />
     <Compile Include="Infrastructure\RecipeRepository.cs" />
     <Compile Include="Recipes\DownloadRecipe.ashx.cs">
       <DependentUpon>DownloadRecipe.ashx</DependentUpon>

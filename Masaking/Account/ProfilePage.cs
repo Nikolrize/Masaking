@@ -3,7 +3,6 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.IO;
 
 namespace Masaking.Account
 {
@@ -125,26 +124,7 @@ namespace Masaking.Account
 
         protected string Picture(object value)
         {
-            string path = Convert.ToString(value).Replace('\\', '/');
-            Uri uri;
-
-            if (Uri.TryCreate(path, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp))
-                return path;
-
-            if (path.StartsWith("~/", StringComparison.Ordinal))
-                path = path.Substring(1);
-
-            path = path.Replace("/Content/Uploads/Recipes/", "/Content/images/Uploads/Recipes/");
-            const string prefix = "/Content/images/Uploads/Recipes/";
-            Guid id;
-            string file = Path.GetFileName(path);
-
-            return path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
-                && path.Substring(prefix.Length) == file
-                && file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                && Guid.TryParseExact(Path.GetFileNameWithoutExtension(file), "N", out id)
-                ? ResolveUrl("~" + path)
-                : "";
+            return RecipePhoto.Resolve(this, value);
         }
 
         protected string RecipeUrl(object id, object status)
