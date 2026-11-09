@@ -47,6 +47,9 @@
     <Compile Include="Infrastructure\ActivityEditorPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Content Include="App_Data\MasakingDB_log.ldf">
+      <DependentUpon>MasakingDB.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\css\activity-editor.css" />
     <Content Include="Learning\ManageChallenges.aspx" />
     <Content Include="Learning\QuizQuestions.aspx" />
@@ -99,8 +102,13 @@
     <Compile Include="Infrastructure\SimulationImages.cs" />
     <Compile Include="Infrastructure\StockImages.cs" />
     <Compile Include="Infrastructure\SimulationStructure.cs" />
-    <Compile Include="Admin\SimulationStages.aspx.cs"><DependentUpon>SimulationStages.aspx</DependentUpon><SubType>ASPXCodeBehind</SubType></Compile>
-    <Compile Include="Admin\SimulationStages.aspx.designer.cs"><DependentUpon>SimulationStages.aspx</DependentUpon></Compile>
+    <Compile Include="Admin\SimulationStages.aspx.cs">
+      <DependentUpon>SimulationStages.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\SimulationStages.aspx.designer.cs">
+      <DependentUpon>SimulationStages.aspx</DependentUpon>
+    </Compile>
     <Content Include="Scripts\cooking-step-editor.js" />
     <Content Include="Scripts\ingredient-editor.js" />
     <Content Include="Scripts\simulation-upload.js" />
@@ -320,9 +328,6 @@
     <Content Include="Admin\ManageRecipes.aspx" />
     <Content Include="Admin\ManageUsers.aspx" />
     <Content Include="App_Data\MasakingDB.mdf" />
-    <Content Include="App_Data\MasakingDB_log.ldf">
-      <DependentUpon>MasakingDB.mdf</DependentUpon>
-    </Content>
     <Content Include="Community\Community.aspx" />
     <Content Include="Community\EditPost.aspx" />
     <Content Include="Contact.aspx" />
@@ -665,7 +670,6 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
-
   <ItemGroup>
     <Content Include="Content\images\simulation\defaults\cookware\bamboo-skewers.png" />
     <Content Include="Content\images\simulation\defaults\cookware\grill.svg" />

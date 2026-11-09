@@ -8,7 +8,8 @@
     <div class="position-relative">
         <div class="ratio ratio-4x3 bg-dark bg-opacity-25">
             <asp:Image ID="recipeImage" runat="server"
-                CssClass="card-img-top object-fit-cover" />
+                CssClass="card-img-top"
+                Style="object-fit: cover;" />
         </div>
 
         <asp:Label ID="recipeStatus" runat="server"
