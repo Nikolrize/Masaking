@@ -94,7 +94,7 @@ namespace Masaking.Recipes
 
         private void SetPageText()
         {
-            Page.Title = editId.HasValue ? "Edit Recipe" : "Submit Recipe";
+            Page.Title = editId.HasValue ? "Edit Recipe | Masaking" : "Submit Recipe | Masaking";
             recipeHeading.InnerText = editId.HasValue
                 ? "Edit your recipe" : "Share your recipe";
 

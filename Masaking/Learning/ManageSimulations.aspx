@@ -1,4 +1,4 @@
-<%@ Page Title="Manage Simulations" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" Inherits="Masaking.Admin.ManageSimulations" %>
+<%@ Page Title="Manage Simulations | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" Inherits="Masaking.Admin.ManageSimulations" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="../Content/css/activity-editor.css" rel="stylesheet" />

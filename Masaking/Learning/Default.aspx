@@ -1,4 +1,4 @@
-<%@ Page Title="Learn & Improve" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Masaking.Learning.LearningHome" %>
+<%@ Page Title="Learn & Improve | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Masaking.Learning.LearningHome" %>
 
 <asp:Content ID="PageHead" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="<%= ResolveUrl("~/Content/css/learning.css") %>" rel="stylesheet" />

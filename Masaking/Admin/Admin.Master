@@ -4,7 +4,7 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><%: Page.Title %> - Masaking</title>
+    <title></title>
     <link runat="server" href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link runat="server" href="~/Content/Site.css" rel="stylesheet" />
     <link runat="server" href="~/Content/css/admin.css" rel="stylesheet" />

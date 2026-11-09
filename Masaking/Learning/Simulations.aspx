@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Cooking Simulations" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Simulations.aspx.cs" Inherits="Masaking.Learning.Simulations" %>
+﻿<%@ Page Title="Cooking Simulations | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Simulations.aspx.cs" Inherits="Masaking.Learning.Simulations" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <main class="py-4 py-md-5">
         <div class="d-flex flex-wrap gap-2 mb-3">

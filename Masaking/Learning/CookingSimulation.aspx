@@ -1,4 +1,4 @@
-<%@ Page Title="Cooking Simulation" Language="C#" MasterPageFile="~/Site.Master"
+<%@ Page Title="Cooking Simulation | Masaking" Language="C#" MasterPageFile="~/Site.Master"
     AutoEventWireup="true" CodeBehind="CookingSimulation.aspx.cs" Inherits="Masaking.Learning.CookingSimulation" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="<%= ResolveUrl("~/Content/css/simulation.css") %>" rel="stylesheet" />

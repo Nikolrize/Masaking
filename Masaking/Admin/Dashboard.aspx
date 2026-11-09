@@ -1,4 +1,4 @@
-<%@ Page Title="Admin Dashboard" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="Masaking.Admin.Dashboard" %>
+<%@ Page Title="Admin Dashboard | Masaking" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="Masaking.Admin.Dashboard" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <header class="mb-4">
         <h1 class="page-heading">Admin Dashboard</h1>

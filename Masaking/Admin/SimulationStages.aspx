@@ -1,4 +1,4 @@
-<%@ Page Title="Simulation Stages" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="SimulationStages.aspx.cs" Inherits="Masaking.Admin.SimulationStages" %>
+<%@ Page Title="Simulation Stages | Masaking" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="SimulationStages.aspx.cs" Inherits="Masaking.Admin.SimulationStages" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <main class="container-fluid py-3 px-0">

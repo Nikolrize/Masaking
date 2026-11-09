@@ -1,4 +1,4 @@
-<%@ Page Title="Manage Recipes" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="ManageRecipes.aspx.cs" Inherits="Masaking.Admin.ManageRecipes" %>
+<%@ Page Title="Manage Recipes | Masaking" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="ManageRecipes.aspx.cs" Inherits="Masaking.Admin.ManageRecipes" %>
 <%@ Import Namespace="Masaking.Infrastructure" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <p class="text-brand fw-semibold">ADMINISTRATION</p>

@@ -82,7 +82,7 @@ namespace Masaking.Recipes
                 recipeRating.Text = "No reviews yet";
             }
 
-            Page.Title = recipe["title"].ToString();
+            Page.Title = recipe["title"].ToString() + " | Masaking";
 
             ingredientServings.Text = recipe["servings"].ToString();
             LoadRecipeContents(recipeId);

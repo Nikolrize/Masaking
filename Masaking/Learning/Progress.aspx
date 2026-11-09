@@ -1,4 +1,4 @@
-﻿<%@ Page Title="My Learning Progress" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" MaintainScrollPositionOnPostBack="True" CodeBehind="Progress.aspx.cs" Inherits="Masaking.Learning.Progress" %>
+﻿<%@ Page Title="My Learning Progress | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" MaintainScrollPositionOnPostBack="True" CodeBehind="Progress.aspx.cs" Inherits="Masaking.Learning.Progress" %>
 
 <asp:Content ID="PageHead" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="<%= ResolveUrl("~/Content/css/learning.css") %>" rel="stylesheet" />
