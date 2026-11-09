@@ -1,4 +1,4 @@
-<%@ Page Title="Simulation Steps" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="SimulationSteps.aspx.cs" Inherits="Masaking.Admin.SimulationSteps" %>
+<%@ Page Title="Simulation Steps | Masaking" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="SimulationSteps.aspx.cs" Inherits="Masaking.Admin.SimulationSteps" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Challenge Questions" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="QuizQuestions.aspx.cs" Inherits="Masaking.Admin.QuizQuestions" %>
+﻿<%@ Page Title="Challenge Questions | Masaking" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="QuizQuestions.aspx.cs" Inherits="Masaking.Admin.QuizQuestions" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <asp:HyperLink ID="lnkBack" runat="server" NavigateUrl="~/Admin/ManageChallenges.aspx" Text="Back to challenges" CssClass="btn btn-outline-success mb-3" />

@@ -9,7 +9,6 @@ namespace Masaking
     {
         protected override void OnPreRender(EventArgs e)
         {
-            Page.Header.Title = Page.Title + " - Masaking";
             lblCopyrightYear.Text = DateTime.Now.Year.ToString(CultureInfo.InvariantCulture);
             navSearch.Attributes["data-search-url"] = ResolveUrl("~/Search.aspx");
             bool signedIn = Database.UserId.HasValue;

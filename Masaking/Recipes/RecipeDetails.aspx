@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="RecipeDetails.aspx.cs" Inherits="Masaking.Recipes.RecipeDetails" %>
+<%@ Page Title="Recipe Details | Masaking" Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="RecipeDetails.aspx.cs" Inherits="Masaking.Recipes.RecipeDetails" %>
 
 <%@ Register Src="~/Controls/UserAvatar.ascx" TagPrefix="uc" TagName="UserAvatar" %>
 

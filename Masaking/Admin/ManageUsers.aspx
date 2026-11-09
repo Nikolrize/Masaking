@@ -1,4 +1,4 @@
-<%@ Page Title="Manage Users" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="ManageUsers.aspx.cs" Inherits="Masaking.Admin.ManageUsers" %>
+<%@ Page Title="Manage Users | Masaking" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="ManageUsers.aspx.cs" Inherits="Masaking.Admin.ManageUsers" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <p class="text-brand fw-semibold">ADMINISTRATION</p>
     <h1 class="page-heading"><asp:Label ID="lblTitle" runat="server" Text="Manage users" /></h1>

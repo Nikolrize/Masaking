@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Register.aspx.cs" Inherits="Masaking.Account.Register" %>
+<%@ Page Title="Create account | Masaking" Language="C#" AutoEventWireup="true" CodeBehind="Register.aspx.cs" Inherits="Masaking.Account.Register" %>
 
 <!doctype html>
     <html lang="en">

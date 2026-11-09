@@ -1,4 +1,4 @@
-<%@ Page Title="Challenge Questions" Language="C#" MasterPageFile="~/Site.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" Inherits="Masaking.Admin.QuizQuestions" %>
+<%@ Page Title="Challenge Questions | Masaking" Language="C#" MasterPageFile="~/Site.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" Inherits="Masaking.Admin.QuizQuestions" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="../Content/css/activity-editor.css" rel="stylesheet" />

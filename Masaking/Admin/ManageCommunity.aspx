@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Community moderation" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" MaintainScrollPositionOnPostBack="True" CodeBehind="ManageCommunity.aspx.cs" Inherits="Masaking.Admin.ManageCommunity" %>
+﻿<%@ Page Title="Community moderation | Masaking" Language="C#" MasterPageFile="~/Admin/Admin.Master" AutoEventWireup="true" MaintainScrollPositionOnPostBack="True" CodeBehind="ManageCommunity.aspx.cs" Inherits="Masaking.Admin.ManageCommunity" %>
 
 <%@ Import Namespace="Masaking.Infrastructure" %>
 

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Cooking Challenge" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" MaintainScrollPositionOnPostBack="True" CodeBehind="TakeQuiz.aspx.cs" Inherits="Masaking.Learning.TakeQuiz" %>
+﻿<%@ Page Title="Cooking Challenge | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" MaintainScrollPositionOnPostBack="True" CodeBehind="TakeQuiz.aspx.cs" Inherits="Masaking.Learning.TakeQuiz" %>
 
 <asp:Content ID="PageHead" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="<%= ResolveUrl("~/Content/css/learning.css") %>" rel="stylesheet" />

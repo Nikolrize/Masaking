@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" EnableViewStateMac="true" EnableEventValidation="true" CodeBehind="ForgotPassword.aspx.cs" Inherits="Masaking.Account.ForgotPassword" %>
+<%@ Page Title="Reset password | Masaking" Language="C#" AutoEventWireup="true" EnableViewStateMac="true" EnableEventValidation="true" CodeBehind="ForgotPassword.aspx.cs" Inherits="Masaking.Account.ForgotPassword" %>
 
 <!doctype html>
 <html lang="en">

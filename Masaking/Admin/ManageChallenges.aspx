@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Manage Challenges" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="ManageChallenges.aspx.cs" Inherits="Masaking.Admin.ManageChallenges" %>
+﻿<%@ Page Title="Manage Challenges | Masaking" Language="C#" MasterPageFile="~/Admin/Admin.Master" MaintainScrollPositionOnPostBack="True" AutoEventWireup="true" CodeBehind="ManageChallenges.aspx.cs" Inherits="Masaking.Admin.ManageChallenges" %>
 
 <%@ Import Namespace="Masaking.Infrastructure" %>
 

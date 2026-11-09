@@ -1,4 +1,4 @@
-<%@ Page Title="Submit Recipe" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SubmitRecipe.aspx.cs" Inherits="Masaking.Recipes.SubmitRecipe" %>
+<%@ Page Title="Submit Recipe | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SubmitRecipe.aspx.cs" Inherits="Masaking.Recipes.SubmitRecipe" %>
 
 <%@ Register Src="~/Controls/IngredientEditor.ascx" TagPrefix="uc" TagName="IngredientEditor" %>
 <%@ Register Src="~/Controls/CookingStepEditor.ascx" TagPrefix="uc" TagName="CookingStepEditor" %>

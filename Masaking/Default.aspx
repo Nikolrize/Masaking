@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Masaking._Default" %>
+﻿<%@ Page Title="Home Page | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Masaking._Default" %>
 
 <%@ Register Src="~/Controls/RecipeCard.ascx" TagPrefix="uc" TagName="RecipeCard" %>
 

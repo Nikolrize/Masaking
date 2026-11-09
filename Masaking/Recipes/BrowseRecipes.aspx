@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Browse Recipes" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="BrowseRecipes.aspx.cs" Inherits="Masaking.Recipes.BrowseRecipes" %>
+﻿<%@ Page Title="Browse Recipes | Masaking" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="BrowseRecipes.aspx.cs" Inherits="Masaking.Recipes.BrowseRecipes" %>
 
 <%@ Register Src="~/Controls/RecipeCard.ascx" TagPrefix="uc" TagName="RecipeCard" %>
 <%@ Register Src="~/Controls/RecipeFilters.ascx" TagPrefix="uc" TagName="RecipeFilters" %>
